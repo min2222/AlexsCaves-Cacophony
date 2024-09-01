@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "com.min01.cacophony.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [],
+	"client": [],
+	"server": [],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"refmap": "cacophony.refmap.json"
+}
