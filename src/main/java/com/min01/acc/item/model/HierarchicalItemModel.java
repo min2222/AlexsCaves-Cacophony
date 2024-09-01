@@ -49,6 +49,20 @@ public abstract class HierarchicalItemModel extends Model
 	{
 		this.animate(p_233382_, p_233383_, p_233384_, 1.0F);
 	}
+	
+	protected void animate(AnimationState p_233382_, boolean isStarted, AnimationDefinition p_233383_, float p_233384_)
+	{
+		this.animate(p_233382_, isStarted, p_233383_, p_233384_, 1.0F);
+	}
+	
+	protected void animate(AnimationState p_233386_, boolean isStarted, AnimationDefinition p_233387_, float p_233388_, float p_233389_) 
+	{
+		p_233386_.updateTime(p_233388_, p_233389_);
+		if(isStarted)
+		{
+			KeyframeItemAnimations.animate(this, p_233387_, p_233386_.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE);
+		}
+	}
 
 	protected void animate(AnimationState p_233386_, AnimationDefinition p_233387_, float p_233388_, float p_233389_) 
 	{

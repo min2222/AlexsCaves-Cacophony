@@ -1,7 +1,6 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.item.animation.RaybladeAnimation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -58,10 +57,12 @@ public class ModelRayblade extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(cap -> cap.addAnimationState(RaybladeItem.ACTIVATED));
-		AnimationState state = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).map(cap -> cap.getAnimationState(RaybladeItem.ACTIVATED)).get();
-		this.animate(state, RaybladeAnimation.RAYBLADE_ACTIVATE, ageInTicks);
-		this.handle.getChild("blade").visible = state.isStarted();
+		if(stack.getItem() instanceof RaybladeItem rayblade)
+		{
+			AnimationState state = rayblade.activateAnimationState;
+			this.animate(state, RaybladeItem.isStarted(stack), RaybladeAnimation.RAYBLADE_ACTIVATE, ageInTicks);
+			this.handle.getChild("blade").visible = RaybladeItem.isStarted(stack);
+		}
 	}
 	
 	@Override
