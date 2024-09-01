@@ -1,4 +1,5 @@
 {
 	"itemGroup.accacophony.accacophony": "Alex's Caves: Cacophony",
-	"item.accacophony.rayblade": "Rayblade"
+	"item.accacophony.rayblade": "Rayblade",
+	"item.accacophony.rayblade.charge": "Charge: %s/%s"
 }

@@ -3,6 +3,7 @@ package com.min01.acc.item.renderer;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.item.model.ModelRayblade;
+import com.min01.acc.misc.ACCRenderType;
 import com.min01.acc.util.ACCClientUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -38,15 +39,14 @@ public class RaybladeRenderer extends BlockEntityWithoutLevelRenderer
 		this.model.renderToBuffer(p_108832_, vertexconsumer, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 		p_108832_.popPose();
 		
-		//FIXME
-		/*p_108832_.pushPose();
+		p_108832_.pushPose();
 		VertexConsumer vertexconsumer2 = p_108833_.getBuffer(ACCRenderType.eyesFix(this.getLayerTexture(p_108830_)));
 		p_108832_.scale(-1.0F, -1.0F, 1.0F);
 		p_108832_.translate(0.0F, -1.5F, 0.0F);
 		p_108832_.translate(-0.5F, -0.8F, 0.5F);
 		this.model.setupAnim(p_108830_, 0, 0, ACCClientUtil.MC.player.tickCount + ACCClientUtil.MC.getFrameTime(), 0, 0);
-		this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-		p_108832_.popPose();*/
+		this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
+		p_108832_.popPose();
 	}
 	
 	public ResourceLocation getLayerTexture(ItemStack stack)

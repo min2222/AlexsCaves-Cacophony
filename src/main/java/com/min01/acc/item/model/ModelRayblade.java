@@ -57,12 +57,9 @@ public class ModelRayblade extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		if(stack.getItem() instanceof RaybladeItem rayblade)
-		{
-			AnimationState state = rayblade.activateAnimationState;
-			this.animate(state, RaybladeItem.isStarted(stack), RaybladeAnimation.RAYBLADE_ACTIVATE, ageInTicks);
-			this.handle.getChild("blade").visible = RaybladeItem.isStarted(stack);
-		}
+		AnimationState state = RaybladeItem.getAnimationState(stack);
+		this.animate(state, RaybladeAnimation.RAYBLADE_ACTIVATE, ageInTicks);
+		this.handle.getChild("blade").visible = RaybladeItem.getCharge(stack) < RaybladeItem.MAX_CHARGE;
 	}
 	
 	@Override
