@@ -1,6 +1,7 @@
 package com.min01.acc.event;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.item.model.ModelRayblade;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -13,7 +14,7 @@ public class ClientEventHandler
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
     {
-    	
+    	event.registerLayerDefinition(ModelRayblade.LAYER_LOCATION, ModelRayblade::createBodyLayer);
     }
     
     @SubscribeEvent

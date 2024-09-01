@@ -2,6 +2,7 @@ package com.min01.acc.misc;
 
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.item.ACCItems;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -19,6 +20,6 @@ public class ACCCreativeModeTabs
     		.icon(() -> new ItemStack(ACItemRegistry.CAVE_MAP.get()))
     		.displayItems((enabledFeatures, output) -> 
     		{
-    			
+    			output.accept(ACCItems.RAYBLAE.get());
     		}).build());
 }

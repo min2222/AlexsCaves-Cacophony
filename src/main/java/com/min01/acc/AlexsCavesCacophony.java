@@ -1,11 +1,15 @@
 package com.min01.acc;
 
+import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.item.ACCItems;
 import com.min01.acc.misc.ACCCreativeModeTabs;
 import com.min01.acc.misc.ACCEntityDataSerializers;
 import com.min01.acc.misc.ACCSounds;
+import com.min01.acc.network.ACCNetwork;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,5 +27,8 @@ public class AlexsCavesCacophony
 		ACCItems.ITEMS.register(bus);
 		ACCSounds.SOUNDS.register(bus);
 		ACCEntityDataSerializers.SERIALIZERS.register(bus);
+		
+		ACCNetwork.registerMessages();
+		MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ACCCapabilities::attachItemStackCapability);
 	}
 }

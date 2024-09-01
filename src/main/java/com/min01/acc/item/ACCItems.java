@@ -16,6 +16,8 @@ public class ACCItems
 {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AlexsCavesCacophony.MODID);
 	
+	public static final RegistryObject<Item> RAYBLAE = ITEMS.register("rayblade", () -> new RaybladeItem());
+	
 	public static <T extends Mob> RegistryObject<Item> registerSpawnEgg(String name, Supplier<EntityType<T>> entity, int color1, int color2) 
 	{
 		return ITEMS.register(name, () -> new ForgeSpawnEggItem(entity, color1, color2, new Item.Properties()));

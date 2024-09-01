@@ -8,6 +8,7 @@ import org.joml.Vector4f;
 import com.min01.acc.entity.AbstractAnimatableMonster;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.HierarchicalModel;
@@ -17,6 +18,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class ACCClientUtil 
 {
+	public static final Minecraft MC = Minecraft.getInstance();
+	
 	//https://github.com/EEEAB/EEEABsMobs/blob/master/src/main/java/com/eeeab/animate/client/util/ModelPartUtils.java#L57
 	
     public static Vec3 getWorldPosition(Entity entity, float yaw, ModelPart root, String... modelPartName) 

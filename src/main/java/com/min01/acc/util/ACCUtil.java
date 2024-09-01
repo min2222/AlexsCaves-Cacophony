@@ -2,7 +2,10 @@ package com.min01.acc.util;
 
 import org.joml.Math;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
@@ -12,6 +15,34 @@ import net.minecraftforge.fml.ModList;
 public class ACCUtil 
 {
 	public static final String ALEXS_CAVES = "alexscaves";
+	
+	public static void writeAnimationState(CompoundTag tag, AnimationState state)
+	{
+		tag.putLong("LastTime", state.lastTime);
+		tag.putLong("AccumulatedTime", state.accumulatedTime);
+	}
+	
+	public static void writeAnimationState(FriendlyByteBuf buf, AnimationState state)
+	{
+		buf.writeLong(state.lastTime);
+		buf.writeLong(state.accumulatedTime);
+	}
+	
+	public static AnimationState readAnimationState(CompoundTag tag)
+	{
+		AnimationState state = new AnimationState();
+		state.lastTime = tag.getLong("LastTime");
+		state.accumulatedTime = tag.getLong("AccumulatedTime");
+		return state;
+	}
+	
+	public static AnimationState readAnimationState(FriendlyByteBuf buf)
+	{
+		AnimationState state = new AnimationState();
+		state.lastTime = buf.readLong();
+		state.accumulatedTime = buf.readLong();
+		return state;
+	}
 	
 	public static boolean isModLoaded(String modid)
 	{
