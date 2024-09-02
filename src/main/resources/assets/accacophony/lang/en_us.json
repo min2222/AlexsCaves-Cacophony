@@ -1,5 +1,15 @@
 {
-	"itemGroup.accacophony.accacophony": "Alex's Caves: Cacophony",
 	"item.accacophony.rayblade": "Rayblade",
-	"item.accacophony.rayblade.charge": "Charge: %s/%s"
+	"item.accacophony.rayblade.charge": "Charge: %s/%s",
+	"item.accacophony.ray_catalyst": "Ray Catalyst",
+	"item.accacophony.raw_dino_drumstick": "Raw Dino Drumstick",
+	"item.accacophony.cooked_dino_drumstick": "Cooked Dino Drumstick",
+	"item.accacophony.hullbreaker_tooth": "Hullbreaker Tooth",
+	"item.accacophony.mastcarver": "Mastcarver",
+	"advancements.accacophony.rayblade.title": "Rip and Tear",
+	"advancements.accacophony.rayblade.desc": "Acquire a Rayblade",
+	"advancements.accacophony.rayblade_challenge.title": "...Until it is done",
+	"advancements.accacophony.rayblade_challenge.desc": "Kill every Forlorn and Nether mob using a Rayblade",
+	"advancements.accacophony.ray_catalyst.title": "Unlimited power!!!",
+	"advancements.accacophony.ray_catalyst.desc": "Acquire a Ray Catalyst"
 }

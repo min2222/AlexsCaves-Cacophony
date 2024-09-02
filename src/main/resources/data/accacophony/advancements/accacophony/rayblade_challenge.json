@@ -1,0 +1,472 @@
+{
+	"display": {
+		"icon": {
+			"item": "accacophony:ray_catalyst"
+		},
+		"title": {
+			"translate": "advancements.accacophony.rayblade_challenge.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.rayblade_challenge.desc"
+		},
+		"frame": "challenge"
+	},
+	"parent": "alexscaves:alexscaves/uranium_rod",
+	"criteria": {
+		"minecraft:blaze": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:blaze"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:ghast": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:ghast"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:hoglin": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:hoglin"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:magma_cube": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:magma_cube"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:piglin": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:piglin"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:piglin_brute": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:piglin_brute"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:strider": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:strider"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:wither_skeleton": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:wither_skeleton"
+						}
+					}
+				]
+			}
+		},
+		"minecraft:zombified_piglin": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "minecraft:zombified_piglin"
+						}
+					}
+				]
+			}
+		},
+		"alexscaves:gloomoth": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "alexscaves:gloomoth"
+						}
+					}
+				]
+			}
+		},
+		"alexscaves:underzealot": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "alexscaves:underzealot"
+						}
+					}
+				]
+			}
+		},
+		"alexscaves:vesper": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "alexscaves:vesper"
+						}
+					}
+				]
+			}
+		},
+		"alexscaves:corrodent": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "alexscaves:corrodent"
+						}
+					}
+				]
+			}
+		},
+		"alexscaves:watcher": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "alexscaves:watcher"
+						}
+					}
+				]
+			}
+		},
+		"alexscaves:forsaken": {
+			"trigger": "minecraft:player_killed_entity",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"equipment": {
+								"mainhand": {
+									"items": [
+										"accacophony:rayblade"
+									]
+								}
+							}
+						}
+					}
+				],
+				"entity": [
+					{
+						"condition": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"type": "alexscaves:forsaken"
+						}
+					}
+				]
+			}
+		}
+	},
+	"requirements": [
+		[
+			"minecraft:blaze",
+			"minecraft:ghast",
+			"minecraft:hoglin",
+			"minecraft:magma_cube",
+			"minecraft:piglin",
+			"minecraft:piglin_brute",
+			"minecraft:strider",
+			"minecraft:wither_skeleton",
+			"minecraft:zombified_piglin",
+			"alexscaves:gloomoth",
+			"alexscaves:underzealot",
+			"alexscaves:vesper",
+			"alexscaves:corrodent",
+			"alexscaves:watcher",
+			"alexscaves:forsaken"
+		]
+	],
+	"sends_telemetry_event": true
+}

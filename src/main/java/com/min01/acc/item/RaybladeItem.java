@@ -12,8 +12,6 @@ import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.min01.acc.item.renderer.RaybladeRenderer;
-import com.min01.acc.network.ACCNetwork;
-import com.min01.acc.network.ItemCompoundTagSyncPacket;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
 
@@ -29,6 +27,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -44,6 +43,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 public class RaybladeItem extends Item
 {
     public static final String FRAME = "Frame";
+    public static final String CHARGE_USED = "ChargeUsed";
     public static final int MAX_CHARGE = 3;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
@@ -53,7 +53,7 @@ public class RaybladeItem extends Item
     
 	public RaybladeItem()
 	{
-		super(new Item.Properties().rarity(ACItemRegistry.RARITY_NUCLEAR));
+		super(new Item.Properties().stacksTo(1).rarity(ACItemRegistry.RARITY_NUCLEAR));
 	}
 	
 	@Override
@@ -84,15 +84,29 @@ public class RaybladeItem extends Item
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
-		CompoundTag tag = p_41404_.getTag();
-		if(tag != null)
+		CompoundTag tag = p_41404_.getOrCreateTag();
+		updateFrame(tag, p_41406_);
+		int charge = getCharge(p_41404_);
+        if(charge >= MAX_CHARGE)
+        {
+            AnimationState state = RaybladeItem.getAnimationState(p_41404_);
+        	state.stop();
+        	RaybladeItem.setAnimationState(p_41404_, state);
+        }
+	}
+	
+	@Override
+	public boolean hurtEnemy(ItemStack stack, LivingEntity victim, LivingEntity attacker) 
+	{
+		if(attacker instanceof Player player)
 		{
-			if(!tag.contains("LastTime"))
-			{
-				setAnimationState(p_41404_, new AnimationState());
-			}
-			updateFrame(tag, p_41406_);
+	        if(!player.getAbilities().instabuild)
+	        {
+		        int charge = getCharge(stack);
+		        setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
+	        }
 		}
+		return super.hurtEnemy(stack, victim, attacker);
 	}
 	
 	@Override
@@ -111,27 +125,8 @@ public class RaybladeItem extends Item
 		return super.use(level, player, hand);
 	}
 	
-	@Override
-	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity)
-	{
-        AnimationState state = getAnimationState(stack);
-    	state.stop();
-    	setAnimationState(stack, state);
-        if(!player.getAbilities().instabuild)
-        {
-	        int charge = getCharge(stack);
-	        setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
-        }
-		return super.onLeftClickEntity(stack, player, entity);
-	}
-	
     public ItemStack findAmmo(Player entity) 
     {
-        if(entity.isCreative())
-        {
-            return ItemStack.EMPTY;
-        }
-        
         for(int i = 0; i < entity.getInventory().getContainerSize(); ++i)
         {
             ItemStack itemstack1 = entity.getInventory().getItem(i);
@@ -163,11 +158,6 @@ public class RaybladeItem extends Item
 		}
 	}
 	
-	public static int getFrame(ItemStack stack)
-	{
-		return stack.getOrCreateTag().getInt(FRAME);
-	}
-	
     public static boolean hasCharge(ItemStack stack)
     {
         return getCharge(stack) < MAX_CHARGE;
@@ -185,16 +175,28 @@ public class RaybladeItem extends Item
         ACCUtil.writeAnimationState(compoundtag, state);
     }
     
+    public static int getFrame(ItemStack stack)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null ? compoundtag.getInt(FRAME) : 0;
+    }
+    
+    public static void setFrame(ItemStack stack, int frame)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        compoundtag.putInt(FRAME, frame);
+    }
+    
     public static int getCharge(ItemStack stack)
     {
         CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getInt("ChargeUsed") : 0;
+        return compoundtag != null ? compoundtag.getInt(CHARGE_USED) : 0;
     }
 
     public static void setCharge(ItemStack stack, int charge)
     {
         CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putInt("ChargeUsed", charge);
+        compoundtag.putInt(CHARGE_USED, charge);
     }
     
     @Override
@@ -203,7 +205,7 @@ public class RaybladeItem extends Item
 		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder2 = ImmutableMultimap.builder();
 		builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", 99.0D, AttributeModifier.Operation.ADDITION));
-		builder2.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", -1.0D, AttributeModifier.Operation.ADDITION));
+		builder2.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", 2.0D, AttributeModifier.Operation.ADDITION));
 		if(slot == EquipmentSlot.MAINHAND)
 		{
 	    	return getCharge(stack) < RaybladeItem.MAX_CHARGE ? builder.build() : builder2.build();

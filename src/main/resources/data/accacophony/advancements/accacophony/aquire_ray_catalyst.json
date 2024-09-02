@@ -1,0 +1,28 @@
+{
+	"display": {
+		"icon": {
+			"item": "accacophony:ray_catalyst"
+		},
+		"title": {
+			"translate": "advancements.accacophony.ray_catalyst.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.ray_catalyst.desc"
+		}
+	},
+	"parent": "alexscaves:alexscaves/uranium_rod",
+	"criteria": {
+		"rayblade": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": [
+							"accacophony:ray_catalyst"
+						]
+					}
+				]
+			}
+		}
+	}
+}

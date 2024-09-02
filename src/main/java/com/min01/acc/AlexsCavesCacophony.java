@@ -2,7 +2,6 @@ package com.min01.acc;
 
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.item.ACCItems;
-import com.min01.acc.misc.ACCCreativeModeTabs;
 import com.min01.acc.misc.ACCEntityDataSerializers;
 import com.min01.acc.misc.ACCSounds;
 import com.min01.acc.network.ACCNetwork;
@@ -20,7 +19,6 @@ public class AlexsCavesCacophony
 	{
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		ACCEntities.ENTITY_TYPES.register(bus);
-		ACCCreativeModeTabs.CREATIVE_MODE_TAB.register(bus);
 		ACCItems.ITEMS.register(bus);
 		ACCSounds.SOUNDS.register(bus);
 		ACCEntityDataSerializers.SERIALIZERS.register(bus);

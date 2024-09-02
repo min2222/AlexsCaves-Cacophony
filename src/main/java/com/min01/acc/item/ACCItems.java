@@ -6,6 +6,7 @@ import com.min01.acc.AlexsCavesCacophony;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
@@ -17,6 +18,12 @@ public class ACCItems
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AlexsCavesCacophony.MODID);
 	
 	public static final RegistryObject<Item> RAYBLAE = ITEMS.register("rayblade", () -> new RaybladeItem());
+	public static final RegistryObject<Item> RAY_CATALYST = ITEMS.register("ray_catalyst", () -> new RayCatalystItem());
+	
+	public static final RegistryObject<Item> HULLBREAKER_TOOTH = ITEMS.register("hullbreaker_tooth", () -> new Item(new Item.Properties()));
+	
+	public static final RegistryObject<Item> RAW_DINO_DRUMSTICK = ITEMS.register("raw_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(2.5F).nutrition(10).build(), true));
+	public static final RegistryObject<Item> COOKED_DINO_DRUMSTICK = ITEMS.register("cooked_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(5.0F).nutrition(20).build(), false));
 	
 	public static <T extends Mob> RegistryObject<Item> registerSpawnEgg(String name, Supplier<EntityType<T>> entity, int color1, int color2) 
 	{

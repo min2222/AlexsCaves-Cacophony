@@ -1,0 +1,28 @@
+{
+	"display": {
+		"icon": {
+			"item": "accacophony:rayblade"
+		},
+		"title": {
+			"translate": "advancements.accacophony.rayblade.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.rayblade.desc"
+		}
+	},
+	"parent": "alexscaves:alexscaves/uranium_rod",
+	"criteria": {
+		"rayblade": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": [
+							"accacophony:rayblade"
+						]
+					}
+				]
+			}
+		}
+	}
+}

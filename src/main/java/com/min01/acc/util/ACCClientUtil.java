@@ -2,16 +2,11 @@ package com.min01.acc.util;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import com.min01.acc.entity.AbstractAnimatableMonster;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.KeyframeAnimations;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -54,18 +49,5 @@ public class ACCClientUtil
 	{
 		head.yRot += Math.toRadians(netHeadYaw);
 		head.xRot += Math.toRadians(headPitch);
-	}
-	
-	public static void animateWalk(AbstractAnimatableMonster entity, HierarchicalModel<? extends Entity> model, AnimationDefinition animation, float limbSwing, float limbSwingAmount, float p_268138_, float p_268165_) 
-	{
-		if(entity.getAnimationState() == 0)
-		{
-			if(ACCUtil.isMoving(entity))
-			{
-				long i = (long)(limbSwing * 50.0F * p_268138_);
-				float f = Math.min(limbSwingAmount * p_268165_, 1.0F);
-				KeyframeAnimations.animate(model, animation, i, f, new Vector3f());
-			}
-		}
 	}
 }

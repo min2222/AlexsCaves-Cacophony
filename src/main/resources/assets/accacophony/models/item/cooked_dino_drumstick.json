@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/handheld",
+	"textures": {
+		"layer0": "accacophony:item/cooked_dino_drumstick"
+	}
+}

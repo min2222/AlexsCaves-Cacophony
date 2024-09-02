@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/handheld",
+	"textures": {
+		"layer0": "accacophony:item/raw_dino_drumstick"
+	}
+}
