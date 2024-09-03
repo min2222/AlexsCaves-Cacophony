@@ -20,5 +20,13 @@ public class EventHandlerForge
         {
         	event.getTable().addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootTableReference.lootTableReference(ACCLootTables.HULLBREAKER_TOOTH)).build());
         }
+        if(event.getName().toString().matches("alexscaves:entities/vallumraptor")) 
+        {
+        	event.getTable().addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootTableReference.lootTableReference(ACCLootTables.RAW_DINO_DRUMSTICK)).build());
+        }
+        if(event.getName().toString().matches("alexscaves:entities/subterranodon")) 
+        {
+        	event.getTable().addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootTableReference.lootTableReference(ACCLootTables.RAW_DINO_DRUMSTICK)).build());
+        }
     }
 }

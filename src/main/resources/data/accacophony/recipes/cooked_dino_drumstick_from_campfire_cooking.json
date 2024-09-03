@@ -1,0 +1,9 @@
+{
+	"type": "minecraft:campfire_cooking",
+	"ingredient": {
+		"item": "accacophony:raw_dino_drumstick"
+	},
+	"result": "accacophony:cooked_dino_drumstick",
+	"experience": 0.15,
+	"cookingtime": 600
+}
