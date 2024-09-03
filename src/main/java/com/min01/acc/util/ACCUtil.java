@@ -1,5 +1,8 @@
 package com.min01.acc.util;
 
+import java.lang.reflect.Method;
+import java.util.UUID;
+
 import org.joml.Math;
 
 import net.minecraft.nbt.CompoundTag;
@@ -8,13 +11,31 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 public class ACCUtil 
 {
 	public static final String ALEXS_CAVES = "alexscaves";
+	
+	@SuppressWarnings("unchecked")
+	public static Entity getEntityByUUID(Level level, UUID uuid)
+	{
+		Method m = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
+		try 
+		{
+			LevelEntityGetter<Entity> entities = (LevelEntityGetter<Entity>) m.invoke(level);
+			return entities.get(uuid);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	public static void writeAnimationState(CompoundTag tag, AnimationState state)
 	{

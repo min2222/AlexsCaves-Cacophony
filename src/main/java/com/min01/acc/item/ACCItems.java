@@ -21,6 +21,7 @@ public class ACCItems
 	public static final RegistryObject<Item> RAY_CATALYST = ITEMS.register("ray_catalyst", () -> new RayCatalystItem());
 	
 	public static final RegistryObject<Item> HULLBREAKER_TOOTH = ITEMS.register("hullbreaker_tooth", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> MASTCARVER = ITEMS.register("mastcarver", () -> new MastcarverItem());
 	
 	public static final RegistryObject<Item> RAW_DINO_DRUMSTICK = ITEMS.register("raw_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(2.5F).nutrition(10).build(), true));
 	public static final RegistryObject<Item> COOKED_DINO_DRUMSTICK = ITEMS.register("cooked_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(5.0F).nutrition(20).build(), false));

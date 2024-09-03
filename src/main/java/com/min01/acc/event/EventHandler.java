@@ -36,6 +36,7 @@ public class EventHandler
     	if(event.getTabKey() == ACCreativeTabRegistry.ABYSSAL_CHASM.getKey())
     	{
     		event.accept(ACCItems.HULLBREAKER_TOOTH.get());
+    		event.accept(ACCItems.MASTCARVER.get());
     	}
     	if(event.getTabKey() == ACCreativeTabRegistry.PRIMORDIAL_CAVES.getKey())
     	{

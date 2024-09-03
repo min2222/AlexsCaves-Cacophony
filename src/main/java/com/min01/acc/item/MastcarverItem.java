@@ -1,0 +1,134 @@
+package com.min01.acc.item;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import com.min01.acc.util.ACCUtil;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class MastcarverItem extends Item
+{
+    public static final String STACKED_DMG = "StackedDmg";
+    public static final String LAST_HIT_ENTITY = "LastHitEntity";
+    public static final int MAX_STACK = 100;
+    
+	public MastcarverItem() 
+	{
+		super(new Item.Properties().durability(1000).rarity(Rarity.EPIC));
+	}
+	
+	@Override
+	public boolean canAttackBlock(BlockState p_43291_, Level p_43292_, BlockPos p_43293_, Player p_43294_)
+	{
+		return !p_43294_.isCreative();
+	}
+	
+	@Override
+	public float getDestroySpeed(ItemStack p_43288_, BlockState p_43289_)
+	{
+		if(p_43289_.is(Blocks.COBWEB)) 
+		{
+			return 15.0F;
+		} 
+		else
+		{
+			return p_43289_.is(BlockTags.SWORD_EFFICIENT) ? 1.5F : 1.0F;
+		}
+	}
+
+	@Override
+	public boolean isCorrectToolForDrops(BlockState p_43298_) 
+	{
+		return p_43298_.is(Blocks.COBWEB);
+	}
+	
+	@Override
+	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
+	{
+		if(getStackedDmg(p_41404_) <= 0.0F)
+		{
+			setStackedDmg(p_41404_, 6.0F);
+		}
+		super.inventoryTick(p_41404_, p_41405_, p_41406_, p_41407_, p_41408_);
+	}
+	
+	@Override
+	public boolean hurtEnemy(ItemStack stack, LivingEntity victim, LivingEntity attacker) 
+	{
+		float stackedDmg = getStackedDmg(stack);
+		Entity entity = getLastHitEntity(stack, attacker.level);
+		if(entity != null)
+		{
+			if(entity == victim)
+			{
+				setStackedDmg(stack, Math.min(stackedDmg + 1, MAX_STACK));
+			}
+			else
+			{
+				setStackedDmg(stack, 6.0F);
+				setLastHitEntity(stack, victim);
+			}
+		}
+		else
+		{
+			if(!stack.getTag().contains(LAST_HIT_ENTITY))
+			{
+				setStackedDmg(stack, Math.min(stackedDmg + 1, MAX_STACK));
+			}
+			else
+			{
+				setStackedDmg(stack, 6.0F);
+			}
+			setLastHitEntity(stack, victim);
+		}
+		return super.hurtEnemy(stack, victim, attacker);
+	}
+	
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) 
+    {
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+		builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", getStackedDmg(stack), AttributeModifier.Operation.ADDITION));
+		builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", -3.0D, AttributeModifier.Operation.ADDITION));
+    	return slot == EquipmentSlot.MAINHAND ? builder.build() : super.getAttributeModifiers(slot, stack);
+    }
+    
+    public static Entity getLastHitEntity(ItemStack stack, Level level)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null && compoundtag.contains(LAST_HIT_ENTITY) ? ACCUtil.getEntityByUUID(level, compoundtag.getUUID(LAST_HIT_ENTITY)) : null;
+    }
+
+    public static void setLastHitEntity(ItemStack stack, Entity entity)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        compoundtag.putUUID(LAST_HIT_ENTITY, entity.getUUID());
+    }
+    
+    public static float getStackedDmg(ItemStack stack)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null && compoundtag.contains(STACKED_DMG) ? compoundtag.getFloat(STACKED_DMG) : 6.0F;
+    }
+
+    public static void setStackedDmg(ItemStack stack, float charge)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        compoundtag.putFloat(STACKED_DMG, charge);
+    }
+}
