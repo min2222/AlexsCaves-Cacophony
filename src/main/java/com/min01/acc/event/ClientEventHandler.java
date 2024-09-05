@@ -1,6 +1,9 @@
 package com.min01.acc.event;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.entity.ACCEntities;
+import com.min01.acc.entity.model.ModelFearArrow;
+import com.min01.acc.entity.renderer.FearArrowRenderer;
 import com.min01.acc.item.model.ModelRayblade;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,11 +18,12 @@ public class ClientEventHandler
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
     {
     	event.registerLayerDefinition(ModelRayblade.LAYER_LOCATION, ModelRayblade::createBodyLayer);
+    	event.registerLayerDefinition(ModelFearArrow.LAYER_LOCATION, ModelFearArrow::createBodyLayer);
     }
     
     @SubscribeEvent
     public static void onRegisterEntityRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
-    	
+    	event.registerEntityRenderer(ACCEntities.FEAR_ARROW.get(), FearArrowRenderer::new);
     }
 }

@@ -42,6 +42,8 @@ public class EventHandler
     	{
     		event.accept(ACCItems.RAW_DINO_DRUMSTICK.get());
     		event.accept(ACCItems.COOKED_DINO_DRUMSTICK.get());
+    		event.accept(ACCItems.TREMORSAURUS_TOOTH.get());
+    		event.accept(ACCItems.ARROW_OF_FEAR.get());
     	}
     }
 }

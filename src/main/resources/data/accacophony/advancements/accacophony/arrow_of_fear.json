@@ -1,0 +1,40 @@
+{
+	"display": {
+		"icon": {
+			"item": "accacophony:arrow_of_fear"
+		},
+		"title": {
+			"translate": "advancements.accacophony.arrow_of_fear.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.arrow_of_fear.desc"
+		}
+	},
+	"parent": "alexscaves:alexscaves/discover_dinosaur",
+	"criteria": {
+		"shot_arrow": {
+			"trigger": "minecraft:player_hurt_entity",
+			"conditions": {
+				"damage": {
+					"type": {
+						"tags": [
+							{
+								"id": "minecraft:is_projectile",
+								"expected": true
+							}
+						],
+						"direct_entity": {
+							"type": "accacophony:arrow_of_fear"
+						}
+					}
+				}
+			}
+		}
+	},
+	"requirements": [
+		[
+			"shot_arrow"
+		]
+	],
+	"sends_telemetry_event": true
+}

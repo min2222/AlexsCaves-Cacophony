@@ -1,6 +1,7 @@
 package com.min01.acc.entity;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.entity.projectile.EntityFearArrow;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +14,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class ACCEntities
 {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, AlexsCavesCacophony.MODID);
+	
+	public static final RegistryObject<EntityType<EntityFearArrow>> FEAR_ARROW = registerEntity("arrow_of_fear", EntityType.Builder.<EntityFearArrow>of(EntityFearArrow::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
 	
 	public static <T extends Entity> EntityType.Builder<T> createBuilder(EntityType.EntityFactory<T> factory, MobCategory category)
 	{

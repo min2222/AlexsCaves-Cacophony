@@ -4,24 +4,22 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.min01.acc.util.ACCUtil;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
-public class MastcarverItem extends Item
+public class MastcarverItem extends SwordItem
 {
     public static final String STACKED_DMG = "StackedDmg";
     public static final String LAST_HIT_ENTITY = "LastHitEntity";
@@ -29,32 +27,7 @@ public class MastcarverItem extends Item
     
 	public MastcarverItem() 
 	{
-		super(new Item.Properties().durability(1000).rarity(Rarity.EPIC));
-	}
-	
-	@Override
-	public boolean canAttackBlock(BlockState p_43291_, Level p_43292_, BlockPos p_43293_, Player p_43294_)
-	{
-		return !p_43294_.isCreative();
-	}
-	
-	@Override
-	public float getDestroySpeed(ItemStack p_43288_, BlockState p_43289_)
-	{
-		if(p_43289_.is(Blocks.COBWEB)) 
-		{
-			return 15.0F;
-		} 
-		else
-		{
-			return p_43289_.is(BlockTags.SWORD_EFFICIENT) ? 1.5F : 1.0F;
-		}
-	}
-
-	@Override
-	public boolean isCorrectToolForDrops(BlockState p_43298_) 
-	{
-		return p_43298_.is(Blocks.COBWEB);
+		super(ACCItems.TIER_MASTCARVER, 0, 0, new Item.Properties().durability(1000).rarity(Rarity.EPIC));
 	}
 	
 	@Override
@@ -97,6 +70,12 @@ public class MastcarverItem extends Item
 			setLastHitEntity(stack, victim);
 		}
 		return super.hurtEnemy(stack, victim, attacker);
+	}
+	
+	@Override
+	public boolean canPerformAction(ItemStack stack, ToolAction toolAction) 
+	{
+		return toolAction == ToolActions.SWORD_DIG;
 	}
 	
     @Override

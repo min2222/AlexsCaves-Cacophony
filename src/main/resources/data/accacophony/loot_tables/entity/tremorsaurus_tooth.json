@@ -6,7 +6,13 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "accacophony:hullbreaker_tooth"
+					"name": "accacophony:tremorsaurus_tooth",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 3
+						}
+					]
 				}
 			],
 			"functions": [

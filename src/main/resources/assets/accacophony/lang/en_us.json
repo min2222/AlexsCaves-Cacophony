@@ -4,12 +4,17 @@
 	"item.accacophony.ray_catalyst": "Ray Catalyst",
 	"item.accacophony.raw_dino_drumstick": "Raw Dino Drumstick",
 	"item.accacophony.cooked_dino_drumstick": "Cooked Dino Drumstick",
+	"item.accacophony.tremorsaurus_tooth": "Tremorsaurus Tooth",
+	"item.accacophony.arrow_of_fear": "Arrow of Fear",
 	"item.accacophony.hullbreaker_tooth": "Hullbreaker Tooth",
 	"item.accacophony.mastcarver": "Mastcarver",
+	"entity.accacophony.arrow_of_fear": "Arrow of Fear",
 	"advancements.accacophony.rayblade.title": "Rip and Tear",
 	"advancements.accacophony.rayblade.desc": "Acquire a Rayblade",
 	"advancements.accacophony.rayblade_challenge.title": "...Until it is done",
 	"advancements.accacophony.rayblade_challenge.desc": "Kill every Forlorn and Nether mob using a Rayblade",
 	"advancements.accacophony.ray_catalyst.title": "Unlimited power!!!",
-	"advancements.accacophony.ray_catalyst.desc": "Acquire a Ray Catalyst"
+	"advancements.accacophony.ray_catalyst.desc": "Acquire a Ray Catalyst",
+	"advancements.accacophony.arrow_of_fear.title": "The only thing they fear is you",
+	"advancements.accacophony.arrow_of_fear.desc": "Use an arrow of fear on any mob"
 }
