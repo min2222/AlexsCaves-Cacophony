@@ -10,6 +10,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.Vec2;
@@ -20,6 +21,49 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 public class ACCUtil 
 {
 	public static final String ALEXS_CAVES = "alexscaves";
+    public static final String CHARGE_USED = "ChargeUsed";
+    public static final String ANIMATION_TICK = "AnimationTick";
+    
+    public static int getAnimationTick(ItemStack stack)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null ? compoundtag.getInt(ANIMATION_TICK) : 0;
+    }
+
+    public static void setAnimationTick(ItemStack stack, int tick)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        compoundtag.putInt(ANIMATION_TICK, tick);
+    }
+	
+    public static AnimationState getAnimationState(ItemStack stack)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null ? ACCUtil.readAnimationState(compoundtag) : new AnimationState();
+    }
+
+    public static void setAnimationState(ItemStack stack, AnimationState state)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        ACCUtil.writeAnimationState(compoundtag, state);
+    }
+    
+    public static boolean hasCharge(ItemStack stack, int maxCharge)
+    {
+        return ACCUtil.getCharge(stack) < maxCharge;
+    }
+    
+    public static int getCharge(ItemStack stack)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null ? compoundtag.getInt(CHARGE_USED) : 0;
+    }
+
+    public static void setCharge(ItemStack stack, int charge)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        compoundtag.putInt(CHARGE_USED, charge);
+    }
 	
 	@SuppressWarnings("unchecked")
 	public static Entity getEntityByUUID(Level level, UUID uuid)

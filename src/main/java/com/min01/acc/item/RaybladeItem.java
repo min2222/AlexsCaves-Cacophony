@@ -43,7 +43,6 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 public class RaybladeItem extends Item
 {
     public static final String FRAME = "Frame";
-    public static final String CHARGE_USED = "ChargeUsed";
     public static final int MAX_CHARGE = 3;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
@@ -86,12 +85,12 @@ public class RaybladeItem extends Item
 	{
 		CompoundTag tag = p_41404_.getOrCreateTag();
 		updateFrame(tag, p_41406_);
-		int charge = getCharge(p_41404_);
+		int charge = ACCUtil.getCharge(p_41404_);
         if(charge >= MAX_CHARGE)
         {
-            AnimationState state = RaybladeItem.getAnimationState(p_41404_);
+            AnimationState state = ACCUtil.getAnimationState(p_41404_);
         	state.stop();
-        	RaybladeItem.setAnimationState(p_41404_, state);
+        	ACCUtil.setAnimationState(p_41404_, state);
         }
 	}
 	
@@ -102,8 +101,8 @@ public class RaybladeItem extends Item
 		{
 	        if(!player.getAbilities().instabuild)
 	        {
-		        int charge = getCharge(stack);
-		        setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
+		        int charge = ACCUtil.getCharge(stack);
+		        ACCUtil.setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
 	        }
 		}
 		return super.hurtEnemy(stack, victim, attacker);
@@ -114,13 +113,13 @@ public class RaybladeItem extends Item
 	{
 		ItemStack stack = player.getItemInHand(hand);
         ItemStack ammo = this.findAmmo(player);
-        AnimationState state = getAnimationState(stack);
-        if(!ammo.isEmpty() && getCharge(stack) >= MAX_CHARGE) 
+        AnimationState state = ACCUtil.getAnimationState(stack);
+        if(!ammo.isEmpty() && ACCUtil.getCharge(stack) >= MAX_CHARGE) 
         {
             ammo.shrink(1);
-        	setCharge(stack, 0);
+            ACCUtil.setCharge(stack, 0);
         	state.startIfStopped(player.tickCount);
-        	setAnimationState(stack, state);
+        	ACCUtil.setAnimationState(stack, state);
         }
 		return super.use(level, player, hand);
 	}
@@ -160,19 +159,7 @@ public class RaybladeItem extends Item
 	
     public static boolean hasCharge(ItemStack stack)
     {
-        return getCharge(stack) < MAX_CHARGE;
-    }
-    
-    public static AnimationState getAnimationState(ItemStack stack)
-    {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? ACCUtil.readAnimationState(compoundtag) : new AnimationState();
-    }
-
-    public static void setAnimationState(ItemStack stack, AnimationState state)
-    {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        ACCUtil.writeAnimationState(compoundtag, state);
+        return ACCUtil.getCharge(stack) < MAX_CHARGE;
     }
     
     public static int getFrame(ItemStack stack)
@@ -187,18 +174,6 @@ public class RaybladeItem extends Item
         compoundtag.putInt(FRAME, frame);
     }
     
-    public static int getCharge(ItemStack stack)
-    {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getInt(CHARGE_USED) : 0;
-    }
-
-    public static void setCharge(ItemStack stack, int charge)
-    {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putInt(CHARGE_USED, charge);
-    }
-    
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) 
     {
@@ -208,7 +183,7 @@ public class RaybladeItem extends Item
 		builder2.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", 2.0D, AttributeModifier.Operation.ADDITION));
 		if(slot == EquipmentSlot.MAINHAND)
 		{
-	    	return getCharge(stack) < RaybladeItem.MAX_CHARGE ? builder.build() : builder2.build();
+	    	return ACCUtil.getCharge(stack) < RaybladeItem.MAX_CHARGE ? builder.build() : builder2.build();
 		}
     	return super.getAttributeModifiers(slot, stack);
     }
@@ -216,19 +191,19 @@ public class RaybladeItem extends Item
     @Override
     public boolean isBarVisible(ItemStack stack) 
     {
-        return getCharge(stack) != 0;
+        return ACCUtil.getCharge(stack) != 0;
     }
 
     @Override
     public int getBarWidth(ItemStack stack) 
     {
-        return Math.round(13.0F - (float) getCharge(stack) * 13.0F / (float) MAX_CHARGE);
+        return Math.round(13.0F - (float) ACCUtil.getCharge(stack) * 13.0F / (float) MAX_CHARGE);
     }
 
     @Override
     public int getBarColor(ItemStack stack) 
     {
-        float pulseRate = (float) getCharge(stack) / (float) MAX_CHARGE * 2.0F;
+        float pulseRate = (float) ACCUtil.getCharge(stack) / (float) MAX_CHARGE * 2.0F;
         float f = AlexsCaves.PROXY.getPlayerTime() + AlexsCaves.PROXY.getPartialTicks();
         float f1 = 0.5F * (float) (1.0F + Math.sin(f * pulseRate));
         return Mth.hsvToRgb(0.3F, f1 * 0.6F + 0.2F, 1.0F);
@@ -237,9 +212,9 @@ public class RaybladeItem extends Item
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
-        if(getCharge(stack) != 0)
+        if(ACCUtil.getCharge(stack) != 0)
         {
-            String chargeLeft = "" + (int) (MAX_CHARGE - getCharge(stack));
+            String chargeLeft = "" + (int) (MAX_CHARGE - ACCUtil.getCharge(stack));
             tooltip.add(Component.translatable("item.accacophony.rayblade.charge", chargeLeft, MAX_CHARGE).withStyle(ChatFormatting.GREEN));
         }
     }

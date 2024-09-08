@@ -23,6 +23,7 @@ public class ACCItems
 	
 	public static final RegistryObject<Item> RAYBLAE = ITEMS.register("rayblade", () -> new RaybladeItem());
 	public static final RegistryObject<Item> RAY_CATALYST = ITEMS.register("ray_catalyst", () -> new RayCatalystItem());
+	public static final RegistryObject<Item> RADRIFLE = ITEMS.register("radrifle", () -> new RadrifleItem());
 	
 	public static final RegistryObject<Item> HULLBREAKER_TOOTH = ITEMS.register("hullbreaker_tooth", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> MASTCARVER = ITEMS.register("mastcarver", () -> new MastcarverItem());

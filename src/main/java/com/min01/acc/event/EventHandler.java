@@ -32,6 +32,7 @@ public class EventHandler
     	{
     		event.accept(ACCItems.RAYBLAE.get());
     		event.accept(ACCItems.RAY_CATALYST.get());
+    		event.accept(ACCItems.RADRIFLE.get());
     	}
     	if(event.getTabKey() == ACCreativeTabRegistry.ABYSSAL_CHASM.getKey())
     	{
