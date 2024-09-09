@@ -41,10 +41,8 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -114,50 +112,45 @@ public class RadrifleItem extends Item
 			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), riflePos, 0.0F, 0.0F, 100.0F);
 			
 			HitResult hitResult = level.clip(new ClipContext(riflePos, lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-			if(hitResult instanceof BlockHitResult blockHit)
-			{
-				if(blockHit.getType() != Type.MISS)
-				{
-					Vec3 pos = hitResult.getLocation();
-		        	setBeamLength(stack, (float) pos.subtract(riflePos).length() + 0.5F);
-				}
-				else
-				{
-					EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, riflePos, lookPos, player.getBoundingBox().inflate(100.0F), Entity::canBeHitByProjectile);
-					if(entityHit != null)
-					{
-						Vec3 pos = entityHit.getEntity().getEyePosition();
-			        	setBeamLength(stack, (float) pos.subtract(riflePos).length());
-			        	if(!level.isClientSide)
-			        	{
-			                Vec3 vec31 = pos.subtract(riflePos);
-			                Vec3 vec32 = vec31.normalize();
-			                for(int i = 1; i < Mth.floor(vec31.length()) + 1; ++i)
-			                {
-			                	Vec3 vec33 = riflePos.add(vec32.scale(i));
-			                	List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(0.1F));
-			                	list.removeIf(t -> t == player || t.isAlliedTo(player));
-			                	list.forEach(t -> 
-			                	{
-			                        boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
-			                        int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
-			                        if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F) && !t.getType().is(ACTagRegistry.RESISTS_RADIATION)) 
-			                        {
-			                            if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
-			                            {
-			                                AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
-			                            }
-			                        }
-			                	});
-			                }
-			        	}
-					}
-				}
-			}
-        	
+			EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, riflePos, lookPos, player.getBoundingBox().inflate(100.0F), Entity::canBeHitByProjectile);
+			
+            if(entityHit != null)
+            {
+            	Vec3 pos = entityHit.getLocation();
+	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() + 0.5F);
+	        	if(!level.isClientSide)
+	        	{
+	                Vec3 vec31 = pos.subtract(riflePos);
+	                Vec3 vec32 = vec31.normalize();
+	                for(int i = 1; i < Mth.floor(vec31.length()) + 1; ++i)
+	                {
+	                	Vec3 vec33 = riflePos.add(vec32.scale(i));
+	                	List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(0.1F));
+	                	list.removeIf(t -> t == player || t.isAlliedTo(player) || t.getType().is(ACTagRegistry.RESISTS_RADIATION));
+	                	list.forEach(t -> 
+	                	{
+	                        boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
+	                        int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
+	                        if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F)) 
+	                        {
+	                            if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
+	                            {
+	                                AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
+	                            }
+	                        }
+	                	});
+	                }
+	        	}
+            }
+            else
+            {
+            	Vec3 pos = hitResult.getLocation();
+	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() + 0.5F);
+            }
+
+        	player.getCooldowns().addCooldown(stack.getItem(), 60);
         	if(!player.getAbilities().instabuild)
         	{
-            	player.getCooldowns().addCooldown(stack.getItem(), 60);
                 ACCUtil.setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
         	}
         }
@@ -173,6 +166,12 @@ public class RadrifleItem extends Item
 	public UseAnim getUseAnimation(ItemStack p_41452_) 
 	{
 		return UseAnim.BOW;
+	}
+	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) 
+	{
+		return newStack.getItem() != this;
 	}
 	
     public ItemStack findAmmo(Player entity) 

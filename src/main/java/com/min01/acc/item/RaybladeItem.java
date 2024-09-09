@@ -124,6 +124,12 @@ public class RaybladeItem extends Item
 		return super.use(level, player, hand);
 	}
 	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) 
+	{
+		return newStack.getItem() != this;
+	}
+	
     public ItemStack findAmmo(Player entity) 
     {
         for(int i = 0; i < entity.getInventory().getContainerSize(); ++i)

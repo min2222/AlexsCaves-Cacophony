@@ -39,18 +39,18 @@ public class ACCUtil
     public static AnimationState getAnimationState(ItemStack stack)
     {
         CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? ACCUtil.readAnimationState(compoundtag) : new AnimationState();
+        return compoundtag != null ? readAnimationState(compoundtag) : new AnimationState();
     }
 
     public static void setAnimationState(ItemStack stack, AnimationState state)
     {
         CompoundTag compoundtag = stack.getOrCreateTag();
-        ACCUtil.writeAnimationState(compoundtag, state);
+        writeAnimationState(compoundtag, state);
     }
     
     public static boolean hasCharge(ItemStack stack, int maxCharge)
     {
-        return ACCUtil.getCharge(stack) < maxCharge;
+        return getCharge(stack) < maxCharge;
     }
     
     public static int getCharge(ItemStack stack)

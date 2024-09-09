@@ -78,6 +78,12 @@ public class MastcarverItem extends SwordItem
 		return toolAction == ToolActions.SWORD_DIG;
 	}
 	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) 
+	{
+		return newStack.getItem() != this;
+	}
+	
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) 
     {
