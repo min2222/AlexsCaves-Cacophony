@@ -37,7 +37,7 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
 			p_108832_.scale(-1.0F, -1.0F, 1.0F);
 			p_108832_.translate(0.0F, -1.5F, 0.0F);
 			p_108832_.translate(-0.5F, -0.8F, 0.5F);
-			this.model.root().getChild("rifle").getChild("beam").visible = false;
+			this.model.root().getChild("beam").visible = false;
 			this.model.renderToBuffer(p_108832_, vertexconsumer, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			p_108832_.popPose();
 			
@@ -46,7 +46,7 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
 			p_108832_.scale(-1.0F, -1.0F, 1.0F);
 			p_108832_.translate(0.0F, -1.5F, 0.0F);
 			p_108832_.translate(-0.5F, -0.8F, 0.5F);
-			this.model.root().getChild("rifle").getChild("beam").visible = false;
+			this.model.root().getChild("beam").visible = false;
 			this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
 			p_108832_.popPose();
 		}

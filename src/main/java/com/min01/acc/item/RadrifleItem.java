@@ -7,10 +7,13 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import com.github.alexmodguy.alexscaves.AlexsCaves;
+import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
+import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
 import com.github.alexmodguy.alexscaves.server.message.UpdateEffectVisualityEntityMessage;
+import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
 import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.github.alexmodguy.alexscaves.server.potion.ACEffectRegistry;
@@ -23,6 +26,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -41,13 +45,14 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-public class RadrifleItem extends Item
+public class RadrifleItem extends Item implements UpdatesStackTags
 {
     public static final int MAX_CHARGE = 1000;
     public static final String BEAM_LENGTH = "BeamLength";
@@ -94,6 +99,11 @@ public class RadrifleItem extends Item
                 }
             }
         }
+        
+        if(p_41405_.isClientSide) 
+        {
+            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(p_41406_.getId(), p_41404_));
+        }
 	}
 	
 	@Override
@@ -110,14 +120,20 @@ public class RadrifleItem extends Item
         	ACCUtil.setAnimationTick(stack, 13);
         	Vec3 riflePos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 3.0F);
 			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), riflePos, 0.0F, 0.0F, 100.0F);
-			
+
 			HitResult hitResult = level.clip(new ClipContext(riflePos, lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 			EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, riflePos, lookPos, player.getBoundingBox().inflate(100.0F), Entity::canBeHitByProjectile);
 			
             if(entityHit != null)
             {
             	Vec3 pos = entityHit.getLocation();
-	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() + 0.5F);
+	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() - 0.5F);
+	        	
+        		Direction direction = Direction.UP;
+	            float offset = 0.05F + level.random.nextFloat() * 0.09F;
+	            Vec3 particleVec = pos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
+	            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
+	            
 	        	if(!level.isClientSide)
 	        	{
 	                Vec3 vec31 = pos.subtract(riflePos);
@@ -145,7 +161,15 @@ public class RadrifleItem extends Item
             else
             {
             	Vec3 pos = hitResult.getLocation();
-	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() + 0.5F);
+	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() - 0.5F);
+	            
+	        	if(hitResult instanceof BlockHitResult blockHit)
+	        	{
+	        		Direction direction = blockHit.getDirection();
+		            float offset = 0.05F + level.random.nextFloat() * 0.09F;
+		            Vec3 particleVec = pos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
+		            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
+	        	}
             }
 
         	player.getCooldowns().addCooldown(stack.getItem(), 60);
@@ -158,6 +182,10 @@ public class RadrifleItem extends Item
         {
             ammo.shrink(1);
             ACCUtil.setCharge(stack, 0);
+        }
+        if(level.isClientSide) 
+        {
+            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
         }
 		return super.use(level, player, hand);
 	}

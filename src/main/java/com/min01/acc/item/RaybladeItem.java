@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
+import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
+import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.min01.acc.item.renderer.RaybladeRenderer;
@@ -40,7 +42,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-public class RaybladeItem extends Item
+public class RaybladeItem extends Item implements UpdatesStackTags
 {
     public static final String FRAME = "Frame";
     public static final int MAX_CHARGE = 3;
@@ -91,6 +93,10 @@ public class RaybladeItem extends Item
             AnimationState state = ACCUtil.getAnimationState(p_41404_);
         	state.stop();
         	ACCUtil.setAnimationState(p_41404_, state);
+            if(p_41405_.isClientSide) 
+            {
+                AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(p_41406_.getId(), p_41404_));
+            }
         }
 	}
 	
@@ -103,6 +109,10 @@ public class RaybladeItem extends Item
 	        {
 		        int charge = ACCUtil.getCharge(stack);
 		        ACCUtil.setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
+	            if(player.level.isClientSide) 
+	            {
+	                AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+	            }
 	        }
 		}
 		return super.hurtEnemy(stack, victim, attacker);
@@ -120,6 +130,10 @@ public class RaybladeItem extends Item
             ACCUtil.setCharge(stack, 0);
         	state.startIfStopped(player.tickCount);
         	ACCUtil.setAnimationState(stack, state);
+            if(level.isClientSide) 
+            {
+                AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+            }
         }
 		return super.use(level, player, hand);
 	}

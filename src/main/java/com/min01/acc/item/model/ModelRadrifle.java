@@ -49,13 +49,10 @@ public class ModelRadrifle extends HierarchicalItemModel
 		.texOffs(0, 8).addBox(0.5F, -1.0F, -6.8F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 0).addBox(0.5F, -1.0F, -6.8F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.1F)), PartPose.offset(0.0F, 0.0F, 14.0F));
 
-		rifle.addOrReplaceChild("beam", CubeListBuilder.create().texOffs(31, 32).addBox(0.0F, -2.0F, -16.0F, 0.0F, 3.0F, 16.0F, new CubeDeformation(0.0F))
-		.texOffs(23, 32).addBox(-1.5F, -0.5F, -16.0F, 3.0F, 0.0F, 16.0F, new CubeDeformation(0.0F))
-		.texOffs(45, 0).addBox(-4.0F, -4.0F, -16.0F, 7.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, -18.0F));
+		PartDefinition beam = root.addOrReplaceChild("beam", CubeListBuilder.create().texOffs(31, 32).addBox(0.0F, -2.0F, -16.0F, 0.0F, 3.0F, 16.0F, new CubeDeformation(0.0F))
+		.texOffs(23, 32).addBox(-1.5F, -0.5F, -16.0F, 3.0F, 0.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, -17.0F));
 
-		rifle.addOrReplaceChild("bone2", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-		rifle.addOrReplaceChild("bone3", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+		beam.addOrReplaceChild("beam_end", CubeListBuilder.create().texOffs(45, 0).addBox(-4.0F, -4.0F, 0.01F, 7.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, -16.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
@@ -66,8 +63,8 @@ public class ModelRadrifle extends HierarchicalItemModel
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		AnimationState state = ACCUtil.getAnimationState(stack);
 		this.animate(state, RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
-		this.root.getChild("rifle").getChild("beam").visible = ACCUtil.getAnimationTick(stack) >= 10;
-		this.root.getChild("rifle").getChild("beam").zScale += RadrifleItem.getBeamLength(stack);
+		this.root.getChild("beam").visible = ACCUtil.getAnimationTick(stack) >= 8;
+		this.root.getChild("beam").zScale += RadrifleItem.getBeamLength(stack);
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ public class ACCNetwork
 	public static int ID = 0;
 	public static void registerMessages()
 	{
-		CHANNEL.registerMessage(ID++, ItemCompoundTagSyncPacket.class, ItemCompoundTagSyncPacket::encode, ItemCompoundTagSyncPacket::new, ItemCompoundTagSyncPacket.Handler::onMessage);
+		
 	}
 	
     public static <MSG> void sendToServer(MSG message) 
