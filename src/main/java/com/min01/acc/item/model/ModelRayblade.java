@@ -1,7 +1,6 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.item.animation.RaybladeAnimation;
 import com.min01.acc.util.ACCUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,8 +58,8 @@ public class ModelRayblade extends HierarchicalItemModel
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		AnimationState state = ACCUtil.getAnimationState(stack);
-		this.animate(state, RaybladeAnimation.RAYBLADE_ACTIVATE, ageInTicks);
-		this.handle.getChild("blade").visible = ACCUtil.getCharge(stack) < RaybladeItem.MAX_CHARGE;
+		this.animate(state, RaybladeAnimation.RAYBLADE_SWING, ageInTicks);
+		this.handle.getChild("blade").visible = ACCUtil.isVisible(stack);
 	}
 	
 	@Override

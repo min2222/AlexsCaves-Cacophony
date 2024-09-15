@@ -171,12 +171,11 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 		            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
 	        	}
             }
-
-        	player.getCooldowns().addCooldown(stack.getItem(), 60);
         	if(!player.getAbilities().instabuild)
         	{
                 ACCUtil.setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
         	}
+        	player.getCooldowns().addCooldown(stack.getItem(), 60);
         }
         else if(!ammo.isEmpty())
         {

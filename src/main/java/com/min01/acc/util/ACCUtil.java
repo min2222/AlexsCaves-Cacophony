@@ -23,6 +23,19 @@ public class ACCUtil
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String ANIMATION_TICK = "AnimationTick";
+    public static final String IS_VISIBLE = "isVisible";
+
+    public static boolean isVisible(ItemStack stack)
+    {
+        CompoundTag compoundtag = stack.getTag();
+        return compoundtag != null ? compoundtag.getBoolean(IS_VISIBLE) : false;
+    }
+
+    public static void setVisible(ItemStack stack, boolean visible)
+    {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        compoundtag.putBoolean(IS_VISIBLE, visible);
+    }
     
     public static int getAnimationTick(ItemStack stack)
     {
@@ -39,13 +52,13 @@ public class ACCUtil
     public static AnimationState getAnimationState(ItemStack stack)
     {
         CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? readAnimationState(compoundtag) : new AnimationState();
+        return compoundtag != null ? readItemAnimationState(compoundtag) : new AnimationState();
     }
 
     public static void setAnimationState(ItemStack stack, AnimationState state)
     {
         CompoundTag compoundtag = stack.getOrCreateTag();
-        writeAnimationState(compoundtag, state);
+        writeItemAnimationState(compoundtag, state);
     }
     
     public static boolean hasCharge(ItemStack stack, int maxCharge)
@@ -81,10 +94,19 @@ public class ACCUtil
 		return null;
 	}
 	
-	public static void writeAnimationState(CompoundTag tag, AnimationState state)
+	public static void writeItemAnimationState(CompoundTag tag, AnimationState state)
 	{
 		tag.putLong("LastTime", state.lastTime);
 		tag.putLong("AccumulatedTime", state.accumulatedTime);
+	}
+	
+	public static void writeAnimationState(CompoundTag tag, AnimationState state, String name)
+	{
+		CompoundTag animTag = new CompoundTag();
+		animTag.putString("Name", name);
+		animTag.putLong("LastTime", state.lastTime);
+		animTag.putLong("AccumulatedTime", state.accumulatedTime);
+		tag.put("AnimationState", animTag);
 	}
 	
 	public static void writeAnimationState(FriendlyByteBuf buf, AnimationState state)
@@ -93,11 +115,27 @@ public class ACCUtil
 		buf.writeLong(state.accumulatedTime);
 	}
 	
-	public static AnimationState readAnimationState(CompoundTag tag)
+	public static AnimationState readItemAnimationState(CompoundTag tag)
 	{
 		AnimationState state = new AnimationState();
 		state.lastTime = tag.getLong("LastTime");
 		state.accumulatedTime = tag.getLong("AccumulatedTime");
+		return state;
+	}
+	
+	public static AnimationState readAnimationState(CompoundTag tag, String name)
+	{
+		AnimationState state = new AnimationState();
+		if(tag.contains("AnimationState"))
+		{
+			CompoundTag animTag = tag.getCompound("AnimationState");
+			if(animTag.getString("Name") == name)
+			{
+				state.lastTime = animTag.getLong("LastTime");
+				state.accumulatedTime = animTag.getLong("AccumulatedTime");
+				return state;
+			}
+		}
 		return state;
 	}
 	
