@@ -2,6 +2,8 @@ package com.min01.acc.event;
 
 import com.github.alexmodguy.alexscaves.server.misc.ACCreativeTabRegistry;
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.entity.ACCEntities;
+import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.item.ACCItems;
 
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -16,7 +18,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) 
     {
-    	
+    	event.put(ACCEntities.GLOOMWORM.get(), EntityGloomworm.createAttributes().build());
     }
     
     @SubscribeEvent
@@ -45,6 +47,11 @@ public class EventHandler
     		event.accept(ACCItems.COOKED_DINO_DRUMSTICK.get());
     		event.accept(ACCItems.TREMORSAURUS_TOOTH.get());
     		event.accept(ACCItems.ARROW_OF_FEAR.get());
+    	}
+    	if(event.getTabKey() == ACCreativeTabRegistry.FORLORN_HOLLOWS.getKey())
+    	{
+    		event.accept(ACCItems.GLOOMOTH_COCOON.get());
+    		event.accept(ACCItems.GLOOMWORM_SPAWN_EGG.get());
     	}
     }
 }

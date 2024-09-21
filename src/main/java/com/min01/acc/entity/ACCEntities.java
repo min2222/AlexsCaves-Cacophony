@@ -1,6 +1,7 @@
 package com.min01.acc.entity;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.entity.projectile.EntityFearArrow;
 
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ public class ACCEntities
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, AlexsCavesCacophony.MODID);
 	
 	public static final RegistryObject<EntityType<EntityFearArrow>> FEAR_ARROW = registerEntity("arrow_of_fear", EntityType.Builder.<EntityFearArrow>of(EntityFearArrow::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
+	public static final RegistryObject<EntityType<EntityGloomworm>> GLOOMWORM = registerEntity("gloomworm", createBuilder(EntityGloomworm::new, MobCategory.CREATURE).sized(0.5F, 0.3F));
 	
 	public static <T extends Entity> EntityType.Builder<T> createBuilder(EntityType.EntityFactory<T> factory, MobCategory category)
 	{

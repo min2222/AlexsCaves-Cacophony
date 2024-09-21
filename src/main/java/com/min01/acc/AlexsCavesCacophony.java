@@ -1,5 +1,6 @@
 package com.min01.acc;
 
+import com.min01.acc.block.ACCBlocks;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.item.ACCItems;
 import com.min01.acc.misc.ACCEntityDataSerializers;
@@ -20,6 +21,8 @@ public class AlexsCavesCacophony
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		ACCEntities.ENTITY_TYPES.register(bus);
 		ACCItems.ITEMS.register(bus);
+		ACCBlocks.BLOCKS.register(bus);
+		ACCBlocks.BLOCK_ENTITIES.register(bus);
 		ACCSounds.SOUNDS.register(bus);
 		ACCEntityDataSerializers.SERIALIZERS.register(bus);
 		

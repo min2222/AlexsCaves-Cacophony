@@ -1,11 +1,12 @@
 package com.min01.acc.entity.ai.goal;
 
-import com.min01.acc.entity.AbstractAnimatableMonster;
+import com.min01.acc.entity.IAnimatable;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 
-public abstract class AbstractAnimationSkillGoal extends Goal
+public abstract class AbstractAnimationSkillGoal<T extends Mob & IAnimatable> extends Goal
 {
 	protected int skillWarmupDelay;
 	protected int nextSkillTickCount;
@@ -113,5 +114,5 @@ public abstract class AbstractAnimationSkillGoal extends Goal
 
     protected abstract int getSkillUsingInterval();
     
-    public abstract AbstractAnimatableMonster getMob();
+    public abstract T getMob();
 }

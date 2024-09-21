@@ -1,8 +1,10 @@
 package com.min01.acc.entity.ai.goal;
 
-import com.min01.acc.entity.AbstractAnimatableMonster;
+import com.min01.acc.entity.IAnimatable;
 
-public abstract class BasicAnimationSkillGoal<T extends AbstractAnimatableMonster> extends AbstractAnimationSkillGoal
+import net.minecraft.world.entity.Mob;
+
+public abstract class BasicAnimationSkillGoal<T extends Mob & IAnimatable> extends AbstractAnimationSkillGoal<T>
 {
 	public T mob;
 	
@@ -12,7 +14,7 @@ public abstract class BasicAnimationSkillGoal<T extends AbstractAnimatableMonste
 	}
 
 	@Override
-	public AbstractAnimatableMonster getMob() 
+	public T getMob() 
 	{
 		return this.mob;
 	}
