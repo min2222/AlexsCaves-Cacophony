@@ -32,17 +32,16 @@ public class FearArrowRenderer extends EntityRenderer<EntityFearArrow>
 		p_114488_.mulPose(Axis.YP.rotationDegrees(Mth.lerp(p_114487_, p_114485_.yRotO, p_114485_.getYRot())));
         p_114488_.mulPose(Axis.XN.rotationDegrees(Mth.lerp(p_114487_, p_114485_.xRotO, p_114485_.getXRot())));
         p_114488_.translate(0.0F, 1.5F, 0.0F);
-        p_114488_.mulPose(Axis.XP.rotationDegrees(180));
+        p_114488_.mulPose(Axis.XP.rotationDegrees(180.0F));
 		float f9 = (float)p_114485_.shakeTime - p_114487_;
 		if(f9 > 0.0F)
 		{
 			float f10 = -Mth.sin(f9 * 3.0F) * f9;
 			p_114488_.mulPose(Axis.ZP.rotationDegrees(f10));
 		}
-		VertexConsumer vertexconsumer = p_114489_.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(p_114485_)));
-		this.model.renderToBuffer(p_114488_, vertexconsumer, p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		VertexConsumer consumer = p_114489_.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(p_114485_)));
+		this.model.renderToBuffer(p_114488_, consumer, p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 		p_114488_.popPose();
-		super.render(p_114485_, p_114486_, p_114487_, p_114488_, p_114489_, p_114490_);
 	}
 
 	@Override

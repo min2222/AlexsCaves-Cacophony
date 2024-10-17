@@ -29,15 +29,15 @@ public class EntityGloomworm extends AbstractAnimatableCreature
     public static AttributeSupplier.Builder createAttributes()
     {
         return Monster.createMonsterAttributes()
-    			.add(Attributes.MAX_HEALTH, 3.0D)
-    			.add(Attributes.MOVEMENT_SPEED, 0.1D);
+    			.add(Attributes.MAX_HEALTH, 3.0F)
+    			.add(Attributes.MOVEMENT_SPEED, 0.1F);
     }
     
 	@Override
 	protected void registerGoals() 
 	{
 		this.goalSelector.addGoal(1, new FloatGoal(this));
-		this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0D));
+		this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0F));
 		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
 	}
@@ -60,6 +60,13 @@ public class EntityGloomworm extends AbstractAnimatableCreature
 				this.discard();
 			}
 		}
+	}
+	
+	@Override
+	protected void updateWalkAnimation(float p_268283_)
+	{
+		float f = Math.min(p_268283_ * 20.0F, 1.0F);
+		this.walkAnimation.update(f, 0.4F);
 	}
 	
 	public boolean isThornWood(BlockPos pos)

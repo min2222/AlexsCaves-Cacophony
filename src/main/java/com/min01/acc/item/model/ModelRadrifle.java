@@ -63,6 +63,7 @@ public class ModelRadrifle extends HierarchicalItemModel
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		AnimationState state = ACCUtil.getAnimationState(stack);
 		this.animate(state, RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
+		this.root.getChild("beam").visible = ACCUtil.getAnimationTick(stack) >= 8;
 		this.root.getChild("beam").zScale += RadrifleItem.getBeamLength(stack);
 	}
 	

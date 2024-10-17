@@ -58,7 +58,7 @@ public class ModelGloomworm extends HierarchicalModel<EntityGloomworm>
 	public void setupAnim(EntityGloomworm entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animateWalk(GloomwormAnimation.GLOOMWORM_CRAWL, limbSwing, limbSwingAmount, 5.5F, 2.5F);
+		this.animateWalk(GloomwormAnimation.GLOOMWORM_CRAWL, limbSwing, limbSwingAmount, 2.5F, 2.5F);
 		ACCClientUtil.animateHead(this.root.getChild("body").getChild("head"), netHeadYaw, headPitch);
 	}
 	

@@ -1,5 +1,6 @@
 package com.min01.acc.item;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -138,6 +139,7 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 	        	{
 	                Vec3 vec31 = pos.subtract(riflePos);
 	                Vec3 vec32 = vec31.normalize();
+	                List<LivingEntity> arrayList = new ArrayList<>();
 	                for(int i = 1; i < Mth.floor(vec31.length()) + 1; ++i)
 	                {
 	                	Vec3 vec33 = riflePos.add(vec32.scale(i));
@@ -145,17 +147,25 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 	                	list.removeIf(t -> t == player || t.isAlliedTo(player) || t.getType().is(ACTagRegistry.RESISTS_RADIATION));
 	                	list.forEach(t -> 
 	                	{
-	                        boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
-	                        int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
-	                        if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F)) 
-	                        {
-	                            if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
-	                            {
-	                                AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
-	                            }
-	                        }
+	                		if(!arrayList.contains(t))
+	                		{
+	                			arrayList.add(t);
+	                		}
 	                	});
 	                }
+	                
+                	arrayList.forEach(t -> 
+                	{
+                        boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
+                        int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
+                        if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F)) 
+                        {
+                            if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
+                            {
+                                AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
+                            }
+                        }
+                	});
 	        	}
             }
             else

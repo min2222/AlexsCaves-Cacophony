@@ -37,8 +37,9 @@ public class GloomothCocoonBlock extends Block
     
 	public GloomothCocoonBlock() 
 	{
-		super(BlockBehaviour.Properties.copy(Blocks.WHITE_WOOL));
-		this.registerDefaultState(this.stateDefinition.any().setValue(WORM_NAME, WormName.NONE));
+		super(BlockBehaviour.Properties.copy(Blocks.WHITE_WOOL).randomTicks());
+		//FIXME registry crash
+		//this.registerDefaultState(this.stateDefinition.any().setValue(WORM_NAME, WormName.NONE));
 	}
 	
 	@Override
@@ -126,7 +127,8 @@ public class GloomothCocoonBlock extends Block
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_152043_)
     {
-    	p_152043_.add(WORM_NAME);
+		//FIXME registry crash
+    	//p_152043_.add(WORM_NAME);
     }
 	
 	@Override
