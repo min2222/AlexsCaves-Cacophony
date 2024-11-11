@@ -1,0 +1,32 @@
+{
+	"display": {
+		"icon": {
+			"item": "accacophony:gloomoth_eggs"
+		},
+		"title": {
+			"translate": "advancements.accacophony.gloomoth_eggs.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.gloomoth_eggs.desc"
+		}
+	},
+	"parent": "alexscaves:alexscaves/guano",
+	"criteria": {
+		"gloomoth_eggs": {
+			"trigger": "minecraft:consume_item",
+			"conditions": {
+				"item": {
+					"items": [
+						"accacophony:gloomoth_eggs"
+					]
+				}
+			}
+		}
+	},
+	"requirements": [
+		[
+			"gloomoth_eggs"
+		]
+	],
+	"sends_telemetry_event": true
+}

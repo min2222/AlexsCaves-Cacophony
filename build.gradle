@@ -159,7 +159,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 	annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     implementation fg.deobf("curse.maven:assets-protector-1032813:5566488")
-    implementation fg.deobf("curse.maven:alexs-caves-924854:5633305")
+    implementation fg.deobf("curse.maven:alexs-caves-924854:5848216")
     implementation fg.deobf("curse.maven:citadel-331936:5633260")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings

@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+	"category": "equipment",
+    "pattern": [
+        "PUP",
+        "PFP",
+        " U "
+    ],
+    "key": {
+        "P": {
+            "item": "alexscaves:polymer_plate"
+        },
+        "U": {
+            "item": "alexscaves:uranium_rod"
+        },
+        "F": {
+            "item": "alexscaves:fissile_core"
+        }
+    },
+    "result": {
+        "item": "accacophony:radrifle",
+        "count": 1
+    },
+	"show_notification": true
+}

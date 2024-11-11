@@ -7,6 +7,8 @@ import com.min01.acc.block.ACCBlocks;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.misc.ACCTier;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.food.FoodProperties;
@@ -40,6 +42,7 @@ public class ACCItems
 	public static final RegistryObject<Item> ARROW_OF_FEAR = ITEMS.register("arrow_of_fear", () -> new FearArrowItem());
 	
 	public static final RegistryObject<Item> GLOOMOTH_COCOON = registerBlockItem("gloomoth_cocoon", () -> ACCBlocks.GLOOMOTH_COCOON.get(), new Item.Properties());
+	public static final RegistryObject<Item> GLOOMOTH_EGGS = registerBlockItem("gloomoth_eggs", () -> ACCBlocks.GLOOMOTH_EGGS.get(), new Item.Properties().food(new FoodProperties.Builder().effect(() -> new MobEffectInstance(MobEffects.SLOW_FALLING, 60), 1.0F).nutrition(2).saturationMod(1.5F).build()));
 	
 	public static RegistryObject<Item> registerBlockItem(String name, Supplier<Block> block, Item.Properties propertie)
 	{

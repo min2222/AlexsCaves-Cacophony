@@ -51,6 +51,7 @@ public class EventHandler
     	if(event.getTabKey() == ACCreativeTabRegistry.FORLORN_HOLLOWS.getKey())
     	{
     		event.accept(ACCItems.GLOOMOTH_COCOON.get());
+    		event.accept(ACCItems.GLOOMOTH_EGGS.get());
     		event.accept(ACCItems.GLOOMWORM_SPAWN_EGG.get());
     	}
     }

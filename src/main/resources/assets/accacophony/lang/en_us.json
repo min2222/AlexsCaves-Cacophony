@@ -12,8 +12,10 @@
 	"item.accacophony.mastcarver": "Mastcarver",
 	"item.accacophony.gloomworm_spawn_egg": "Gloomworm Spawn Egg",
 	"block.accacophony.gloomoth_cocoon": "Gloomoth Cocoon",
+	"block.accacophony.gloomoth_eggs": "Gloomoth Eggs",
 	"entity.accacophony.arrow_of_fear": "Arrow of Fear",
 	"entity.accacophony.gloomworm": "Gloomworm",
+	"entity.accacophony.ovivenator": "Ovivenator",
 	"advancements.accacophony.rayblade.title": "Rip and Tear",
 	"advancements.accacophony.rayblade.desc": "Acquire a Rayblade",
 	"advancements.accacophony.rayblade_challenge.title": "...Until it is done",
@@ -21,5 +23,7 @@
 	"advancements.accacophony.ray_catalyst.title": "Unlimited power!!!",
 	"advancements.accacophony.ray_catalyst.desc": "Acquire a Ray Catalyst",
 	"advancements.accacophony.arrow_of_fear.title": "The only thing they fear is you",
-	"advancements.accacophony.arrow_of_fear.desc": "Use an arrow of fear on any mob"
+	"advancements.accacophony.arrow_of_fear.desc": "Use an arrow of fear on any mob",
+	"advancements.accacophony.gloomoth_eggs.title": "Desperate Measures",
+	"advancements.accacophony.gloomoth_eggs.desc": "Eat Gloomoth eggs, the unborn children of small defenseless moths-- You monster!"
 }

@@ -14,4 +14,5 @@ public class ACCBlocks
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, AlexsCavesCacophony.MODID);
     
     public static final RegistryObject<Block> GLOOMOTH_COCOON = BLOCKS.register("gloomoth_cocoon", () -> new GloomothCocoonBlock());
+    public static final RegistryObject<Block> GLOOMOTH_EGGS = BLOCKS.register("gloomoth_eggs", () -> new GloomothEggsBlock());
 }
