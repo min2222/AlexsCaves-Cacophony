@@ -54,5 +54,9 @@ public class EventHandler
     		event.accept(ACCItems.GLOOMOTH_EGGS.get());
     		event.accept(ACCItems.GLOOMWORM_SPAWN_EGG.get());
     	}
+    	if(event.getTabKey() == ACCreativeTabRegistry.MAGNETIC_CAVES.getKey())
+    	{
+    		event.accept(ACCItems.NEODYMIUM_SHACKLE.get());
+    	}
     }
 }

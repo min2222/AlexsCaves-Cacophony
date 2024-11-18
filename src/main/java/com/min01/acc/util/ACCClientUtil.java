@@ -15,6 +15,12 @@ public class ACCClientUtil
 {
 	public static final Minecraft MC = Minecraft.getInstance();
 	
+	public static float getElapsedSeconds(boolean looping, float lengthInSeconds, long time) 
+	{
+		float f = (float) time / 1000.0F;
+		return looping ? f % lengthInSeconds : f;
+	}
+	
 	//https://github.com/EEEAB/EEEABsMobs/blob/master/src/main/java/com/eeeab/animate/client/util/ModelPartUtils.java#L57
 	
     public static Vec3 getWorldPosition(Entity entity, float yaw, ModelPart root, String... modelPartName) 

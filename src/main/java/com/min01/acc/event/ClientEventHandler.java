@@ -4,8 +4,10 @@ import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.model.ModelFearArrow;
 import com.min01.acc.entity.model.ModelGloomworm;
+import com.min01.acc.entity.model.ModelNeodymiumShackle;
 import com.min01.acc.entity.renderer.FearArrowRenderer;
 import com.min01.acc.entity.renderer.GloomwormRenderer;
+import com.min01.acc.entity.renderer.NeodymiumShackleRenderer;
 import com.min01.acc.item.model.ModelRadrifle;
 import com.min01.acc.item.model.ModelRayblade;
 
@@ -24,6 +26,7 @@ public class ClientEventHandler
     	event.registerLayerDefinition(ModelFearArrow.LAYER_LOCATION, ModelFearArrow::createBodyLayer);
     	event.registerLayerDefinition(ModelRadrifle.LAYER_LOCATION, ModelRadrifle::createBodyLayer);
     	event.registerLayerDefinition(ModelGloomworm.LAYER_LOCATION, ModelGloomworm::createBodyLayer);
+    	event.registerLayerDefinition(ModelNeodymiumShackle.LAYER_LOCATION, ModelNeodymiumShackle::createBodyLayer);
     }
     
     @SubscribeEvent
@@ -31,5 +34,6 @@ public class ClientEventHandler
     {
     	event.registerEntityRenderer(ACCEntities.FEAR_ARROW.get(), FearArrowRenderer::new);
     	event.registerEntityRenderer(ACCEntities.GLOOMWORM.get(), GloomwormRenderer::new);
+    	event.registerEntityRenderer(ACCEntities.NEODYMIUM_SHACKLE.get(), NeodymiumShackleRenderer::new);
     }
 }

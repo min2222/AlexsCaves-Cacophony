@@ -41,6 +41,8 @@ public class ACCItems
 	public static final RegistryObject<Item> TREMORSAURUS_TOOTH = ITEMS.register("tremorsaurus_tooth", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> ARROW_OF_FEAR = ITEMS.register("arrow_of_fear", () -> new FearArrowItem());
 	
+	public static final RegistryObject<Item> NEODYMIUM_SHACKLE = ITEMS.register("neodymium_shackle", () -> new NeodymiumShackleItem());
+	
 	public static final RegistryObject<Item> GLOOMOTH_COCOON = registerBlockItem("gloomoth_cocoon", () -> ACCBlocks.GLOOMOTH_COCOON.get(), new Item.Properties());
 	public static final RegistryObject<Item> GLOOMOTH_EGGS = registerBlockItem("gloomoth_eggs", () -> ACCBlocks.GLOOMOTH_EGGS.get(), new Item.Properties().food(new FoodProperties.Builder().effect(() -> new MobEffectInstance(MobEffects.SLOW_FALLING, 60), 1.0F).nutrition(2).saturationMod(1.5F).build()));
 	
