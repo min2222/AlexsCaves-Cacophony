@@ -10,7 +10,6 @@ import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
 import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
-import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
 import com.min01.acc.item.renderer.RaybladeRenderer;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
@@ -24,7 +23,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -46,6 +44,7 @@ public class RaybladeItem extends Item implements UpdatesStackTags
     public static final String RAYBLADE_DRAW_RIGHT = "RaybladeDrawRight";
     public static final String RAYBLADE_HOLD_RIGHT = "RaybladeHoldRight";
     public static final String RAYBLADE_SWING_RIGHT = "RaybladeSwingRight";
+    public static final String RAYBLADE_SWING = "RaybladeSwing";
     public static final int MAX_CHARGE = 3;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
@@ -88,58 +87,44 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 	{
 		CompoundTag tag = p_41404_.getOrCreateTag();
 		updateFrame(tag, p_41406_);
-    	AnimationState drawAnimationState = ACCUtil.readAnimationState(p_41406_.getPersistentData(), RAYBLADE_DRAW_RIGHT);
-    	AnimationState holdAnimationState = ACCUtil.readAnimationState(p_41406_.getPersistentData(), RAYBLADE_HOLD_RIGHT);
-    	AnimationState swingAnimationState = ACCUtil.readAnimationState(p_41406_.getPersistentData(), RAYBLADE_SWING_RIGHT);
+    	ACCUtil.animationTick(p_41406_, p_41404_);
     	int tick = ACCUtil.getAnimationTick(p_41404_);
-    	
-    	if(tick > 0)
-    	{
-    		ACCUtil.setAnimationTick(p_41404_, tick - 1);
-    	}
-    	
+    	//FIXME item animation stop immediately after started;
     	if(p_41408_)
     	{
-    		if(!holdAnimationState.isStarted() && !swingAnimationState.isStarted())
+    		if(!ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_HOLD_RIGHT).isStarted() && !ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_SWING_RIGHT).isStarted())
     		{
-            	this.changeVisibility(p_41405_, p_41404_, p_41406_, false);
-            	this.stopSwingAnim(p_41405_, p_41404_, p_41406_);
-        		drawAnimationState.startIfStopped(p_41406_.tickCount);
-            	ACCUtil.writeAnimationState(p_41406_.getPersistentData(), drawAnimationState, RAYBLADE_DRAW_RIGHT);
+    			ACCUtil.setVisible(p_41406_, p_41404_, false);
+    			ACCUtil.startPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
     		}
-
-        	if(swingAnimationState.isStarted())
+        	if(ACCUtil.getItemAnimationState(p_41404_, RAYBLADE_SWING).isStarted())
         	{
         		if(tick <= 0)
         		{
-                	this.changeVisibility(p_41405_, p_41404_, p_41406_, false);
-                	this.stopSwingAnim(p_41405_, p_41404_, p_41406_);
-            		holdAnimationState.stop();
-            		swingAnimationState.stop();
-            		ACCUtil.writeAnimationState(p_41406_.getPersistentData(), holdAnimationState, RAYBLADE_HOLD_RIGHT);
-            		ACCUtil.writeAnimationState(p_41406_.getPersistentData(), swingAnimationState, RAYBLADE_SWING_RIGHT);
+        			ACCUtil.setVisible(p_41406_, p_41404_, false);
+                	ACCUtil.stopItemAnimation(p_41406_, p_41404_, RAYBLADE_SWING);
+                	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_HOLD_RIGHT);
+                	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_SWING_RIGHT);
         		}
-        		if(tick == 9 && p_41406_ instanceof LivingEntity living)
+        		else if(tick == 9 && p_41406_ instanceof LivingEntity living)
         		{
-        	    	Vec3 pos = living.getEyePosition().subtract(0, 1.5F, 0.0F);
-        	    	Vec3 lookPos = ACCUtil.getLookPos(new Vec2(0.0F, living.yBodyRot), pos, 0.0F, 0.0F, 1.5F);
-        	    	List<LivingEntity> list = p_41405_.getEntitiesOfClass(LivingEntity.class, new AABB(pos, lookPos).inflate(1.0F, 0.5F, 1.0F));
-        	    	list.removeIf(t -> t == living || t.isAlliedTo(living));
-        	    	list.forEach(t -> 
-        	    	{
-        	    		t.hurt(living.damageSources().mobAttack(living), 100.0F);
-        	    	});
+        			Vec3 pos = living.getEyePosition().subtract(0, 1.5F, 0.0F);
+        			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(0.0F, living.yBodyRot), pos, 0.0F, 0.0F, 1.5F);
+        			List<LivingEntity> list = p_41405_.getEntitiesOfClass(LivingEntity.class, new AABB(pos, lookPos).inflate(1.0F, 0.5F, 1.0F));
+        			list.removeIf(t -> t == living || t.isAlliedTo(living));
+        			list.forEach(t -> 
+        			{
+        				t.hurt(living.damageSources().mobAttack(living), 100.0F);
+        			});
         		}
         	}
     	}
     	else
     	{
-        	this.changeVisibility(p_41405_, p_41404_, p_41406_, false);
-        	this.stopSwingAnim(p_41405_, p_41404_, p_41406_);
-    		holdAnimationState.stop();
-    		swingAnimationState.stop();
-    		ACCUtil.writeAnimationState(p_41406_.getPersistentData(), holdAnimationState, RAYBLADE_HOLD_RIGHT);
-    		ACCUtil.writeAnimationState(p_41406_.getPersistentData(), swingAnimationState, RAYBLADE_SWING_RIGHT);
+			ACCUtil.setVisible(p_41406_, p_41404_, false);
+        	ACCUtil.stopItemAnimation(p_41406_, p_41404_, RAYBLADE_SWING);
+        	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_HOLD_RIGHT);
+        	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_SWING_RIGHT);
     	}
 	}
 	
@@ -151,7 +136,7 @@ public class RaybladeItem extends Item implements UpdatesStackTags
         if(charge < MAX_CHARGE)
         {
         	p_41433_.startUsingItem(p_41434_);
-        	this.changeVisibility(p_41432_, stack, p_41433_, true);
+			ACCUtil.setVisible(p_41433_, stack, true);
         }
         else
         {
@@ -159,18 +144,16 @@ public class RaybladeItem extends Item implements UpdatesStackTags
             if(!ammo.isEmpty())
             {
             	ammo.shrink(1);
-                ACCUtil.setCharge(stack, 0);
+                ACCUtil.setCharge(p_41433_, stack, 0);
             }
         }
-		return super.use(p_41432_, p_41433_, p_41434_);
+		return InteractionResultHolder.pass(stack);
 	}
 	
 	@Override
 	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
 	{
-    	AnimationState holdAnimationState = ACCUtil.readAnimationState(p_41429_.getPersistentData(), RAYBLADE_HOLD_RIGHT);
-    	holdAnimationState.startIfStopped(p_41429_.tickCount);
-    	ACCUtil.writeAnimationState(p_41429_.getPersistentData(), holdAnimationState, RAYBLADE_HOLD_RIGHT);
+		ACCUtil.startPlayerAnimation(p_41429_, RAYBLADE_HOLD_RIGHT);
 	}
 	
 	@Override
@@ -178,58 +161,19 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 	{
 		int i = this.getUseDuration(p_41412_) - p_41415_;
 		int charge = ACCUtil.getCharge(p_41412_);
-    	AnimationState holdAnimationState = ACCUtil.readAnimationState(p_41414_.getPersistentData(), RAYBLADE_HOLD_RIGHT);
-    	holdAnimationState.stop();
-    	//FIXME sometimes swing doesn't work even enough time is passed
-    	if(i >= 20)
+    	if(i >= 1)
     	{
-        	ACCUtil.writeAnimationState(p_41414_.getPersistentData(), holdAnimationState, RAYBLADE_HOLD_RIGHT);
-        	AnimationState swingAnimationState = ACCUtil.readAnimationState(p_41414_.getPersistentData(), RAYBLADE_SWING_RIGHT);
-        	swingAnimationState.startIfStopped(p_41414_.tickCount);
-        	ACCUtil.writeAnimationState(p_41414_.getPersistentData(), swingAnimationState, RAYBLADE_SWING_RIGHT);
+    		ACCUtil.stopPlayerAnimation(p_41414_, RAYBLADE_HOLD_RIGHT);
+    		ACCUtil.startPlayerAnimation(p_41414_, RAYBLADE_SWING_RIGHT);
+        	ACCUtil.startItemAnimation(p_41414_, p_41412_, RAYBLADE_SWING);
         	ACCUtil.setAnimationTick(p_41412_, 15);
-        	this.playSwingAnim(p_41413_, p_41412_, p_41414_);
         	if(p_41414_ instanceof Player player)
         	{
         		if(!player.getAbilities().instabuild)
         		{
-        			ACCUtil.setCharge(p_41412_, Math.min(charge + 1, MAX_CHARGE));
+        			ACCUtil.setCharge(p_41414_, p_41412_, Math.min(charge + 1, MAX_CHARGE));
         		}
         	}
-    	}
-	}
-	
-	public void changeVisibility(Level level, ItemStack stack, Entity entity, boolean visible)
-	{
-		ACCUtil.setVisible(stack, visible);
-		
-    	if(level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(entity.getId(), stack));
-    	}
-	}
-	
-	public void stopSwingAnim(Level level, ItemStack stack, Entity entity)
-	{
-    	AnimationState swingAnimationState = ACCUtil.getAnimationState(stack);
-    	swingAnimationState.stop();
-    	ACCUtil.setAnimationState(stack, swingAnimationState);
-    	
-    	if(level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(entity.getId(), stack));
-    	}
-	}
-	
-	public void playSwingAnim(Level level, ItemStack stack, Entity entity)
-	{
-    	AnimationState swingAnimationState = ACCUtil.getAnimationState(stack);
-    	swingAnimationState.startIfStopped(entity.tickCount);
-    	ACCUtil.setAnimationState(stack, swingAnimationState);
-    	
-    	if(level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(entity.getId(), stack));
     	}
 	}
 	

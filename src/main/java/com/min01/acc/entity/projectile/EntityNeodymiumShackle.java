@@ -116,13 +116,8 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 		{
 			this.loopAnimationState.startIfStopped(this.tickCount);
 		}
-		
-		if(this.getAnimationState() == 1 && this.getAnimationTick() <= 0)
-		{
-			this.setAnimationState(0);
-		}
 
-		if(this.getAnimationState() == 2 && this.getAnimationTick() <= 0)
+		if(this.getAnimationState() == 3 && this.getAnimationTick() <= 0)
 		{
 			this.setAnimationState(0);
 			this.spawnItem();
@@ -147,10 +142,10 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 	protected void onHitBlock(BlockHitResult p_37258_) 
 	{
 		super.onHitBlock(p_37258_);
-		if(this.getAnimationState() != 2)
+		if(this.getAnimationState() != 3)
 		{
-			this.setAnimationState(2);
-			this.setAnimationTick(6);
+			this.setAnimationState(3);
+			this.setAnimationTick(20);
 			this.setNoGravity(true);
 			this.setDeltaMovement(Vec3.ZERO);
 		}
@@ -160,15 +155,15 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 	protected void onHitEntity(EntityHitResult p_37259_) 
 	{
 		super.onHitEntity(p_37259_);
-		if(this.getOwner() != null && this.getAnimationState() != 2)
+		if(this.getOwner() != null && this.getAnimationState() != 3)
 		{
 			Entity entity = p_37259_.getEntity();
 			if(this.getOwner() instanceof LivingEntity living)
 			{
 				if(entity.hurt(living.damageSources().mobAttack(living), 10.0F))
 				{
-					this.setAnimationState(2);
-					this.setAnimationTick(6);
+					this.setAnimationState(3);
+					this.setAnimationTick(20);
 					this.setNoGravity(true);
 					this.setDeltaMovement(Vec3.ZERO);
 				}

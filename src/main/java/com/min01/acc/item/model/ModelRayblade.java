@@ -1,6 +1,7 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.item.animation.RaybladeAnimation;
 import com.min01.acc.util.ACCUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,7 +16,6 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.item.ItemStack;
 
 public class ModelRayblade extends HierarchicalItemModel
@@ -57,8 +57,7 @@ public class ModelRayblade extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		AnimationState state = ACCUtil.getAnimationState(stack);
-		this.animate(state, RaybladeAnimation.RAYBLADE_SWING, ageInTicks);
+		this.animate(ACCUtil.getItemAnimationState(stack, RaybladeItem.RAYBLADE_SWING), RaybladeAnimation.RAYBLADE_SWING, ageInTicks);
 		this.handle.getChild("blade").visible = ACCUtil.isVisible(stack);
 	}
 	

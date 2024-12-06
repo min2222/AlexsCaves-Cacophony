@@ -14,7 +14,6 @@ import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
 import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
 import com.github.alexmodguy.alexscaves.server.message.UpdateEffectVisualityEntityMessage;
-import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
 import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.github.alexmodguy.alexscaves.server.potion.ACEffectRegistry;
@@ -34,11 +33,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -47,7 +44,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -57,6 +53,7 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 {
     public static final int MAX_CHARGE = 1000;
     public static final String BEAM_LENGTH = "BeamLength";
+    public static final String RADRIFLE_FIRE = "RadrifleFire";
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -71,21 +68,12 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
-        CompoundTag compoundtag = p_41404_.getTag();
-        if(compoundtag != null && compoundtag.contains(ACCUtil.ANIMATION_TICK))
-        {
-    		int tick = ACCUtil.getAnimationTick(p_41404_);
-            if(tick <= 0)
-            {
-                AnimationState state = ACCUtil.getAnimationState(p_41404_);
-            	state.stop();
-            	ACCUtil.setAnimationState(p_41404_, state);
-            }
-            else
-            {
-            	ACCUtil.setAnimationTick(p_41404_, tick - 1);
-            }
-        }
+    	ACCUtil.animationTick(p_41406_, p_41404_);
+		int tick = ACCUtil.getAnimationTick(p_41404_);
+    	if(tick <= 0 && ACCUtil.getItemAnimationState(p_41404_, RADRIFLE_FIRE).isStarted())
+    	{
+        	ACCUtil.stopItemAnimation(p_41406_, p_41404_, RADRIFLE_FIRE);
+    	}
         
         if(p_41404_.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
         {
@@ -96,14 +84,9 @@ public class RadrifleItem extends Item implements UpdatesStackTags
                 float timeOfDay = p_41405_.getTimeOfDay(1.0F);
                 if(p_41405_.canSeeSky(playerPos) && p_41405_.isDay() && !p_41405_.dimensionType().hasFixedTime() && (timeOfDay < 0.259 || timeOfDay > 0.74))
                 {
-                	ACCUtil.setCharge(p_41404_, charge - 1);
+                	ACCUtil.setCharge(p_41406_, p_41404_, charge - 1);
                 }
             }
-        }
-        
-        if(p_41405_.isClientSide) 
-        {
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(p_41406_.getId(), p_41404_));
         }
 	}
 	
@@ -113,90 +96,73 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 		ItemStack stack = player.getItemInHand(hand);
         ItemStack ammo = this.findAmmo(player);
 		int charge = ACCUtil.getCharge(stack);
-        AnimationState state = ACCUtil.getAnimationState(stack);
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
-        	state.startIfStopped(player.tickCount);
-        	ACCUtil.setAnimationState(stack, state);
+        	ACCUtil.startItemAnimation(player, stack, RADRIFLE_FIRE);
         	ACCUtil.setAnimationTick(stack, 13);
+        	
         	Vec3 riflePos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 3.0F);
 			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), riflePos, 0.0F, 0.0F, 100.0F);
-
 			HitResult hitResult = level.clip(new ClipContext(riflePos, lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-			EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, riflePos, lookPos, player.getBoundingBox().inflate(100.0F), Entity::canBeHitByProjectile);
-			
-            if(entityHit != null)
+        	Vec3 pos = hitResult.getLocation();
+        	setBeamLength(stack, (float) riflePos.distanceTo(pos));
+
+    		List<LivingEntity> arrayList = new ArrayList<>();
+            Vec3 vec3 = riflePos;
+            Vec3 vec31 = pos.subtract(vec3);
+            Vec3 vec32 = vec31.normalize();
+
+            for(int i = 1; i < Mth.floor(vec31.length()) + riflePos.distanceTo(pos); ++i)
             {
-            	Vec3 pos = entityHit.getLocation();
-	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() - 0.5F);
-	        	
-        		Direction direction = Direction.UP;
+            	Vec3 vec33 = vec3.add(vec32.scale(i));
+            	List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(0.1F));
+            	list.removeIf(t -> t == player || t.isAlliedTo(player) || t.getType().is(ACTagRegistry.RESISTS_RADIATION));
+            	list.forEach(t -> 
+            	{
+            		if(!arrayList.contains(t))
+            		{
+            			arrayList.add(t);
+            		}
+            	});
+            }
+            
+        	arrayList.forEach(t -> 
+        	{
+                boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
+                int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
+                if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F)) 
+                {
+                    if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
+                    {
+                    	if(!level.isClientSide)
+                    	{
+                            AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
+                    	}
+                    }
+                }
+        	});
+        	
+        	if(hitResult instanceof BlockHitResult blockHit)
+        	{
+        		Direction direction = blockHit.getDirection();
 	            float offset = 0.05F + level.random.nextFloat() * 0.09F;
 	            Vec3 particleVec = pos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
 	            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
-	            
-	        	if(!level.isClientSide)
-	        	{
-	                Vec3 vec31 = pos.subtract(riflePos);
-	                Vec3 vec32 = vec31.normalize();
-	                List<LivingEntity> arrayList = new ArrayList<>();
-	                for(int i = 1; i < Mth.floor(vec31.length()) + 1; ++i)
-	                {
-	                	Vec3 vec33 = riflePos.add(vec32.scale(i));
-	                	List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(0.1F));
-	                	list.removeIf(t -> t == player || t.isAlliedTo(player) || t.getType().is(ACTagRegistry.RESISTS_RADIATION));
-	                	list.forEach(t -> 
-	                	{
-	                		if(!arrayList.contains(t))
-	                		{
-	                			arrayList.add(t);
-	                		}
-	                	});
-	                }
-	                
-                	arrayList.forEach(t -> 
-                	{
-                        boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
-                        int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
-                        if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F)) 
-                        {
-                            if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
-                            {
-                                AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
-                            }
-                        }
-                	});
-	        	}
-            }
-            else
-            {
-            	Vec3 pos = hitResult.getLocation();
-	        	setBeamLength(stack, (float) pos.subtract(riflePos).length() - 0.5F);
-	            
-	        	if(hitResult instanceof BlockHitResult blockHit)
-	        	{
-	        		Direction direction = blockHit.getDirection();
-		            float offset = 0.05F + level.random.nextFloat() * 0.09F;
-		            Vec3 particleVec = pos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
-		            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
-	        	}
-            }
+        	}
+        	
         	if(!player.getAbilities().instabuild)
         	{
-                ACCUtil.setCharge(stack, Math.min(charge + 1, MAX_CHARGE));
+                ACCUtil.setCharge(player, stack, Math.min(charge + 1, MAX_CHARGE));
         	}
+        	
         	player.getCooldowns().addCooldown(stack.getItem(), 60);
         }
         else if(!ammo.isEmpty())
         {
             ammo.shrink(1);
-            ACCUtil.setCharge(stack, 0);
+            ACCUtil.setCharge(player, stack, 0);
         }
-        if(level.isClientSide) 
-        {
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
-        }
-		return super.use(level, player, hand);
+		return InteractionResultHolder.pass(stack);
 	}
 	
 	@Override

@@ -53,9 +53,9 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
     @Inject(at = @At("TAIL"), method = "setupAnim", cancellable = true)
     private void setupAnimTail(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci)
     {
-    	this.animate(ACCUtil.readAnimationState(entity.getPersistentData(), RaybladeItem.RAYBLADE_DRAW_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
-    	this.animate(ACCUtil.readAnimationState(entity.getPersistentData(), RaybladeItem.RAYBLADE_HOLD_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_HOLD_RIGHT, ageInTicks);
-    	this.animate(ACCUtil.readAnimationState(entity.getPersistentData(), RaybladeItem.RAYBLADE_SWING_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
+    	this.animate(ACCUtil.getPlayerAnimationState(entity, RaybladeItem.RAYBLADE_DRAW_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
+    	this.animate(ACCUtil.getPlayerAnimationState(entity, RaybladeItem.RAYBLADE_HOLD_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_HOLD_RIGHT, ageInTicks);
+    	this.animate(ACCUtil.getPlayerAnimationState(entity, RaybladeItem.RAYBLADE_SWING_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
     }
     
 	@Override

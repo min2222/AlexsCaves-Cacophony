@@ -5,8 +5,10 @@ import java.util.UUID;
 
 import org.joml.Math;
 
+import com.github.alexmodguy.alexscaves.AlexsCaves;
+import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
+
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
@@ -24,41 +26,48 @@ public class ACCUtil
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String ANIMATION_TICK = "AnimationTick";
     public static final String IS_VISIBLE = "isVisible";
+    
+    public static void animationTick(Entity player, ItemStack stack)
+    {
+    	int tick = ACCUtil.getAnimationTick(stack);
+    	if(tick > 0)
+    	{
+    		ACCUtil.setAnimationTick(stack, tick - 1);
+    	}
+    	
+    	if(player.level.isClientSide)
+    	{
+            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+    	}
+    }
 
     public static boolean isVisible(ItemStack stack)
     {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getBoolean(IS_VISIBLE) : false;
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getBoolean(IS_VISIBLE) : false;
     }
 
-    public static void setVisible(ItemStack stack, boolean visible)
+    public static void setVisible(Entity player, ItemStack stack, boolean visible)
     {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putBoolean(IS_VISIBLE, visible);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putBoolean(IS_VISIBLE, visible);
+        
+    	if(player.level.isClientSide)
+    	{
+    		AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+    	}
     }
     
     public static int getAnimationTick(ItemStack stack)
     {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getInt(ANIMATION_TICK) : 0;
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getInt(ANIMATION_TICK) : 0;
     }
 
     public static void setAnimationTick(ItemStack stack, int tick)
     {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putInt(ANIMATION_TICK, tick);
-    }
-	
-    public static AnimationState getAnimationState(ItemStack stack)
-    {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? readItemAnimationState(compoundtag) : new AnimationState();
-    }
-
-    public static void setAnimationState(ItemStack stack, AnimationState state)
-    {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        writeItemAnimationState(compoundtag, state);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt(ANIMATION_TICK, tick);
     }
     
     public static boolean hasCharge(ItemStack stack, int maxCharge)
@@ -72,55 +81,84 @@ public class ACCUtil
         return compoundtag != null ? compoundtag.getInt(CHARGE_USED) : 0;
     }
 
-    public static void setCharge(ItemStack stack, int charge)
+    public static void setCharge(Entity player, ItemStack stack, int charge)
     {
         CompoundTag compoundtag = stack.getOrCreateTag();
         compoundtag.putInt(CHARGE_USED, charge);
+        
+    	if(player.level.isClientSide)
+    	{
+            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+    	}
+    }
+    
+    public static void startItemAnimation(Entity player, ItemStack stack, String animationName)
+    {
+    	AnimationState animationState = getItemAnimationState(stack, animationName);
+    	animationState.startIfStopped(player.tickCount);
+    	setItemAnimationState(stack, animationState, animationName);
+    	
+    	if(player.level.isClientSide)
+    	{
+            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+    	}
+    }
+    
+    public static void stopItemAnimation(Entity player, ItemStack stack, String animationName)
+    {
+    	AnimationState animationState = getItemAnimationState(stack, animationName);
+    	animationState.stop();
+    	setItemAnimationState(stack, animationState, animationName);
+    	
+    	if(player.level.isClientSide)
+    	{
+            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
+    	}
+    }
+    
+    public static void startPlayerAnimation(Entity player, String animationName)
+    {
+    	AnimationState animationState = getPlayerAnimationState(player, animationName);
+    	animationState.startIfStopped(player.tickCount);
+    	setPlayerAnimationState(player, animationState, animationName);
+    }
+    
+    public static void stopPlayerAnimation(Entity player, String animationName)
+    {
+    	AnimationState animationState = getPlayerAnimationState(player, animationName);
+    	animationState.stop();
+    	setPlayerAnimationState(player, animationState, animationName);
+    }
+    
+    public static AnimationState getPlayerAnimationState(Entity player, String name)
+    {
+        return readAnimationState(player.getPersistentData(), name);
+    }
+
+    public static void setPlayerAnimationState(Entity player, AnimationState state, String name)
+    {
+        writeAnimationState(player.getPersistentData(), state, name);
     }
 	
-	@SuppressWarnings("unchecked")
-	public static Entity getEntityByUUID(Level level, UUID uuid)
-	{
-		Method m = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
-		try 
-		{
-			LevelEntityGetter<Entity> entities = (LevelEntityGetter<Entity>) m.invoke(level);
-			return entities.get(uuid);
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public static void writeItemAnimationState(CompoundTag tag, AnimationState state)
-	{
-		tag.putLong("LastTime", state.lastTime);
-		tag.putLong("AccumulatedTime", state.accumulatedTime);
-	}
+    public static AnimationState getItemAnimationState(ItemStack stack, String name)
+    {
+        CompoundTag tag = stack.getTag();
+        return tag != null ? readAnimationState(tag, name) : new AnimationState();
+    }
+
+    public static void setItemAnimationState(ItemStack stack, AnimationState state, String name)
+    {
+        CompoundTag tag = stack.getOrCreateTag();
+        writeAnimationState(tag, state, name);
+    }
 	
 	public static void writeAnimationState(CompoundTag tag, AnimationState state, String name)
 	{
-		CompoundTag animTag = new CompoundTag();
+		CompoundTag animTag = tag.getCompound("AnimationState");
 		animTag.putString("Name", name);
 		animTag.putLong("LastTime", state.lastTime);
 		animTag.putLong("AccumulatedTime", state.accumulatedTime);
 		tag.put("AnimationState", animTag);
-	}
-	
-	public static void writeAnimationState(FriendlyByteBuf buf, AnimationState state)
-	{
-		buf.writeLong(state.lastTime);
-		buf.writeLong(state.accumulatedTime);
-	}
-	
-	public static AnimationState readItemAnimationState(CompoundTag tag)
-	{
-		AnimationState state = new AnimationState();
-		state.lastTime = tag.getLong("LastTime");
-		state.accumulatedTime = tag.getLong("AccumulatedTime");
-		return state;
 	}
 	
 	public static AnimationState readAnimationState(CompoundTag tag, String name)
@@ -139,12 +177,20 @@ public class ACCUtil
 		return state;
 	}
 	
-	public static AnimationState readAnimationState(FriendlyByteBuf buf)
+	@SuppressWarnings("unchecked")
+	public static Entity getEntityByUUID(Level level, UUID uuid)
 	{
-		AnimationState state = new AnimationState();
-		state.lastTime = buf.readLong();
-		state.accumulatedTime = buf.readLong();
-		return state;
+		Method m = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
+		try 
+		{
+			LevelEntityGetter<Entity> entities = (LevelEntityGetter<Entity>) m.invoke(level);
+			return entities.get(uuid);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static boolean isModLoaded(String modid)

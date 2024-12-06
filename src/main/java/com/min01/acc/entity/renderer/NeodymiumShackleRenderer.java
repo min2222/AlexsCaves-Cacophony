@@ -33,8 +33,8 @@ public class NeodymiumShackleRenderer extends EntityRenderer<EntityNeodymiumShac
 		p_114488_.translate(0.0F, -1.5F, 0.0F);
 		this.model.setupAnim(p_114485_, 0, 0, p_114485_.tickCount + p_114487_, 0, 0);
 		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(TEXTURE_BLUE)), p_114490_, OverlayTexture.NO_OVERLAY, 0.8F, 0.8F, 0.8F, 1.0F);
-		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(TEXTURE_RED)), p_114490_, OverlayTexture.NO_OVERLAY, 0.8F, 0.8F, 0.8F, 1.0F);
+		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(TEXTURE_BLUE)), p_114490_, OverlayTexture.NO_OVERLAY, 0.5F, 0.5F, 0.5F, 1.0F);
+		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(TEXTURE_RED)), p_114490_, OverlayTexture.NO_OVERLAY, 0.5F, 0.5F, 0.5F, 1.0F);
 		p_114488_.popPose();
 	}
 

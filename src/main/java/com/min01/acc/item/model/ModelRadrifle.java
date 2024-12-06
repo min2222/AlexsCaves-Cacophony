@@ -16,7 +16,6 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.item.ItemStack;
 
 public class ModelRadrifle extends HierarchicalItemModel
@@ -61,8 +60,7 @@ public class ModelRadrifle extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) 
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		AnimationState state = ACCUtil.getAnimationState(stack);
-		this.animate(state, RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
+		this.animate(ACCUtil.getItemAnimationState(stack, RadrifleItem.RADRIFLE_FIRE), RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
 		this.root.getChild("beam").visible = ACCUtil.getAnimationTick(stack) >= 8;
 		this.root.getChild("beam").zScale += RadrifleItem.getBeamLength(stack);
 	}
