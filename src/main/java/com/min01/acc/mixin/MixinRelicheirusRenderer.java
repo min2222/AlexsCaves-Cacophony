@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 @Mixin(RelicheirusRenderer.class)
 public class MixinRelicheirusRenderer
 {
-    @Inject(at = @At("HEAD"), method = "getTextureLocation", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getTextureLocation", cancellable = true, remap = false)
     private void getTextureLocation(RelicheirusEntity entity, CallbackInfoReturnable<ResourceLocation> cir)
     {
     	if(entity.getPersistentData().contains("isPainted"))

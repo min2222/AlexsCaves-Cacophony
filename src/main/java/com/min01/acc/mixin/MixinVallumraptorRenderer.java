@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 @Mixin(VallumraptorRenderer.class)
 public class MixinVallumraptorRenderer
 {
-    @Inject(at = @At("HEAD"), method = "getTextureLocation", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getTextureLocation", cancellable = true, remap = false)
     private void getTextureLocation(VallumraptorEntity entity, CallbackInfoReturnable<ResourceLocation> cir)
     {
     	if(entity.getPersistentData().contains("isPainted"))
