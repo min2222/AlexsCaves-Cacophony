@@ -16,8 +16,6 @@ public abstract class AbstractAnimatableMonster extends Monster implements IAdva
 {
 	public static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Integer> ANIMATION_TICK = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.INT);
-	public static final EntityDataAccessor<Integer> PREV_ANIMATION_TICK = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.INT);
-	public static final EntityDataAccessor<Integer> MOVE_STOP_DELAY = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Boolean> CAN_LOOK = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> CAN_MOVE = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> IS_USING_SKILL = SynchedEntityData.defineId(AbstractAnimatableMonster.class, EntityDataSerializers.BOOLEAN);
@@ -37,8 +35,6 @@ public abstract class AbstractAnimatableMonster extends Monster implements IAdva
 		super.defineSynchedData();
 		this.entityData.define(ANIMATION_STATE, 0);
 		this.entityData.define(ANIMATION_TICK, 0);
-		this.entityData.define(PREV_ANIMATION_TICK, 0);
-		this.entityData.define(MOVE_STOP_DELAY, 0);
 		this.entityData.define(CAN_LOOK, true);
 		this.entityData.define(CAN_MOVE, true);
 		this.entityData.define(IS_USING_SKILL, false);
@@ -120,28 +116,6 @@ public abstract class AbstractAnimatableMonster extends Monster implements IAdva
     public boolean canMove()
     {
     	return this.entityData.get(CAN_MOVE);
-    }
-    
-    public void setMoveStopDelay(int value)
-    {
-        this.entityData.set(MOVE_STOP_DELAY, value);
-    }
-
-    @Override
-    public int getMoveStopDelay()
-    {
-        return this.entityData.get(MOVE_STOP_DELAY);
-    }
-    
-    public void setPrevAnimationTick(int value)
-    {
-        this.entityData.set(PREV_ANIMATION_TICK, value);
-    }
-
-    @Override
-    public int getPrevAnimationTick()
-    {
-        return this.entityData.get(PREV_ANIMATION_TICK);
     }
     
     @Override
