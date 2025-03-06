@@ -2,21 +2,32 @@ package com.min01.acc.util;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.joml.Math;
 
 import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
+import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.IItemAnimationCapability;
+import com.min01.acc.capabilities.IPlayerAnimationCapability;
+import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
+import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
@@ -24,50 +35,215 @@ public class ACCUtil
 {
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
-    public static final String ANIMATION_TICK = "AnimationTick";
     public static final String IS_VISIBLE = "isVisible";
     
-    public static void animationTick(Entity player, ItemStack stack)
+	public static void getClientLevel(Consumer<Level> consumer)
+	{
+		LogicalSidedProvider.CLIENTWORLD.get(LogicalSide.CLIENT).filter(ClientLevel.class::isInstance).ifPresent(level -> 
+		{
+			consumer.accept(level);
+		});
+	}
+    
+    public static void updatePlayerTick(LivingEntity player)
     {
-    	int tick = ACCUtil.getAnimationTick(stack);
-    	if(tick > 0)
+    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
     	{
-    		ACCUtil.setAnimationTick(stack, tick - 1);
-    	}
-    	
-    	if(player.level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
-    	}
+    		t.update();
+    	});
     }
+    
+    public static void updateItemTick(LivingEntity player, ItemStack stack)
+    {
+    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	{
+    		t.update();
+    		t.setEntity(player);
+    	});
+    }
+    
+    public static int getPlayerAnimationTick(LivingEntity player)
+    {
+        IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+        return cap.getAnimationTick();
+    }
+
+    public static void setPlayerAnimationTick(LivingEntity player, int tick)
+    {
+    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
+    	{
+    		t.setAnimationTick(tick);
+    	});
+    }
+    
+    public static int getItemAnimationTick(ItemStack stack)
+    {
+        IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+        return cap.getAnimationTick();
+    }
+
+    public static void setItemAnimationTick(ItemStack stack, int tick)
+    {
+    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	{
+    		t.setAnimationTick(tick);
+    	});
+    }
+    
+    public static void startItemAnimation(ItemStack stack, String animationName, int tickCount)
+    {
+    	stopAllItemAnimations(stack);
+    	AnimationState animationState = getItemAnimationState(stack, animationName);
+    	animationState.startIfStopped(tickCount);
+    	setItemAnimationState(stack, animationState, animationName);
+    }
+    
+    public static void stopAllItemAnimations(ItemStack stack)
+    {
+    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	{
+    		ListTag list = t.getTag().getLeft();
+    		for(int i = 0; i < list.size(); ++i)
+    		{
+    			CompoundTag compoundTag = list.getCompound(i);
+    	    	AnimationState animationState = getItemAnimationState(stack, compoundTag.getString("Name"));
+    	    	animationState.stop();
+    	    	setItemAnimationState(stack, animationState, compoundTag.getString("Name"));
+    		}
+    	});
+    }
+    
+    public static void stopItemAnimation(ItemStack stack, String animationName)
+    {
+    	AnimationState animationState = getItemAnimationState(stack, animationName);
+    	animationState.stop();
+    	setItemAnimationState(stack, animationState, animationName);
+    }
+    
+    public static void startPlayerAnimation(Entity player, String animationName)
+    {
+    	stopAllPlayerAnimations(player);
+    	AnimationState animationState = getPlayerAnimationState(player, animationName);
+    	animationState.startIfStopped(player.tickCount);
+    	setPlayerAnimationState(player, animationState, animationName);
+    }
+    
+    public static void stopAllPlayerAnimations(Entity player)
+    {
+    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
+    	{
+    		ListTag list = t.getTag().getLeft();
+    		for(int i = 0; i < list.size(); ++i)
+    		{
+    			CompoundTag compoundTag = list.getCompound(i);
+    	    	AnimationState animationState = getPlayerAnimationState(player, compoundTag.getString("Name"));
+    	    	animationState.stop();
+    	    	setPlayerAnimationState(player, animationState, compoundTag.getString("Name"));
+    		}
+    	});
+    }
+    
+    public static void stopPlayerAnimation(Entity player, String animationName)
+    {
+    	AnimationState animationState = getPlayerAnimationState(player, animationName);
+    	animationState.stop();
+    	setPlayerAnimationState(player, animationState, animationName);
+    }
+    
+    public static AnimationState getPlayerAnimationState(Entity player, String animationName)
+    {
+        IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+        return cap.getAnimationState(animationName);
+    }
+
+    public static void setPlayerAnimationState(Entity player, AnimationState state, String animationName)
+    {
+    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
+    	{
+    		t.setAnimationState(state, animationName);
+    	});
+    }
+	
+    public static AnimationState getItemAnimationState(ItemStack stack, String animationName)
+    {
+        IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+        return cap.getAnimationState(animationName);
+    }
+
+    public static void setItemAnimationState(ItemStack stack, AnimationState state, String animationName)
+    {
+    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	{
+    		t.setAnimationState(state, animationName);
+    	});
+    }
+	
+	public static void writeAnimationState(ListTag list, AnimationState state, String animationName)
+	{
+		CompoundTag compoundTag = getAnimationTag(list, animationName);
+		compoundTag.putString("Name", animationName);
+		compoundTag.putLong("LastTime", state.lastTime);
+		compoundTag.putLong("AccumulatedTime", state.accumulatedTime);
+		if(!hasAnimation(list, animationName))
+		{
+			list.add(compoundTag);
+		}
+	}
+	
+	public static boolean hasAnimation(ListTag list, String animationName)
+	{
+		boolean flag = false;
+		for(int i = 0; i < list.size(); ++i)
+		{
+			CompoundTag compoundTag = list.getCompound(i);
+			if(compoundTag.getString("Name").equals(animationName))
+			{
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+	
+	public static CompoundTag getAnimationTag(ListTag list, String animationName)
+	{
+		for(int i = 0; i < list.size(); ++i)
+		{
+			CompoundTag compoundTag = list.getCompound(i);
+			if(compoundTag.getString("Name").equals(animationName))
+			{
+				return compoundTag;
+			}
+		}
+		return new CompoundTag();
+	}
+	
+	public static AnimationState readAnimationState(ListTag list, String animationName)
+	{
+		AnimationState state = new AnimationState();
+		for(int i = 0; i < list.size(); ++i)
+		{
+			CompoundTag compoundTag = list.getCompound(i);
+			if(compoundTag.getString("Name").equals(animationName))
+			{
+				state.lastTime = compoundTag.getLong("LastTime");
+				state.accumulatedTime = compoundTag.getLong("AccumulatedTime");
+				return state;
+			}
+		}
+		return state;
+	}
 
     public static boolean isVisible(ItemStack stack)
     {
         CompoundTag tag = stack.getTag();
-        return tag != null ? tag.getBoolean(IS_VISIBLE) : false;
+        return tag != null && tag.getBoolean(IS_VISIBLE);
     }
 
-    public static void setVisible(Entity player, ItemStack stack, boolean visible)
+    public static void setVisible(ItemStack stack, boolean visible)
     {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putBoolean(IS_VISIBLE, visible);
-        
-    	if(player.level.isClientSide)
-    	{
-    		AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
-    	}
-    }
-    
-    public static int getAnimationTick(ItemStack stack)
-    {
-        CompoundTag tag = stack.getTag();
-        return tag != null ? tag.getInt(ANIMATION_TICK) : 0;
-    }
-
-    public static void setAnimationTick(ItemStack stack, int tick)
-    {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(ANIMATION_TICK, tick);
     }
     
     public static boolean hasCharge(ItemStack stack, int maxCharge)
@@ -91,91 +267,6 @@ public class ACCUtil
             AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
     	}
     }
-    
-    public static void startItemAnimation(Entity player, ItemStack stack, String animationName)
-    {
-    	AnimationState animationState = getItemAnimationState(stack, animationName);
-    	animationState.startIfStopped(player.tickCount);
-    	setItemAnimationState(stack, animationState, animationName);
-    	
-    	if(player.level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
-    	}
-    }
-    
-    public static void stopItemAnimation(Entity player, ItemStack stack, String animationName)
-    {
-    	AnimationState animationState = getItemAnimationState(stack, animationName);
-    	animationState.stop();
-    	setItemAnimationState(stack, animationState, animationName);
-    	
-    	if(player.level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
-    	}
-    }
-    
-    public static void startPlayerAnimation(Entity player, String animationName)
-    {
-    	AnimationState animationState = getPlayerAnimationState(player, animationName);
-    	animationState.startIfStopped(player.tickCount);
-    	setPlayerAnimationState(player, animationState, animationName);
-    }
-    
-    public static void stopPlayerAnimation(Entity player, String animationName)
-    {
-    	AnimationState animationState = getPlayerAnimationState(player, animationName);
-    	animationState.stop();
-    	setPlayerAnimationState(player, animationState, animationName);
-    }
-    
-    public static AnimationState getPlayerAnimationState(Entity player, String name)
-    {
-        return readAnimationState(player.getPersistentData(), name);
-    }
-
-    public static void setPlayerAnimationState(Entity player, AnimationState state, String name)
-    {
-        writeAnimationState(player.getPersistentData(), state, name);
-    }
-	
-    public static AnimationState getItemAnimationState(ItemStack stack, String name)
-    {
-        CompoundTag tag = stack.getTag();
-        return tag != null ? readAnimationState(tag, name) : new AnimationState();
-    }
-
-    public static void setItemAnimationState(ItemStack stack, AnimationState state, String name)
-    {
-        CompoundTag tag = stack.getOrCreateTag();
-        writeAnimationState(tag, state, name);
-    }
-	
-	public static void writeAnimationState(CompoundTag tag, AnimationState state, String name)
-	{
-		CompoundTag animTag = tag.getCompound("AnimationState");
-		animTag.putString("Name", name);
-		animTag.putLong("LastTime", state.lastTime);
-		animTag.putLong("AccumulatedTime", state.accumulatedTime);
-		tag.put("AnimationState", animTag);
-	}
-	
-	public static AnimationState readAnimationState(CompoundTag tag, String name)
-	{
-		AnimationState state = new AnimationState();
-		if(tag.contains("AnimationState"))
-		{
-			CompoundTag animTag = tag.getCompound("AnimationState");
-			if(animTag.getString("Name") == name)
-			{
-				state.lastTime = animTag.getLong("LastTime");
-				state.accumulatedTime = animTag.getLong("AccumulatedTime");
-				return state;
-			}
-		}
-		return state;
-	}
 	
 	@SuppressWarnings("unchecked")
 	public static Entity getEntityByUUID(Level level, UUID uuid)

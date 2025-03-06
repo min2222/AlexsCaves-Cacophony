@@ -68,11 +68,10 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
-    	ACCUtil.animationTick(p_41406_, p_41404_);
-		int tick = ACCUtil.getAnimationTick(p_41404_);
+		int tick = ACCUtil.getItemAnimationTick(p_41404_);
     	if(tick <= 0 && ACCUtil.getItemAnimationState(p_41404_, RADRIFLE_FIRE).isStarted())
     	{
-        	ACCUtil.stopItemAnimation(p_41406_, p_41404_, RADRIFLE_FIRE);
+        	ACCUtil.stopItemAnimation(p_41404_, RADRIFLE_FIRE);
     	}
         
         if(p_41404_.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
@@ -98,8 +97,8 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 		int charge = ACCUtil.getCharge(stack);
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
-        	ACCUtil.startItemAnimation(player, stack, RADRIFLE_FIRE);
-        	ACCUtil.setAnimationTick(stack, 13);
+        	ACCUtil.startItemAnimation(stack, RADRIFLE_FIRE, player.tickCount);
+        	ACCUtil.setItemAnimationTick(stack, 13);
         	
         	Vec3 riflePos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 3.0F);
 			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), riflePos, 0.0F, 0.0F, 100.0F);

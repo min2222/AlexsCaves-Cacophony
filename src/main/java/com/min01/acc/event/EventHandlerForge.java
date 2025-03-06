@@ -4,12 +4,15 @@ import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.entity.projectile.EntityFearArrow;
 import com.min01.acc.misc.ACCLootTables;
+import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -17,6 +20,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -49,6 +53,25 @@ public class EventHandlerForge
         }
     }
     
+	@SubscribeEvent
+	public static void onPlayerTick(PlayerTickEvent event)
+	{
+		Player player = event.player;
+		ACCUtil.updatePlayerTick(player);
+		for(ItemStack stack : player.getInventory().items)
+		{
+			ACCUtil.updateItemTick(player, stack);
+		}
+		for(ItemStack stack : player.getInventory().armor)
+		{
+			ACCUtil.updateItemTick(player, stack);
+		}
+		for(ItemStack stack : player.getInventory().offhand)
+		{
+			ACCUtil.updateItemTick(player, stack);
+		}
+	}
+	
     @SubscribeEvent
     public static void onProjectileImpact(ProjectileImpactEvent event)
     {

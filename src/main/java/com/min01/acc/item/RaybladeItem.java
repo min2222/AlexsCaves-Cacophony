@@ -23,6 +23,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -33,9 +34,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class RaybladeItem extends Item implements UpdatesStackTags
@@ -45,6 +43,7 @@ public class RaybladeItem extends Item implements UpdatesStackTags
     public static final String RAYBLADE_HOLD_RIGHT = "RaybladeHoldRight";
     public static final String RAYBLADE_SWING_RIGHT = "RaybladeSwingRight";
     public static final String RAYBLADE_SWING = "RaybladeSwing";
+    public static final String IS_SELECTED = "isSelected";
     public static final int MAX_CHARGE = 3;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
@@ -85,47 +84,14 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
+		AnimationState drawState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_DRAW_RIGHT);
 		CompoundTag tag = p_41404_.getOrCreateTag();
 		updateFrame(tag, p_41406_);
-    	ACCUtil.animationTick(p_41406_, p_41404_);
-    	int tick = ACCUtil.getAnimationTick(p_41404_);
-    	//FIXME item animation stop immediately after started;
-    	if(p_41408_)
+    	if(p_41408_ && !drawState.isStarted() && !isSelected(p_41404_))
     	{
-    		if(!ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_HOLD_RIGHT).isStarted() && !ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_SWING_RIGHT).isStarted())
-    		{
-    			ACCUtil.setVisible(p_41406_, p_41404_, false);
-    			ACCUtil.startPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
-    		}
-        	if(ACCUtil.getItemAnimationState(p_41404_, RAYBLADE_SWING).isStarted())
-        	{
-        		if(tick <= 0)
-        		{
-        			ACCUtil.setVisible(p_41406_, p_41404_, false);
-                	ACCUtil.stopItemAnimation(p_41406_, p_41404_, RAYBLADE_SWING);
-                	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_HOLD_RIGHT);
-                	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_SWING_RIGHT);
-        		}
-        		else if(tick == 9 && p_41406_ instanceof LivingEntity living)
-        		{
-        			Vec3 pos = living.getEyePosition().subtract(0, 1.5F, 0.0F);
-        			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(0.0F, living.yBodyRot), pos, 0.0F, 0.0F, 1.5F);
-        			List<LivingEntity> list = p_41405_.getEntitiesOfClass(LivingEntity.class, new AABB(pos, lookPos).inflate(1.0F, 0.5F, 1.0F));
-        			list.removeIf(t -> t == living || t.isAlliedTo(living));
-        			list.forEach(t -> 
-        			{
-        				t.hurt(living.damageSources().mobAttack(living), 100.0F);
-        			});
-        		}
-        	}
+			//ACCUtil.startPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
     	}
-    	else
-    	{
-			ACCUtil.setVisible(p_41406_, p_41404_, false);
-        	ACCUtil.stopItemAnimation(p_41406_, p_41404_, RAYBLADE_SWING);
-        	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_HOLD_RIGHT);
-        	ACCUtil.stopPlayerAnimation(p_41406_, RAYBLADE_SWING_RIGHT);
-    	}
+		setSelected(p_41404_, p_41408_);
 	}
 	
 	@Override
@@ -136,7 +102,7 @@ public class RaybladeItem extends Item implements UpdatesStackTags
         if(charge < MAX_CHARGE)
         {
         	p_41433_.startUsingItem(p_41434_);
-			ACCUtil.setVisible(p_41433_, stack, true);
+			ACCUtil.setVisible(stack, true);
         }
         else
         {
@@ -163,10 +129,9 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 		int charge = ACCUtil.getCharge(p_41412_);
     	if(i >= 1)
     	{
-    		ACCUtil.stopPlayerAnimation(p_41414_, RAYBLADE_HOLD_RIGHT);
     		ACCUtil.startPlayerAnimation(p_41414_, RAYBLADE_SWING_RIGHT);
-        	ACCUtil.startItemAnimation(p_41414_, p_41412_, RAYBLADE_SWING);
-        	ACCUtil.setAnimationTick(p_41412_, 15);
+        	ACCUtil.startItemAnimation(p_41412_, RAYBLADE_SWING, p_41414_.tickCount);
+        	ACCUtil.setItemAnimationTick(p_41412_, 15);
         	if(p_41414_ instanceof Player player)
         	{
         		if(!player.getAbilities().instabuild)
@@ -226,6 +191,18 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 		{
 			tag.putInt(FRAME, 0);
 		}
+	}
+	
+	public static boolean isSelected(ItemStack stack) 
+	{
+		CompoundTag tag = stack.getTag();
+		return tag != null && tag.getBoolean(IS_SELECTED);
+	}
+	
+	public static void setSelected(ItemStack stack, boolean isSelected) 
+	{
+		CompoundTag tag = stack.getOrCreateTag();
+		tag.putBoolean(IS_SELECTED, isSelected);
 	}
 	
     public static boolean hasCharge(ItemStack stack)
