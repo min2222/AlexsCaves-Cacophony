@@ -9,17 +9,14 @@ import javax.annotation.Nullable;
 import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
-import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
 import com.min01.acc.item.renderer.RaybladeRenderer;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -29,14 +26,19 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
-public class RaybladeItem extends Item implements UpdatesStackTags
+public class RaybladeItem extends SwordItem
 {
     public static final String FRAME = "Frame";
     public static final String RAYBLADE_DRAW_RIGHT = "RaybladeDrawRight";
@@ -53,44 +55,40 @@ public class RaybladeItem extends Item implements UpdatesStackTags
     
 	public RaybladeItem()
 	{
-		super(new Item.Properties().stacksTo(1).rarity(ACItemRegistry.RARITY_NUCLEAR));
-	}
-	
-	@Override
-	public boolean canAttackBlock(BlockState p_43291_, Level p_43292_, BlockPos p_43293_, Player p_43294_)
-	{
-		return !p_43294_.isCreative();
-	}
-	
-	@Override
-	public float getDestroySpeed(ItemStack p_43288_, BlockState p_43289_)
-	{
-		if(p_43289_.is(Blocks.COBWEB)) 
-		{
-			return 15.0F;
-		} 
-		else
-		{
-			return p_43289_.is(BlockTags.SWORD_EFFICIENT) ? 1.5F : 1.0F;
-		}
-	}
-
-	@Override
-	public boolean isCorrectToolForDrops(BlockState p_43298_) 
-	{
-		return p_43298_.is(Blocks.COBWEB);
+		super(Tiers.NETHERITE, 0, 0.0F, new Item.Properties().stacksTo(1).rarity(ACItemRegistry.RARITY_NUCLEAR));
 	}
 
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
+		int tick = ACCUtil.getItemAnimationTick(p_41404_);
 		AnimationState drawState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_DRAW_RIGHT);
-		CompoundTag tag = p_41404_.getOrCreateTag();
-		updateFrame(tag, p_41406_);
+		AnimationState swingState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_SWING_RIGHT);
     	if(p_41408_ && !drawState.isStarted() && !isSelected(p_41404_))
     	{
-			//ACCUtil.startPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
+			ACCUtil.startPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
     	}
+    	if(p_41408_ && swingState.isStarted())
+    	{
+    		if(tick == 60 - 6 && p_41406_ instanceof LivingEntity living)
+    		{
+    			Vec3 pos = living.getEyePosition().subtract(0, 1.5F, 0.0F);
+    			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(0.0F, living.yBodyRot), pos, 0.0F, 0.0F, 1.5F);
+    			List<LivingEntity> list = p_41405_.getEntitiesOfClass(LivingEntity.class, new AABB(pos, lookPos).inflate(1.0F, 0.5F, 1.0F));
+    			list.removeIf(t -> t == living || t.isAlliedTo(living));
+    			list.forEach(t -> 
+    			{
+    				t.hurt(living.damageSources().mobAttack(living), 100.0F);
+    			});
+    		}
+    		if(tick <= 0)
+    		{
+    			ACCUtil.setVisible(p_41404_, false);
+            	ACCUtil.stopAllPlayerAnimations(p_41406_);
+    			ACCUtil.stopAllItemAnimations(p_41404_);
+    		}
+    	}
+		updateFrame(p_41404_.getOrCreateTag(), p_41406_);
 		setSelected(p_41404_, p_41408_);
 	}
 	
@@ -102,6 +100,8 @@ public class RaybladeItem extends Item implements UpdatesStackTags
         if(charge < MAX_CHARGE)
         {
         	p_41433_.startUsingItem(p_41434_);
+        	ACCUtil.stopAllPlayerAnimations(p_41433_);
+        	ACCUtil.stopAllItemAnimations(stack);
 			ACCUtil.setVisible(stack, true);
         }
         else
@@ -119,7 +119,11 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 	@Override
 	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
 	{
-		ACCUtil.startPlayerAnimation(p_41429_, RAYBLADE_HOLD_RIGHT);
+		AnimationState state = ACCUtil.getPlayerAnimationState(p_41429_, RAYBLADE_HOLD_RIGHT);
+		if(!state.isStarted())
+		{
+			ACCUtil.startPlayerAnimation(p_41429_, RAYBLADE_HOLD_RIGHT);
+		}
 	}
 	
 	@Override
@@ -131,7 +135,7 @@ public class RaybladeItem extends Item implements UpdatesStackTags
     	{
     		ACCUtil.startPlayerAnimation(p_41414_, RAYBLADE_SWING_RIGHT);
         	ACCUtil.startItemAnimation(p_41412_, RAYBLADE_SWING, p_41414_.tickCount);
-        	ACCUtil.setItemAnimationTick(p_41412_, 15);
+        	ACCUtil.setItemAnimationTick(p_41412_, 60);
         	if(p_41414_ instanceof Player player)
         	{
         		if(!player.getAbilities().instabuild)
@@ -264,5 +268,11 @@ public class RaybladeItem extends Item implements UpdatesStackTags
 				return new RaybladeRenderer(ACCClientUtil.MC.getEntityModels());
 			}
 		});
+	}
+	
+	@Override
+	public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
+	{
+		return toolAction == ToolActions.SWORD_DIG;
 	}
 }
