@@ -2,7 +2,6 @@ package com.min01.acc.event;
 
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.entity.IPainted;
 import com.min01.acc.entity.projectile.EntityFearArrow;
 import com.min01.acc.misc.ACCLootTables;
 import com.min01.acc.util.ACCUtil;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -73,20 +71,6 @@ public class EventHandlerForge
 			ACCUtil.updateItemTick(player, stack);
 		}
 	}
-	
-	//TODO
-    //@SubscribeEvent
-    public static void onEntityJoinLevel(EntityJoinLevelEvent event)
-    {
-    	Entity entity = event.getEntity();
-    	if(entity instanceof IPainted painted)
-    	{
-    		if(Math.random() <= 0.1F)
-    		{
-        		painted.setPainted(true);
-    		}
-    	}
-    }
 	
     @SubscribeEvent
     public static void onProjectileImpact(ProjectileImpactEvent event)
