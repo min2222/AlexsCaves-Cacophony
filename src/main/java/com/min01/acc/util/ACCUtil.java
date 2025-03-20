@@ -322,9 +322,9 @@ public class ACCUtil
 	
 	public static Vec3 getSpreadPosition(Level level, Vec3 startPos, double range)
 	{
-        double x = (double) startPos.x + (level.random.nextDouble() - level.random.nextDouble()) * (double)range + 0.5D;
-        double y = (double) startPos.y + (level.random.nextDouble() - level.random.nextDouble()) * (double)range + 0.5D;
-        double z = (double) startPos.z + (level.random.nextDouble() - level.random.nextDouble()) * (double)range + 0.5D;
+        double x = startPos.x + (level.random.nextDouble() - level.random.nextDouble()) * range + 0.5D;
+        double y = startPos.y + (level.random.nextDouble() - level.random.nextDouble()) * range + 0.5D;
+        double z = startPos.z + (level.random.nextDouble() - level.random.nextDouble()) * range + 0.5D;
         return new Vec3(x, y, z);
 	}
 	
