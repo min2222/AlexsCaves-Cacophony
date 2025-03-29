@@ -57,6 +57,7 @@ public class EventHandler
     	if(event.getTabKey() == ACCreativeTabRegistry.MAGNETIC_CAVES.getKey())
     	{
     		event.accept(ACCItems.NEODYMIUM_SHACKLE.get());
+    		event.accept(ACCItems.MAGNETIC_RAILGUN.get());
     	}
     }
 }

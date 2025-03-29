@@ -8,6 +8,7 @@ import com.min01.acc.entity.model.ModelNeodymiumShackle;
 import com.min01.acc.entity.renderer.FearArrowRenderer;
 import com.min01.acc.entity.renderer.GloomwormRenderer;
 import com.min01.acc.entity.renderer.NeodymiumShackleRenderer;
+import com.min01.acc.item.model.ModelMagneticRailgun;
 import com.min01.acc.item.model.ModelRadrifle;
 import com.min01.acc.item.model.ModelRayblade;
 
@@ -27,6 +28,7 @@ public class ClientEventHandler
     	event.registerLayerDefinition(ModelRadrifle.LAYER_LOCATION, ModelRadrifle::createBodyLayer);
     	event.registerLayerDefinition(ModelGloomworm.LAYER_LOCATION, ModelGloomworm::createBodyLayer);
     	event.registerLayerDefinition(ModelNeodymiumShackle.LAYER_LOCATION, ModelNeodymiumShackle::createBodyLayer);
+    	event.registerLayerDefinition(ModelMagneticRailgun.LAYER_LOCATION, ModelMagneticRailgun::createBodyLayer);
     }
     
     @SubscribeEvent

@@ -77,7 +77,6 @@ public class GloomothEggsBlock extends MultifaceBlock implements SimpleWaterlogg
 		{
 			p_153305_.scheduleTick(p_153306_, Fluids.WATER, Fluids.WATER.getTickDelay(p_153305_));
 		}
-
 		return super.updateShape(p_153302_, p_153303_, p_153304_, p_153305_, p_153306_, p_153307_);
 	}
 

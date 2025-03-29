@@ -18,6 +18,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,6 +37,28 @@ public class ACCUtil
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String IS_VISIBLE = "isVisible";
+    
+    public static void shoot(Entity projectile, double p_37266_, double p_37267_, double p_37268_, float p_37269_, float p_37270_) 
+    {
+    	RandomSource random = projectile.level.random;
+    	Vec3 vec3 = (new Vec3(p_37266_, p_37267_, p_37268_)).normalize().add(random.triangle(0.0D, 0.0172275D * (double)p_37270_), random.triangle(0.0D, 0.0172275D * (double)p_37270_), random.triangle(0.0D, 0.0172275D * (double)p_37270_)).scale((double)p_37269_);
+    	projectile.setDeltaMovement(vec3);
+    	double d0 = vec3.horizontalDistance();
+    	projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
+    	projectile.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180F / (float)Math.PI)));
+    	projectile.yRotO = projectile.getYRot();
+    	projectile.xRotO = projectile.getXRot();
+    }
+
+    public static void shootFromRotation(Entity projectile, Entity p_37252_, float p_37253_, float p_37254_, float p_37255_, float p_37256_, float p_37257_) 
+    {
+    	float f = -Mth.sin(p_37254_ * ((float)Math.PI / 180F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180F));
+    	float f1 = -Mth.sin((p_37253_ + p_37255_) * ((float)Math.PI / 180F));
+    	float f2 = Mth.cos(p_37254_ * ((float)Math.PI / 180F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180F));
+    	shoot(projectile, (double)f, (double)f1, (double)f2, p_37256_, p_37257_);
+    	Vec3 vec3 = p_37252_.getDeltaMovement();
+    	projectile.setDeltaMovement(projectile.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));
+    }
     
 	public static void getClientLevel(Consumer<Level> consumer)
 	{
@@ -253,14 +276,14 @@ public class ACCUtil
     
     public static int getCharge(ItemStack stack)
     {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getInt(CHARGE_USED) : 0;
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getInt(CHARGE_USED) : 0;
     }
 
     public static void setCharge(Entity player, ItemStack stack, int charge)
     {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putInt(CHARGE_USED, charge);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt(CHARGE_USED, charge);
         
     	if(player.level.isClientSide)
     	{

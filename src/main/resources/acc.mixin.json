@@ -6,7 +6,9 @@
 	"mixins": [
 		"MixinRelicheirusEntity",
 		"MixinVallumraptorEntity",
-		"MixinLivingEntity"
+		"MixinLivingEntity",
+		"MixinMob",
+		"MixinFallingBlockEntity"
 	],
 	"client": [
 		"MixinPlayerModel",

@@ -191,14 +191,14 @@ public class RadrifleItem extends Item implements UpdatesStackTags
     
     public static float getBeamLength(ItemStack stack)
     {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getFloat(BEAM_LENGTH) : 0;
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getFloat(BEAM_LENGTH) : 0;
     }
 
     public static void setBeamLength(ItemStack stack, float length)
     {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putFloat(BEAM_LENGTH, length);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putFloat(BEAM_LENGTH, length);
     }
     
     @Override

@@ -2,26 +2,32 @@ package com.min01.acc.event;
 
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.entity.projectile.EntityFearArrow;
+import com.min01.acc.item.ACCItems;
 import com.min01.acc.misc.ACCLootTables;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -70,6 +76,32 @@ public class EventHandlerForge
 		{
 			ACCUtil.updateItemTick(player, stack);
 		}
+	}
+	
+	@SubscribeEvent
+	public static void onLivingTick(LivingTickEvent event)
+	{
+		LivingEntity living = event.getEntity();
+		living.getCapability(ACCCapabilities.OWNER).ifPresent(t -> 
+		{
+			Entity owner = t.getOwner();
+			if(owner instanceof Player player)
+			{
+	    		if(player.isHolding(ACCItems.MAGNETIC_RAILGUN.get()))
+	    		{
+	    			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 5.0F);
+	    			HitResult hitResult = living.level.clip(new ClipContext(player.getEyePosition(), lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+	    			Vec3 pos = hitResult.getLocation();
+	    			living.teleportTo(pos.x, pos.y, pos.z);
+	    			living.setOnGround(false);
+	    		}
+	    		else
+	    		{
+	    			living.setNoGravity(false);
+	    			t.setOwner(null);
+	    		}
+			}
+		});
 	}
 	
     @SubscribeEvent
