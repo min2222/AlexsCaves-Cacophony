@@ -25,6 +25,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -46,6 +47,7 @@ public class MagneticRailgunItem extends Item implements UpdatesStackTags
 {
     public static final int MAX_CHARGE = 1000;
     public static final String PICKUP = "Pickup";
+    public int tickCount;
     
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -58,13 +60,28 @@ public class MagneticRailgunItem extends Item implements UpdatesStackTags
 	}
 	
 	@Override
-	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int p_41407_, boolean p_41408_)
 	{
-		super.inventoryTick(p_41404_, p_41405_, p_41406_, p_41407_, p_41408_);
-		if(isPickup(p_41404_) && !p_41408_)
+		this.tickCount++;
+		if(entity instanceof Player player)
 		{
-			setPickup(p_41404_, null);
+			ACCUtil.updateItemTick(player, stack);
 		}
+		if(isPickup(level, stack) && !p_41408_)
+		{
+			setPickup(stack, null);
+		}
+	}
+	
+	@Override
+	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) 
+	{
+		this.tickCount++;
+		if(entity.getOwner() instanceof LivingEntity living)
+		{
+			ACCUtil.updateItemTick(living, stack);
+		}
+		return super.onEntityItemUpdate(stack, entity);
 	}
 	
 	@Override
@@ -74,7 +91,7 @@ public class MagneticRailgunItem extends Item implements UpdatesStackTags
 		Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 5.0F);
 		HitResult hitResult = level.clip(new ClipContext(player.getEyePosition(), lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 		HitResult entityHitResult = ProjectileUtil.getHitResultOnViewVector(player, t -> t != player, 8.0F);
-		if(!isPickup(stack))
+		if(!isPickup(level, stack))
 		{
     		if(hitResult instanceof BlockHitResult blockHit)
     		{
@@ -158,9 +175,9 @@ public class MagneticRailgunItem extends Item implements UpdatesStackTags
         }
     }
     
-    public static boolean isPickup(ItemStack stack)
+    public static boolean isPickup(Level level, ItemStack stack)
     {
-    	return getPickup(stack) != null;
+    	return getPickup(level, stack) != null;
     }
     
     public static Entity getPickup(Level level, ItemStack stack)

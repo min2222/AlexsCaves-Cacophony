@@ -3,14 +3,9 @@ package com.min01.acc.entity.model;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.entity.animation.NeodymiumShackleAnimation;
 import com.min01.acc.entity.projectile.EntityNeodymiumShackle;
-import com.min01.acc.util.ACCClientUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -54,88 +49,10 @@ public class ModelNeodymiumShackle extends HierarchicalModel<EntityNeodymiumShac
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
-		this.animate(entity.loopAnimationState, this.shackleLoop(ACCClientUtil.getElapsedSeconds(true, 0.5F, entity.loopAnimationState.getAccumulatedTime()) / 60.0F), ageInTicks);
+		this.animate(entity.loopAnimationState, NeodymiumShackleAnimation.SHACKLE_LOOP, ageInTicks);
 		this.animate(entity.deployAnimationState, NeodymiumShackleAnimation.SHACKLE_DEPLOY, ageInTicks);
-		this.animate(entity.impactAnimationState, this.shackleImpact(ACCClientUtil.getElapsedSeconds(false, 0.3333F, entity.impactAnimationState.getAccumulatedTime()) / 60.0F), ageInTicks);
-		this.animate(entity.impactCloseAnimationState, this.shackleImpactClose(ACCClientUtil.getElapsedSeconds(false, 1.0F, entity.impactCloseAnimationState.getAccumulatedTime()) / 60.0F), ageInTicks);
-	}
-	
-	public AnimationDefinition shackleLoop(float elapsedSeconds)
-	{
-		AnimationDefinition anim = AnimationDefinition.Builder.withLength(0.5F).looping()
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
-					new Keyframe(0.0F, ACCClientUtil.degreeVec(0.0F, -elapsedSeconds*720, Math.cos(elapsedSeconds*720)*5), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, ACCClientUtil.scaleVec(1+Math.cos(elapsedSeconds*720)*.2, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.build();
-		return anim;
-	}
-	
-	public AnimationDefinition shackleImpact(float elapsedSeconds)
-	{
-		AnimationDefinition anim = AnimationDefinition.Builder.withLength(0.3333F)
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
-					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.125F, ACCClientUtil.degreeVec(0.0F, 0.0F, Math.sin(elapsedSeconds * 2160) * 20), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.2083F, ACCClientUtil.degreeVec(0.0F, 0.0F, Math.sin(elapsedSeconds * 2160) * 20), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.3333F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.POSITION, 
-					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.125F, KeyframeAnimations.posVec(0.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.25F, KeyframeAnimations.posVec(0.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3333F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
-				))
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("right_weight", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("left_weight", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.build();
-		return anim;
-	}
-	
-	public AnimationDefinition shackleImpactClose(float elapsedSeconds)
-	{
-		AnimationDefinition anim = AnimationDefinition.Builder.withLength(1.0F)
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
-					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.125F, ACCClientUtil.degreeVec(0.0F, 0.0F, Math.sin(elapsedSeconds * 2160) * 20), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.2083F, ACCClientUtil.degreeVec(0.0F, 0.0F, Math.sin(elapsedSeconds * 2160) * 20), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.3333F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.POSITION, 
-					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.125F, KeyframeAnimations.posVec(0.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.25F, KeyframeAnimations.posVec(0.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3333F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
-				))
-				.addAnimation("shackle", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.5F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.625F, KeyframeAnimations.scaleVec(0.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.8333F, KeyframeAnimations.scaleVec(0.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("right_weight", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.5F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.625F, KeyframeAnimations.scaleVec(0.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.8333F, KeyframeAnimations.scaleVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.addAnimation("left_weight", new AnimationChannel(AnimationChannel.Targets.SCALE, 
-					new Keyframe(0.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.5F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.625F, KeyframeAnimations.scaleVec(0.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-					new Keyframe(0.8333F, KeyframeAnimations.scaleVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-				))
-				.build();
-		return anim;
+		this.animate(entity.impactAnimationState, NeodymiumShackleAnimation.SHACKLE_IMPACT, ageInTicks);
+		this.animate(entity.impactCloseAnimationState, NeodymiumShackleAnimation.SHACKLE_IMPACT_CLOSE, ageInTicks);
 	}
 	
 	@Override

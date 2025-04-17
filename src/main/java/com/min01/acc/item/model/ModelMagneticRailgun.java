@@ -32,15 +32,19 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 
 		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition railgun = root.addOrReplaceChild("railgun", CubeListBuilder.create().texOffs(0, 0).addBox(-3.5F, -3.0F, -10.0F, 7.0F, 3.0F, 11.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 14).addBox(-3.5F, -3.0F, -10.0F, 7.0F, 3.0F, 11.0F, new CubeDeformation(0.1F))
-		.texOffs(0, 28).addBox(-3.5F, -3.0F, -23.0F, 2.0F, 3.0F, 13.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 44).addBox(-3.5F, -3.0F, -22.0F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.1F))
-		.texOffs(30, 28).addBox(1.5F, -3.0F, -23.0F, 2.0F, 3.0F, 13.0F, new CubeDeformation(0.0F))
-		.texOffs(14, 44).addBox(1.5F, -3.0F, -22.0F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.1F))
-		.texOffs(36, 0).addBox(0.0F, 0.0F, -2.0F, 0.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 7.0F));
+		PartDefinition railgun = root.addOrReplaceChild("railgun", CubeListBuilder.create().texOffs(0, 48).addBox(-1.5F, -3.0F, -6.0F, 3.0F, 4.0F, 7.0F, new CubeDeformation(0.01F))
+		.texOffs(32, 16).addBox(-1.5F, -3.0F, -10.0F, 3.0F, 4.0F, 11.0F, new CubeDeformation(0.1F))
+		.texOffs(20, 53).addBox(0.0F, 0.0F, -2.0F, 0.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 7.0F));
 
-		railgun.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(36, 11).addBox(-1.5F, -2.0F, -2.0F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.1895F, 2.3123F, 1.0908F, 0.0F, 0.0F));
+		railgun.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(52, 53).addBox(-1.5F, -2.0F, -2.0F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.1895F, 2.3123F, 1.0908F, 0.0F, 0.0F));
+
+		PartDefinition rail = railgun.addOrReplaceChild("rail", CubeListBuilder.create().texOffs(32, 31).addBox(-1.5F, -2.0F, -7.0F, 3.0F, 4.0F, 9.0F, new CubeDeformation(0.011F))
+		.texOffs(0, 0).addBox(-1.0F, -2.0F, -21.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 32).addBox(-1.0F, -2.0F, -21.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.09F)), PartPose.offset(0.0F, -1.0F, -8.0F));
+
+		rail.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(31, 44).addBox(-1.5F, -2.0F, -4.0F, 3.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 16).addBox(-1.0F, -1.0F, -18.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(32, 0).addBox(-1.0F, -1.0F, -18.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.09F)), PartPose.offset(0.0F, 3.0F, -3.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}

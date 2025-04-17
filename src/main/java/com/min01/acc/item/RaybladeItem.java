@@ -23,6 +23,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,13 +41,14 @@ import net.minecraftforge.common.ToolActions;
 
 public class RaybladeItem extends SwordItem
 {
-    public static final String FRAME = "Frame";
     public static final String RAYBLADE_DRAW_RIGHT = "RaybladeDrawRight";
     public static final String RAYBLADE_HOLD_RIGHT = "RaybladeHoldRight";
     public static final String RAYBLADE_SWING_RIGHT = "RaybladeSwingRight";
     public static final String RAYBLADE_SWING = "RaybladeSwing";
     public static final String IS_SELECTED = "isSelected";
     public static final int MAX_CHARGE = 3;
+    public int tickCount;
+    public int frame;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -61,6 +63,12 @@ public class RaybladeItem extends SwordItem
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
+		this.tickCount++;
+		updateFrame(p_41404_);
+		if(p_41406_ instanceof Player player)
+		{
+			ACCUtil.updateItemTick(player, p_41404_);
+		}
 		int tick = ACCUtil.getItemAnimationTick(p_41404_);
 		AnimationState drawState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_DRAW_RIGHT);
 		AnimationState swingState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_SWING_RIGHT);
@@ -88,8 +96,44 @@ public class RaybladeItem extends SwordItem
     			ACCUtil.stopAllItemAnimations(p_41404_);
     		}
     	}
-		updateFrame(p_41404_.getOrCreateTag(), p_41406_);
 		setSelected(p_41404_, p_41408_);
+	}
+	
+	@Override
+	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) 
+	{
+		this.tickCount++;
+		updateFrame(stack);
+		if(entity.getOwner() instanceof LivingEntity living)
+		{
+			ACCUtil.updateItemTick(living, stack);
+		}
+		return super.onEntityItemUpdate(stack, entity);
+	}
+	
+	public static void updateFrame(ItemStack stack)
+	{
+		if(stack.getItem() instanceof RaybladeItem blade)
+		{
+			if(blade.tickCount % 2 == 0)
+			{
+				blade.frame++;
+			}
+			
+			if(blade.frame > 19)
+			{
+				blade.frame = 0;
+			}
+		}
+	}
+	
+	public static int getFrame(ItemStack stack)
+	{
+		if(stack.getItem() instanceof RaybladeItem blade)
+		{
+			return blade.frame;
+		}
+		return 0;
 	}
 	
 	@Override
@@ -134,7 +178,7 @@ public class RaybladeItem extends SwordItem
     	if(i >= 1)
     	{
     		ACCUtil.startPlayerAnimation(p_41414_, RAYBLADE_SWING_RIGHT);
-        	ACCUtil.startItemAnimation(p_41412_, RAYBLADE_SWING, p_41414_.tickCount);
+        	ACCUtil.startItemAnimation(p_41412_, RAYBLADE_SWING, this.tickCount);
         	ACCUtil.setItemAnimationTick(p_41412_, 60);
         	if(p_41414_ instanceof Player player)
         	{
@@ -177,26 +221,6 @@ public class RaybladeItem extends SwordItem
         return ItemStack.EMPTY;
     }
 	
-	public static void updateFrame(CompoundTag tag, Entity entity)
-	{
-		if(tag.contains(FRAME))
-		{
-			if(entity.tickCount % 2 == 0)
-			{
-				tag.putInt(FRAME, tag.getInt(FRAME) + 1);
-			}
-			
-			if(tag.getInt(FRAME) > 19)
-			{
-				tag.putInt(FRAME, 0);
-			}
-		}
-		else
-		{
-			tag.putInt(FRAME, 0);
-		}
-	}
-	
 	public static boolean isSelected(ItemStack stack) 
 	{
 		CompoundTag tag = stack.getTag();
@@ -212,18 +236,6 @@ public class RaybladeItem extends SwordItem
     public static boolean hasCharge(ItemStack stack)
     {
         return ACCUtil.getCharge(stack) < MAX_CHARGE;
-    }
-    
-    public static int getFrame(ItemStack stack)
-    {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null ? compoundtag.getInt(FRAME) : 0;
-    }
-    
-    public static void setFrame(ItemStack stack, int frame)
-    {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putInt(FRAME, frame);
     }
     
     @Override
