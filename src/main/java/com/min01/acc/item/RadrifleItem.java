@@ -35,7 +35,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -55,7 +54,6 @@ public class RadrifleItem extends Item implements UpdatesStackTags
     public static final int MAX_CHARGE = 1000;
     public static final String BEAM_LENGTH = "BeamLength";
     public static final String RADRIFLE_FIRE = "RadrifleFire";
-    public int tickCount;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -70,13 +68,8 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
-		this.tickCount++;
-		if(p_41406_ instanceof Player player)
-		{
-			ACCUtil.updateItemTick(player, p_41404_);
-		}
 		int tick = ACCUtil.getItemAnimationTick(p_41404_);
-    	if(tick <= 0 && ACCUtil.getItemAnimationState(p_41404_, RADRIFLE_FIRE).isStarted())
+    	if(tick <= 0 && ACCUtil.getItemAnimation(p_41404_, RADRIFLE_FIRE).isStarted())
     	{
         	ACCUtil.stopItemAnimation(p_41404_, RADRIFLE_FIRE);
     	}
@@ -96,17 +89,6 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 	}
 	
 	@Override
-	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) 
-	{
-		this.tickCount++;
-		if(entity.getOwner() instanceof LivingEntity living)
-		{
-			ACCUtil.updateItemTick(living, stack);
-		}
-		return super.onEntityItemUpdate(stack, entity);
-	}
-	
-	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) 
 	{
 		ItemStack stack = player.getItemInHand(hand);
@@ -114,7 +96,7 @@ public class RadrifleItem extends Item implements UpdatesStackTags
 		int charge = ACCUtil.getCharge(stack);
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
-        	ACCUtil.startItemAnimation(stack, RADRIFLE_FIRE, this.tickCount);
+        	ACCUtil.startItemAnimation(stack, RADRIFLE_FIRE);
         	ACCUtil.setItemAnimationTick(stack, 13);
         	
         	Vec3 riflePos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 3.0F);

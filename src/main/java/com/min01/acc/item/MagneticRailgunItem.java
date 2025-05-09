@@ -25,7 +25,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -47,7 +46,6 @@ public class MagneticRailgunItem extends Item implements UpdatesStackTags
 {
     public static final int MAX_CHARGE = 1000;
     public static final String PICKUP = "Pickup";
-    public int tickCount;
     
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -62,26 +60,10 @@ public class MagneticRailgunItem extends Item implements UpdatesStackTags
 	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int p_41407_, boolean p_41408_)
 	{
-		this.tickCount++;
-		if(entity instanceof Player player)
-		{
-			ACCUtil.updateItemTick(player, stack);
-		}
 		if(isPickup(level, stack) && !p_41408_)
 		{
 			setPickup(stack, null);
 		}
-	}
-	
-	@Override
-	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) 
-	{
-		this.tickCount++;
-		if(entity.getOwner() instanceof LivingEntity living)
-		{
-			ACCUtil.updateItemTick(living, stack);
-		}
-		return super.onEntityItemUpdate(stack, entity);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
@@ -61,8 +62,14 @@ public class EventHandlerForge
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event)
 	{
-		Player player = event.player;
-		ACCUtil.updatePlayerTick(player);
+		for(ItemStack stack : event.player.getAllSlots())
+		{
+			stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+			{
+				t.setEntity(event.player);
+				t.update();
+			});
+		}
 	}
 	
 	@SubscribeEvent

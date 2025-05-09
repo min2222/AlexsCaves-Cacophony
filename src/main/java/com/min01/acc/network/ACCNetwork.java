@@ -21,10 +21,9 @@ public class ACCNetwork
 	public static int ID = 0;
 	public static void registerMessages()
 	{
-		CHANNEL.registerMessage(ID++, UpdatePlayerAnimationPacket.class, UpdatePlayerAnimationPacket::encode, UpdatePlayerAnimationPacket::new, UpdatePlayerAnimationPacket.Handler::onMessage);
-		CHANNEL.registerMessage(ID++, UpdateItemAnimationPacket.class, UpdateItemAnimationPacket::encode, UpdateItemAnimationPacket::new, UpdateItemAnimationPacket.Handler::onMessage);
 		CHANNEL.registerMessage(ID++, UpdatePlayerAnimationTickPacket.class, UpdatePlayerAnimationTickPacket::encode, UpdatePlayerAnimationTickPacket::new, UpdatePlayerAnimationTickPacket.Handler::onMessage);
 		CHANNEL.registerMessage(ID++, UpdateItemAnimationTickPacket.class, UpdateItemAnimationTickPacket::encode, UpdateItemAnimationTickPacket::new, UpdateItemAnimationTickPacket.Handler::onMessage);
+		CHANNEL.registerMessage(ID++, UpdateItemTickCountPacket.class, UpdateItemTickCountPacket::encode, UpdateItemTickCountPacket::new, UpdateItemTickCountPacket.Handler::onMessage);
 		CHANNEL.registerMessage(ID++, UpdateOwnerCapabilityPacket.class, UpdateOwnerCapabilityPacket::encode, UpdateOwnerCapabilityPacket::new, UpdateOwnerCapabilityPacket.Handler::onMessage);
 	}
 	

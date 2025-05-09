@@ -4,38 +4,34 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.min01.acc.capabilities.ACCCapabilities;
-import com.min01.acc.capabilities.IPlayerAnimationCapability;
-import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class UpdatePlayerAnimationTickPacket 
 {
 	public final UUID uuid;
-	public final IPlayerAnimationCapability cap;
+	public final int animationTick;
 
-	public UpdatePlayerAnimationTickPacket(UUID uuid, IPlayerAnimationCapability cap) 
+	public UpdatePlayerAnimationTickPacket(UUID uuid, int animationTick) 
 	{
 		this.uuid = uuid;
-		this.cap = cap;
+		this.animationTick = animationTick;
 	}
 
 	public UpdatePlayerAnimationTickPacket(FriendlyByteBuf buf)
 	{
 		this.uuid = buf.readUUID();
-		IPlayerAnimationCapability cap = new PlayerAnimationCapabilityImpl();
-		cap.deserializeNBT(buf.readNbt());
-		this.cap = cap;
+		this.animationTick = buf.readInt();
 	}
 
 	public void encode(FriendlyByteBuf buf)
 	{
 		buf.writeUUID(this.uuid);
-		buf.writeNbt(this.cap.serializeNBT());
+		buf.writeInt(this.animationTick);
 	}
 
 	public static class Handler 
@@ -49,11 +45,11 @@ public class UpdatePlayerAnimationTickPacket
 					ACCUtil.getClientLevel(level -> 
 					{
 						Entity entity = ACCUtil.getEntityByUUID(level, message.uuid);
-						if(entity instanceof LivingEntity living)
+						if(entity instanceof Player player)
 						{
-							living.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
+							player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
 							{
-								t.setAnimationTick(message.cap.getAnimationTick());
+								t.setAnimationTick(message.animationTick);
 							});
 						}
 					});

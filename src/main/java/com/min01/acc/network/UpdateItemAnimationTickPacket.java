@@ -4,8 +4,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.min01.acc.capabilities.ACCCapabilities;
-import com.min01.acc.capabilities.IItemAnimationCapability;
-import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,29 +17,27 @@ public class UpdateItemAnimationTickPacket
 {
 	public final UUID uuid;
 	public final ItemStack stack;
-	public final IItemAnimationCapability cap;
+	public final int animationTick;
 
-	public UpdateItemAnimationTickPacket(UUID uuid, ItemStack stack, IItemAnimationCapability cap) 
+	public UpdateItemAnimationTickPacket(UUID uuid, ItemStack stack, int animationTick) 
 	{
 		this.uuid = uuid;
 		this.stack = stack;
-		this.cap = cap;
+		this.animationTick = animationTick;
 	}
 
 	public UpdateItemAnimationTickPacket(FriendlyByteBuf buf)
 	{
 		this.uuid = buf.readUUID();
 		this.stack = buf.readItem();
-		IItemAnimationCapability cap = new ItemAnimationCapabilityImpl();
-		cap.deserializeNBT(buf.readNbt());
-		this.cap = cap;
+		this.animationTick = buf.readInt();
 	}
 
 	public void encode(FriendlyByteBuf buf)
 	{
 		buf.writeUUID(this.uuid);
 		buf.writeItem(this.stack);
-		buf.writeNbt(this.cap.serializeNBT());
+		buf.writeInt(this.animationTick);
 	}
 
 	public static class Handler 
@@ -71,7 +67,7 @@ public class UpdateItemAnimationTickPacket
 			                {
 			                	to.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
 			                	{
-			                		t.setAnimationTick(message.cap.getAnimationTick());
+			                		t.setAnimationTick(message.animationTick);
 			                	});
 			                }
 						}

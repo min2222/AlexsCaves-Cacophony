@@ -1,41 +1,44 @@
 package com.min01.acc.capabilities;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.min01.acc.network.ACCNetwork;
-import com.min01.acc.network.UpdateItemAnimationPacket;
 import com.min01.acc.network.UpdateItemAnimationTickPacket;
+import com.min01.acc.network.UpdateItemTickCountPacket;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
 
 public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 {
-    public static final String ANIMATION_TICK = "AnimationTick";
-	private ListTag animations = new ListTag();
-	private CompoundTag compoundTag = new CompoundTag();
-	private LivingEntity entity;
 	private ItemStack stack;
+	private Entity entity;
+	private int tickCount;
+	private int animationTick;
 	
 	@Override
-	public CompoundTag serializeNBT()
+	public CompoundTag serializeNBT() 
 	{
-		CompoundTag tag = new CompoundTag();
-		tag.put("Animations", this.animations);
-		tag.put("Tag", this.compoundTag);
-		return tag;
+		CompoundTag nbt = new CompoundTag();
+		nbt.putInt("TickCount", this.tickCount);
+		nbt.putInt("AnimationTick", this.animationTick);
+		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt)
 	{
-		this.compoundTag = nbt.getCompound("Tag");
-		this.animations = nbt.getList("Animations", 10);
+		this.tickCount = nbt.getInt("TickCount");
+		this.animationTick = nbt.getInt("AnimationTick");
+	}
+	
+	@Override
+	public void setEntity(Entity entity) 
+	{
+		this.entity = entity;
 	}
 	
 	@Override
@@ -43,79 +46,64 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	{
 		this.stack = stack;
 	}
-	
-	@Override
-	public void setEntity(LivingEntity entity) 
-	{
-		this.entity = entity;
-	}
 
 	@Override
 	public void update() 
 	{
-    	int tick = this.getAnimationTick();
-    	if(tick > 0)
-    	{
-    		this.setAnimationTick(tick - 1);
-    	}
+		this.tickCount++;
+		this.animationTick--;
+		if(this.entity != null && this.entity instanceof ServerPlayer)
+		{
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemTickCountPacket(this.entity.getUUID(), this.stack, this.tickCount));
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemAnimationTickPacket(this.entity.getUUID(), this.stack, this.animationTick));
+		}
 	}
 
 	@Override
-    public int getAnimationTick()
-    {
-    	return this.compoundTag.getInt(ANIMATION_TICK);
-    }
+	public void startItemAnimation(String name) 
+	{
+		AnimationState state = this.getAnimationState(name);
+		state.startIfStopped(this.tickCount);
+		ACCUtil.writeAnimationTime(this.stack.getOrCreateTag(), name, state);
+	}
 
 	@Override
-    public void setAnimationTick(int tick)
-    {
-        this.compoundTag.putInt(ANIMATION_TICK, tick);
-		this.sendTickUpdatePacket();
-    }
-	
-	@Override
-	public AnimationState getAnimationState(String name) 
+	public void stopItemAnimation(String name) 
 	{
-        return ACCUtil.readAnimationState(this.animations, name);
+		AnimationState state = this.getAnimationState(name);
+		state.stop();
+		ACCUtil.writeAnimationTime(this.stack.getOrCreateTag(), name, state);
 	}
 	
 	@Override
-	public void setAnimationState(AnimationState state, String name)
+	public AnimationState getAnimationState(String name)
 	{
-		ACCUtil.writeAnimationState(this.animations, state, name);
-		this.sendUpdatePacket();
+		AnimationState state = new AnimationState();
+		ACCUtil.readAnimationTime(this.stack.getOrCreateTag(), name, state);
+		return state;
 	}
 	
 	@Override
-	public Pair<ListTag, CompoundTag> getTag()
+	public void setTickCount(int tickCount) 
 	{
-		return Pair.of(this.animations, this.compoundTag);
+		this.tickCount = tickCount;
 	}
 	
 	@Override
-	public void setTag(Pair<ListTag, CompoundTag> pair)
+	public int getTickCount() 
 	{
-		this.animations = pair.getLeft();
-		this.compoundTag = pair.getRight();
+		return this.tickCount;
 	}
 	
-	private void sendTickUpdatePacket() 
+	@Override
+	public void setAnimationTick(int tick) 
 	{
-		if(this.entity == null)
-			return;
-		if(!this.entity.level.isClientSide)
-		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemAnimationTickPacket(this.entity.getUUID(), this.stack, this));
-		}
+		this.animationTick = tick;
 	}
 	
-	private void sendUpdatePacket() 
+	@Override
+	public int getAnimationTick() 
 	{
-		if(this.entity == null)
-			return;
-		if(!this.entity.level.isClientSide)
-		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemAnimationPacket(this.entity.getUUID(), this.stack, this));
-		}
+		return this.animationTick;
 	}
 }

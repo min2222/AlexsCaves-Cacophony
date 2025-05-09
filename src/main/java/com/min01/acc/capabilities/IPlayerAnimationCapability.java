@@ -1,14 +1,11 @@
 package com.min01.acc.capabilities;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.min01.acc.AlexsCavesCacophony;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -17,19 +14,17 @@ public interface IPlayerAnimationCapability extends INBTSerializable<CompoundTag
 {
 	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "player_animation");
 
-	void setEntity(LivingEntity entity);
-
-	void update();
+	void setEntity(Player entity);
 	
-	int getAnimationTick();
-
-	void setAnimationTick(int tick);
+	void startPlayerAnimation(String name);
+	
+	void stopPlayerAnimation(String name);
 	
 	AnimationState getAnimationState(String name);
 	
-	void setAnimationState(AnimationState state, String name);
+	void setAnimationTick(int tick);
 	
-	Pair<ListTag, CompoundTag> getTag();
+	int getAnimationTick();
 	
-	void setTag(Pair<ListTag, CompoundTag> pair);
+	CompoundTag getCompoundTag();
 }

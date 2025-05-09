@@ -23,7 +23,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,9 +45,8 @@ public class RaybladeItem extends SwordItem
     public static final String RAYBLADE_SWING_RIGHT = "RaybladeSwingRight";
     public static final String RAYBLADE_SWING = "RaybladeSwing";
     public static final String IS_SELECTED = "isSelected";
+    public static final String FRAME = "Frame";
     public static final int MAX_CHARGE = 3;
-    public int tickCount;
-    public int frame;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -63,15 +61,18 @@ public class RaybladeItem extends SwordItem
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
-		this.tickCount++;
-		updateFrame(p_41404_);
-		if(p_41406_ instanceof Player player)
+		int frame = getFrame(p_41404_);
+		if(ACCUtil.getTickCount(p_41404_) % 2 == 0)
 		{
-			ACCUtil.updateItemTick(player, p_41404_);
+			setFrame(p_41404_, frame + 1);
+		}
+		if(frame > 19)
+		{
+			setFrame(p_41404_, 0);
 		}
 		int tick = ACCUtil.getItemAnimationTick(p_41404_);
-		AnimationState drawState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_DRAW_RIGHT);
-		AnimationState swingState = ACCUtil.getPlayerAnimationState(p_41406_, RAYBLADE_SWING_RIGHT);
+		AnimationState drawState = ACCUtil.getPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
+		AnimationState swingState = ACCUtil.getPlayerAnimation(p_41406_, RAYBLADE_SWING_RIGHT);
     	if(p_41408_ && !drawState.isStarted() && !isSelected(p_41404_))
     	{
 			ACCUtil.startPlayerAnimation(p_41406_, RAYBLADE_DRAW_RIGHT);
@@ -92,48 +93,18 @@ public class RaybladeItem extends SwordItem
     		if(tick <= 0)
     		{
     			ACCUtil.setVisible(p_41404_, false);
-            	ACCUtil.stopAllPlayerAnimations(p_41406_);
-    			ACCUtil.stopAllItemAnimations(p_41404_);
+    			stopAllAnimations(p_41406_, p_41404_);
     		}
     	}
 		setSelected(p_41404_, p_41408_);
 	}
 	
-	@Override
-	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) 
+	public static void stopAllAnimations(Entity entity, ItemStack stack)
 	{
-		this.tickCount++;
-		updateFrame(stack);
-		if(entity.getOwner() instanceof LivingEntity living)
-		{
-			ACCUtil.updateItemTick(living, stack);
-		}
-		return super.onEntityItemUpdate(stack, entity);
-	}
-	
-	public static void updateFrame(ItemStack stack)
-	{
-		if(stack.getItem() instanceof RaybladeItem blade)
-		{
-			if(blade.tickCount % 2 == 0)
-			{
-				blade.frame++;
-			}
-			
-			if(blade.frame > 19)
-			{
-				blade.frame = 0;
-			}
-		}
-	}
-	
-	public static int getFrame(ItemStack stack)
-	{
-		if(stack.getItem() instanceof RaybladeItem blade)
-		{
-			return blade.frame;
-		}
-		return 0;
+    	ACCUtil.stopPlayerAnimation(entity, RAYBLADE_DRAW_RIGHT);
+    	ACCUtil.stopPlayerAnimation(entity, RAYBLADE_HOLD_RIGHT);
+    	ACCUtil.stopPlayerAnimation(entity, RAYBLADE_SWING_RIGHT);
+		ACCUtil.stopItemAnimation(stack, RAYBLADE_SWING);
 	}
 	
 	@Override
@@ -144,8 +115,7 @@ public class RaybladeItem extends SwordItem
         if(charge < MAX_CHARGE)
         {
         	p_41433_.startUsingItem(p_41434_);
-        	ACCUtil.stopAllPlayerAnimations(p_41433_);
-        	ACCUtil.stopAllItemAnimations(stack);
+			stopAllAnimations(p_41433_, stack);
 			ACCUtil.setVisible(stack, true);
         }
         else
@@ -163,7 +133,7 @@ public class RaybladeItem extends SwordItem
 	@Override
 	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
 	{
-		AnimationState state = ACCUtil.getPlayerAnimationState(p_41429_, RAYBLADE_HOLD_RIGHT);
+		AnimationState state = ACCUtil.getPlayerAnimation(p_41429_, RAYBLADE_HOLD_RIGHT);
 		if(!state.isStarted())
 		{
 			ACCUtil.startPlayerAnimation(p_41429_, RAYBLADE_HOLD_RIGHT);
@@ -177,8 +147,9 @@ public class RaybladeItem extends SwordItem
 		int charge = ACCUtil.getCharge(p_41412_);
     	if(i >= 1)
     	{
+    		stopAllAnimations(p_41414_, p_41412_);
     		ACCUtil.startPlayerAnimation(p_41414_, RAYBLADE_SWING_RIGHT);
-        	ACCUtil.startItemAnimation(p_41412_, RAYBLADE_SWING, this.tickCount);
+        	ACCUtil.startItemAnimation(p_41412_, RAYBLADE_SWING);
         	ACCUtil.setItemAnimationTick(p_41412_, 60);
         	if(p_41414_ instanceof Player player)
         	{
@@ -220,6 +191,22 @@ public class RaybladeItem extends SwordItem
         }
         return ItemStack.EMPTY;
     }
+    
+	public static int getFrame(ItemStack stack) 
+	{
+		CompoundTag tag = stack.getTag();
+		if(tag != null)
+		{
+			return tag.getInt(FRAME);
+		}
+		return 0;
+	}
+	
+	public static void setFrame(ItemStack stack, int frame) 
+	{
+		CompoundTag tag = stack.getOrCreateTag();
+		tag.putInt(FRAME, frame);
+	}
 	
 	public static boolean isSelected(ItemStack stack) 
 	{

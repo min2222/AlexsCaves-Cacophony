@@ -25,7 +25,7 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 
 @Mixin(PlayerModel.class)
-public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPlayerModel
+public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPlayerModel<T>
 {
 	private Map<String, ModelPart> modelMap = new HashMap<>();
 	
@@ -53,9 +53,9 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
     @Inject(at = @At("TAIL"), method = "setupAnim", cancellable = true)
     private void setupAnimTail(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci)
     {
-    	this.animate(ACCUtil.getPlayerAnimationState(entity, RaybladeItem.RAYBLADE_DRAW_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
-    	this.animate(ACCUtil.getPlayerAnimationState(entity, RaybladeItem.RAYBLADE_HOLD_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_HOLD_RIGHT, ageInTicks);
-    	this.animate(ACCUtil.getPlayerAnimationState(entity, RaybladeItem.RAYBLADE_SWING_RIGHT), PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
+    	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
+    	this.animate(entity, RaybladeItem.RAYBLADE_HOLD_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_HOLD_RIGHT, ageInTicks);
+    	this.animate(entity, RaybladeItem.RAYBLADE_SWING_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
     }
     
 	@Override
@@ -74,17 +74,19 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
 	}
 
 	@Override
-	public void animate(AnimationState p_233382_, AnimationDefinition p_233383_, float p_233384_)
+	public void animate(T entity, String name, AnimationDefinition p_233383_, float p_233384_)
 	{
-		this.animate(p_233382_, p_233383_, p_233384_, 1.0F);
+		this.animate(entity, name, p_233383_, p_233384_, 1.0F);
 	}
 
 	@Override
-	public void animate(AnimationState p_233386_, AnimationDefinition p_233387_, float p_233388_, float p_233389_) 
+	public void animate(T entity, String name, AnimationDefinition p_233387_, float p_233388_, float p_233389_) 
 	{
-		p_233386_.updateTime(p_233388_, p_233389_);
-		p_233386_.ifStarted((p_233392_) ->
+		AnimationState state = ACCUtil.getPlayerAnimation(entity, name);
+		state.updateTime(p_233388_, p_233389_);
+		state.ifStarted((p_233392_) ->
 		{
+			ACCUtil.writeAnimationTime(ACCUtil.getPlayerAnimationTag(entity), name, p_233392_);
 			KeyframePlayerAnimations.animate(PlayerModel.class.cast(this), p_233387_, p_233392_.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE);
 		});
 	}

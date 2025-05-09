@@ -24,7 +24,7 @@ public class KeyframePlayerAnimations
 
 		for(Map.Entry<String, List<AnimationChannel>> entry : p_232321_.boneAnimations().entrySet())
 		{
-			Optional<ModelPart> optional = ((IHierarchicalPlayerModel)p_232320_).getAnyDescendantWithName(entry.getKey());
+			Optional<ModelPart> optional = ((IHierarchicalPlayerModel<?>)p_232320_).getAnyDescendantWithName(entry.getKey());
 			List<AnimationChannel> list = entry.getValue();
 			optional.ifPresent((p_232330_) -> 
 			{

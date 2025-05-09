@@ -34,7 +34,7 @@ public class MixinFallingBlockEntity
 	    			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 5.0F);
 	    			HitResult hitResult = entity.level.clip(new ClipContext(player.getEyePosition(), lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 	    			Vec3 pos = hitResult.getLocation();
-	    			entity.moveTo(pos);
+	    			entity.setPos(pos);
 	    			entity.setOnGround(false);
 	    		}
 	    		else

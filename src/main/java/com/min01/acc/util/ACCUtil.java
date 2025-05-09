@@ -16,12 +16,10 @@ import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.LevelEntityGetter;
@@ -67,195 +65,133 @@ public class ACCUtil
 			consumer.accept(level);
 		});
 	}
-    
-    public static void updatePlayerTick(LivingEntity player)
+	
+    public static CompoundTag getPlayerAnimationTag(Entity player)
     {
-    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
+    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
     	{
-    		t.update();
-    	});
+    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+    		return cap.getCompoundTag();
+    	}
+    	return new CompoundTag();
+    }
+	
+    public static AnimationState getPlayerAnimation(Entity player, String name)
+    {
+    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
+    	{
+    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+    		return cap.getAnimationState(name);
+    	}
+    	return new AnimationState();
     }
     
-    public static void updateItemTick(LivingEntity player, ItemStack stack)
+    public static void startPlayerAnimation(Entity player, String name)
     {
-    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
     	{
-    		t.update();
-    		t.setEntity(player);
-    	});
+    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+    		cap.startPlayerAnimation(name);
+    	}
     }
     
-    public static int getPlayerAnimationTick(LivingEntity player)
+    public static void stopPlayerAnimation(Entity player, String name)
     {
-        IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-        return cap.getAnimationTick();
-    }
-
-    public static void setPlayerAnimationTick(LivingEntity player, int tick)
-    {
-    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
+    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
     	{
-    		t.setAnimationTick(tick);
-    	});
+    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+    		cap.stopPlayerAnimation(name);
+    	}
+    }
+    
+    public static AnimationState getItemAnimation(ItemStack stack, String name)
+    {
+    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
+    	{
+    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+    		return cap.getAnimationState(name);
+    	}
+    	return new AnimationState();
+    }
+    
+    public static void startItemAnimation(ItemStack stack, String name)
+    {
+    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
+    	{
+    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+    		cap.startItemAnimation(name);
+    	}
+    }
+    
+    public static void stopItemAnimation(ItemStack stack, String name)
+    {
+    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
+    	{
+    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+    		cap.stopItemAnimation(name);
+    	}
+    }
+    
+    public static void setItemAnimationTick(ItemStack stack, int tick)
+    {
+    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
+    	{
+    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+    		cap.setAnimationTick(tick);
+    	}
     }
     
     public static int getItemAnimationTick(ItemStack stack)
     {
-        IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-        return cap.getAnimationTick();
-    }
-
-    public static void setItemAnimationTick(ItemStack stack, int tick)
-    {
-    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
     	{
-    		t.setAnimationTick(tick);
-    	});
+    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+    		return cap.getAnimationTick();
+    	}
+    	return 0;
     }
     
-    public static void startItemAnimation(ItemStack stack, String animationName, int tickCount)
+    public static int getTickCount(ItemStack stack)
     {
-    	stopAllItemAnimations(stack);
-    	AnimationState animationState = getItemAnimationState(stack, animationName);
-    	animationState.startIfStopped(tickCount);
-    	setItemAnimationState(stack, animationState, animationName);
-    }
-    
-    public static void stopAllItemAnimations(ItemStack stack)
-    {
-    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
     	{
-    		ListTag list = t.getTag().getLeft();
-    		for(int i = 0; i < list.size(); ++i)
-    		{
-    			CompoundTag compoundTag = list.getCompound(i);
-    	    	AnimationState animationState = getItemAnimationState(stack, compoundTag.getString("Name"));
-    	    	animationState.stop();
-    	    	setItemAnimationState(stack, animationState, compoundTag.getString("Name"));
-    		}
-    	});
+    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+    		return cap.getTickCount();
+    	}
+    	return 0;
     }
     
-    public static void stopItemAnimation(ItemStack stack, String animationName)
+    public static void writeAnimationTime(CompoundTag tag, String name, AnimationState state)
     {
-    	AnimationState animationState = getItemAnimationState(stack, animationName);
-    	animationState.stop();
-    	setItemAnimationState(stack, animationState, animationName);
+        CompoundTag animationsTag;
+        if(tag.contains("Animations", 10))
+        {
+            animationsTag = tag.getCompound("Animations");
+        }
+        else
+        {
+            animationsTag = new CompoundTag();
+            tag.put("Animations", animationsTag);
+        }
+        CompoundTag timeTag = new CompoundTag();
+        timeTag.putLong("LastTime", state.lastTime);
+        timeTag.putLong("AccumulatedTime", state.accumulatedTime);
+        animationsTag.put(name, timeTag);
     }
     
-    public static void startPlayerAnimation(Entity player, String animationName)
+    public static void readAnimationTime(CompoundTag tag, String name, AnimationState state)
     {
-    	stopAllPlayerAnimations(player);
-    	AnimationState animationState = getPlayerAnimationState(player, animationName);
-    	animationState.startIfStopped(player.tickCount);
-    	setPlayerAnimationState(player, animationState, animationName);
+        if(tag.contains("Animations", 10)) 
+        {
+            CompoundTag animationsTag = tag.getCompound("Animations");
+            if(animationsTag.contains(name, 10))
+            {
+                CompoundTag timeTag = animationsTag.getCompound(name);
+                state.lastTime = timeTag.getLong("LastTime");
+                state.accumulatedTime = timeTag.getLong("AccumulatedTime");
+            }
+        }
     }
-    
-    public static void stopAllPlayerAnimations(Entity player)
-    {
-    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
-    	{
-    		ListTag list = t.getTag().getLeft();
-    		for(int i = 0; i < list.size(); ++i)
-    		{
-    			CompoundTag compoundTag = list.getCompound(i);
-    	    	AnimationState animationState = getPlayerAnimationState(player, compoundTag.getString("Name"));
-    	    	animationState.stop();
-    	    	setPlayerAnimationState(player, animationState, compoundTag.getString("Name"));
-    		}
-    	});
-    }
-    
-    public static void stopPlayerAnimation(Entity player, String animationName)
-    {
-    	AnimationState animationState = getPlayerAnimationState(player, animationName);
-    	animationState.stop();
-    	setPlayerAnimationState(player, animationState, animationName);
-    }
-    
-    public static AnimationState getPlayerAnimationState(Entity player, String animationName)
-    {
-        IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-        return cap.getAnimationState(animationName);
-    }
-
-    public static void setPlayerAnimationState(Entity player, AnimationState state, String animationName)
-    {
-    	player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
-    	{
-    		t.setAnimationState(state, animationName);
-    	});
-    }
-	
-    public static AnimationState getItemAnimationState(ItemStack stack, String animationName)
-    {
-        IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-        return cap.getAnimationState(animationName);
-    }
-
-    public static void setItemAnimationState(ItemStack stack, AnimationState state, String animationName)
-    {
-    	stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
-    	{
-    		t.setAnimationState(state, animationName);
-    	});
-    }
-	
-	public static void writeAnimationState(ListTag list, AnimationState state, String animationName)
-	{
-		CompoundTag compoundTag = getAnimationTag(list, animationName);
-		compoundTag.putString("Name", animationName);
-		compoundTag.putLong("LastTime", state.lastTime);
-		compoundTag.putLong("AccumulatedTime", state.accumulatedTime);
-		if(!hasAnimation(list, animationName))
-		{
-			list.add(compoundTag);
-		}
-	}
-	
-	public static boolean hasAnimation(ListTag list, String animationName)
-	{
-		boolean flag = false;
-		for(int i = 0; i < list.size(); ++i)
-		{
-			CompoundTag compoundTag = list.getCompound(i);
-			if(compoundTag.getString("Name").equals(animationName))
-			{
-				flag = true;
-				break;
-			}
-		}
-		return flag;
-	}
-	
-	public static CompoundTag getAnimationTag(ListTag list, String animationName)
-	{
-		for(int i = 0; i < list.size(); ++i)
-		{
-			CompoundTag compoundTag = list.getCompound(i);
-			if(compoundTag.getString("Name").equals(animationName))
-			{
-				return compoundTag;
-			}
-		}
-		return new CompoundTag();
-	}
-	
-	public static AnimationState readAnimationState(ListTag list, String animationName)
-	{
-		AnimationState state = new AnimationState();
-		for(int i = 0; i < list.size(); ++i)
-		{
-			CompoundTag compoundTag = list.getCompound(i);
-			if(compoundTag.getString("Name").equals(animationName))
-			{
-				state.lastTime = compoundTag.getLong("LastTime");
-				state.accumulatedTime = compoundTag.getLong("AccumulatedTime");
-				return state;
-			}
-		}
-		return state;
-	}
 
     public static boolean isVisible(ItemStack stack)
     {
