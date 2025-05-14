@@ -18,6 +18,7 @@ import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.github.alexmodguy.alexscaves.server.potion.ACEffectRegistry;
 import com.github.alexmodguy.alexscaves.server.potion.IrradiatedEffect;
+import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.RadrifleRenderer;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
@@ -49,7 +50,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-public class RadrifleItem extends Item implements UpdatesStackTags
+public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableItem
 {
     public static final int MAX_CHARGE = 1000;
     public static final String BEAM_LENGTH = "BeamLength";

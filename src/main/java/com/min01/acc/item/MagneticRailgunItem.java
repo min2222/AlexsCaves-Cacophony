@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
 import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.MagneticRailgunRendrerer;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
@@ -42,7 +43,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-public class MagneticRailgunItem extends Item implements UpdatesStackTags
+public class MagneticRailgunItem extends Item implements UpdatesStackTags, IAnimatableItem
 {
     public static final int MAX_CHARGE = 1000;
     public static final String PICKUP = "Pickup";

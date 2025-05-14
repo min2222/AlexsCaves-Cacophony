@@ -6,7 +6,6 @@ import com.min01.acc.network.UpdateItemTickCountPacket;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +51,7 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	{
 		this.tickCount++;
 		this.animationTick--;
-		if(this.entity != null && this.entity instanceof ServerPlayer)
+		if(this.entity != null && !this.entity.level.isClientSide)
 		{
 			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemTickCountPacket(this.entity.getUUID(), this.stack, this.tickCount));
 			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemAnimationTickPacket(this.entity.getUUID(), this.stack, this.animationTick));

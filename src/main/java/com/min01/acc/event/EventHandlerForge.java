@@ -5,6 +5,7 @@ import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.entity.projectile.EntityFearArrow;
 import com.min01.acc.item.ACCItems;
+import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.misc.ACCLootTables;
 import com.min01.acc.util.ACCUtil;
 
@@ -64,11 +65,14 @@ public class EventHandlerForge
 	{
 		for(ItemStack stack : event.player.getAllSlots())
 		{
-			stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+			if(stack.getItem() instanceof IAnimatableItem)
 			{
-				t.setEntity(event.player);
-				t.update();
-			});
+				stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+				{
+					t.setEntity(event.player);
+					t.update();
+				});
+			}
 		}
 	}
 	

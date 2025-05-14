@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
+import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.RaybladeRenderer;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
@@ -38,7 +39,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 
-public class RaybladeItem extends SwordItem
+public class RaybladeItem extends SwordItem implements IAnimatableItem
 {
     public static final String RAYBLADE_DRAW_RIGHT = "RaybladeDrawRight";
     public static final String RAYBLADE_HOLD_RIGHT = "RaybladeHoldRight";
