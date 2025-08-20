@@ -63,12 +63,6 @@ description='''This add-on serves to add the communities’ ideas to the popular
     ordering="NONE"
     side="BOTH"
 [[dependencies.accacophony]]
-    modId="aes"
-    mandatory=true
-    versionRange="[1.0.0,)"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.accacophony]]
     modId="alexscaves"
     mandatory=true
     versionRange="[1.1.5,)"

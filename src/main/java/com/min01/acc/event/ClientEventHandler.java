@@ -5,9 +5,11 @@ import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.model.ModelFearArrow;
 import com.min01.acc.entity.model.ModelGloomworm;
 import com.min01.acc.entity.model.ModelNeodymiumShackle;
+import com.min01.acc.entity.model.ModelOvivenator;
 import com.min01.acc.entity.renderer.FearArrowRenderer;
 import com.min01.acc.entity.renderer.GloomwormRenderer;
 import com.min01.acc.entity.renderer.NeodymiumShackleRenderer;
+import com.min01.acc.entity.renderer.OvivenatorRenderer;
 import com.min01.acc.item.model.ModelMagneticRailgun;
 import com.min01.acc.item.model.ModelRadrifle;
 import com.min01.acc.item.model.ModelRayblade;
@@ -29,6 +31,7 @@ public class ClientEventHandler
     	event.registerLayerDefinition(ModelGloomworm.LAYER_LOCATION, ModelGloomworm::createBodyLayer);
     	event.registerLayerDefinition(ModelNeodymiumShackle.LAYER_LOCATION, ModelNeodymiumShackle::createBodyLayer);
     	event.registerLayerDefinition(ModelMagneticRailgun.LAYER_LOCATION, ModelMagneticRailgun::createBodyLayer);
+    	event.registerLayerDefinition(ModelOvivenator.LAYER_LOCATION, ModelOvivenator::createBodyLayer);
     }
     
     @SubscribeEvent
@@ -37,5 +40,6 @@ public class ClientEventHandler
     	event.registerEntityRenderer(ACCEntities.FEAR_ARROW.get(), FearArrowRenderer::new);
     	event.registerEntityRenderer(ACCEntities.GLOOMWORM.get(), GloomwormRenderer::new);
     	event.registerEntityRenderer(ACCEntities.NEODYMIUM_SHACKLE.get(), NeodymiumShackleRenderer::new);
+    	event.registerEntityRenderer(ACCEntities.OVIVENATOR.get(), OvivenatorRenderer::new);
     }
 }

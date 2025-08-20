@@ -16,5 +16,6 @@ public class ACCEffects
 	
 	public static final RegistryObject<MobEffect> FEAR = EFFECTS.register("fear", () -> new FearEffect());
 	
-	public static final RegistryObject<Potion> FEAR_POTION = POTIONS.register("fear", () -> new Potion(new MobEffectInstance(FEAR.get(), 1)));
+	public static final RegistryObject<Potion> FEAR_POTION = POTIONS.register("fear", () -> new Potion(new MobEffectInstance(FEAR.get(), 3600)));
+	public static final RegistryObject<Potion> STRONG_FEAR_POTION = POTIONS.register("strong_fear", () -> new Potion(new MobEffectInstance(FEAR.get(), 1800, 1)));
 }

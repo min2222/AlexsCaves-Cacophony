@@ -1,5 +1,7 @@
 package com.min01.acc;
 
+import java.io.IOException;
+
 import com.min01.acc.block.ACCBlocks;
 import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.effect.ACCEffects;
@@ -8,6 +10,7 @@ import com.min01.acc.item.ACCItems;
 import com.min01.acc.misc.ACCEntityDataSerializers;
 import com.min01.acc.misc.ACCSounds;
 import com.min01.acc.network.ACCNetwork;
+import com.min01.accdep.ACCUtil;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -36,5 +39,14 @@ public class AlexsCavesCacophony
 		ACCNetwork.registerMessages();
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ACCCapabilities::attachEntityCapability);
 		MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ACCCapabilities::attachItemStackCapability);
+		
+		try 
+		{
+			ACCUtil.load("accacophony");
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 }

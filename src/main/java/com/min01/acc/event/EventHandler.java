@@ -1,24 +1,42 @@
 package com.min01.acc.event;
 
+import com.github.alexmodguy.alexscaves.server.entity.living.VallumraptorEntity;
 import com.github.alexmodguy.alexscaves.server.misc.ACCreativeTabRegistry;
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.effect.ACCEffects;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.item.ACCItems;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 @Mod.EventBusSubscriber(modid = AlexsCavesCacophony.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EventHandler
 {
+	@SubscribeEvent
+	public static void onFMLCommonSetup(FMLCommonSetupEvent event)
+	{
+		ItemStack water = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+		ItemStack fear = PotionUtils.setPotion(new ItemStack(Items.POTION), ACCEffects.FEAR_POTION.get());
+		BrewingRecipeRegistry.addRecipe(Ingredient.of(water), Ingredient.of(ACCItems.TREMORSAURUS_TOOTH.get()), fear);
+	}
+	
     @SubscribeEvent
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) 
     {
     	event.put(ACCEntities.GLOOMWORM.get(), EntityGloomworm.createAttributes().build());
+    	event.put(ACCEntities.OVIVENATOR.get(), VallumraptorEntity.createAttributes().build());
     }
     
     @SubscribeEvent
@@ -47,6 +65,7 @@ public class EventHandler
     		event.accept(ACCItems.COOKED_DINO_DRUMSTICK.get());
     		event.accept(ACCItems.TREMORSAURUS_TOOTH.get());
     		event.accept(ACCItems.ARROW_OF_FEAR.get());
+    		event.accept(ACCItems.OVIVENATOR_SPAWN_EGG.get());
     	}
     	if(event.getTabKey() == ACCreativeTabRegistry.FORLORN_HOLLOWS.getKey())
     	{
