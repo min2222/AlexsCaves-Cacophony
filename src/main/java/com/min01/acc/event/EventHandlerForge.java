@@ -1,8 +1,10 @@
 package com.min01.acc.event;
 
+import com.github.alexmodguy.alexscaves.server.entity.living.DinosaurEntity;
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.entity.projectile.EntityFearArrow;
 import com.min01.acc.item.ACCItems;
 import com.min01.acc.item.animation.IAnimatableItem;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -27,6 +30,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -73,6 +77,16 @@ public class EventHandlerForge
 					t.update();
 				});
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onEntityJoinLevel(EntityJoinLevelEvent event)
+	{
+		Entity entity = event.getEntity();
+		if(entity instanceof DinosaurEntity dino)
+		{
+			dino.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(dino, EntityOvivenator.class, false));
 		}
 	}
 	

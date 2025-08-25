@@ -29,7 +29,9 @@ public class EventHandler
 	{
 		ItemStack water = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
 		ItemStack fear = PotionUtils.setPotion(new ItemStack(Items.POTION), ACCEffects.FEAR_POTION.get());
+		ItemStack strongFear = PotionUtils.setPotion(new ItemStack(Items.POTION), ACCEffects.STRONG_FEAR_POTION.get());
 		BrewingRecipeRegistry.addRecipe(Ingredient.of(water), Ingredient.of(ACCItems.TREMORSAURUS_TOOTH.get()), fear);
+		BrewingRecipeRegistry.addRecipe(Ingredient.of(fear), Ingredient.of(Items.GLOWSTONE_DUST), strongFear);
 	}
 	
     @SubscribeEvent
