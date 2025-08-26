@@ -1,11 +1,11 @@
 package com.min01.acc.event;
 
-import com.github.alexmodguy.alexscaves.server.entity.living.VallumraptorEntity;
 import com.github.alexmodguy.alexscaves.server.misc.ACCreativeTabRegistry;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.effect.ACCEffects;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.living.EntityGloomworm;
+import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.item.ACCItems;
 
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +38,7 @@ public class EventHandler
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) 
     {
     	event.put(ACCEntities.GLOOMWORM.get(), EntityGloomworm.createAttributes().build());
-    	event.put(ACCEntities.OVIVENATOR.get(), VallumraptorEntity.createAttributes().build());
+    	event.put(ACCEntities.OVIVENATOR.get(), EntityOvivenator.createAttributes().build());
     }
     
     @SubscribeEvent

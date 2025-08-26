@@ -32,6 +32,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 public class ACCUtil 
 {
+	public static final Method GET_ENTITY = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String IS_VISIBLE = "isVisible";
@@ -230,10 +231,9 @@ public class ACCUtil
 	@SuppressWarnings("unchecked")
 	public static Entity getEntityByUUID(Level level, UUID uuid)
 	{
-		Method m = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
 		try 
 		{
-			LevelEntityGetter<Entity> entities = (LevelEntityGetter<Entity>) m.invoke(level);
+			LevelEntityGetter<Entity> entities = (LevelEntityGetter<Entity>) GET_ENTITY.invoke(level);
 			return entities.get(uuid);
 		}
 		catch (Exception e) 
