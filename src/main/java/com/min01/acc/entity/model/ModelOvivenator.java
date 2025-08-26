@@ -89,11 +89,23 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		ACCClientUtil.animateHead(this.root.getChild("ovivenator").getChild("body").getChild("neck").getChild("head"), netHeadYaw, headPitch);
 		this.animate(entity.idleAnimationState, OvivenatorAnimation.IDLE, ageInTicks);
+		this.animate(entity.idleWithEggAnimationState, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks);
+		this.animate(entity.holdAnimationState, OvivenatorAnimation.HOLD, ageInTicks);
 		this.animate(entity.noiseAnimationState, OvivenatorAnimation.NOISE, ageInTicks);
 		this.animate(entity.scratchRightAnimationState, OvivenatorAnimation.SCRATCH_RIGHT, ageInTicks);
 		this.animate(entity.scratchLeftAnimationState, OvivenatorAnimation.SCRATCH_LEFT, ageInTicks);
 		this.animate(entity.lookAnimationState, OvivenatorAnimation.LOOK, ageInTicks);
-		this.animateWalk(OvivenatorAnimation.WALK, limbSwing, limbSwingAmount, 1.0F, 2.5F);
+		this.animate(entity.danceAnimationState, OvivenatorAnimation.DANCE, ageInTicks);
+		this.animate(entity.pickupAnimationState, OvivenatorAnimation.PICK_UP_ITEM, ageInTicks);
+		this.animate(entity.eatAnimationState, OvivenatorAnimation.EAT_ITEM, ageInTicks);
+		if(!entity.isPanic())
+		{
+			this.animateWalk(OvivenatorAnimation.WALK, limbSwing, limbSwingAmount, 1.0F, 2.5F);
+		}
+		else
+		{
+			this.animateWalk(OvivenatorAnimation.RUN, limbSwing, limbSwingAmount, 1.0F, 2.5F);
+		}
 	}
 	
 	@Override

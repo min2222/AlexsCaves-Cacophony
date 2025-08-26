@@ -8,11 +8,13 @@ import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.item.ACCItems;
 
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -44,7 +46,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onSpawnPlacementRegister(SpawnPlacementRegisterEvent event)
     {
-    	
+    	event.register(ACCEntities.OVIVENATOR.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EntityOvivenator::checkPrehistoricSpawnRules, SpawnPlacementRegisterEvent.Operation.AND);
     }
     
     @SubscribeEvent
@@ -68,6 +70,7 @@ public class EventHandler
     		event.accept(ACCItems.TREMORSAURUS_TOOTH.get());
     		event.accept(ACCItems.ARROW_OF_FEAR.get());
     		event.accept(ACCItems.OVIVENATOR_SPAWN_EGG.get());
+    		event.accept(ACCItems.OVIVENATOR_EGG.get());
     	}
     	if(event.getTabKey() == ACCreativeTabRegistry.FORLORN_HOLLOWS.getKey())
     	{

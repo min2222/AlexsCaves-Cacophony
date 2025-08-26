@@ -20,6 +20,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.LevelEntityGetter;
@@ -36,6 +38,22 @@ public class ACCUtil
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String IS_VISIBLE = "isVisible";
+    
+    public static void runAway(PathfinderMob mob, Vec3 pos)
+    {
+        mob.setTarget(null);
+        mob.setLastHurtByMob(null);
+        if(mob.onGround())
+        {
+            Vec3 randomShake = new Vec3(mob.level.random.nextFloat() - 0.5F, 0, mob.level.random.nextFloat() - 0.5F).scale(0.1F);
+            mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.7F, 1, 0.7F).add(randomShake));
+        }
+        Vec3 vec = LandRandomPos.getPosAway(mob, 15, 7, pos);
+        if(vec != null)
+        {
+            mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0D);
+        }
+    }
     
     public static void shoot(Entity projectile, double p_37266_, double p_37267_, double p_37268_, float p_37269_, float p_37270_) 
     {

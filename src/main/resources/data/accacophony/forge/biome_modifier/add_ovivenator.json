@@ -1,0 +1,10 @@
+{
+	"type": "forge:add_spawns",
+	"biomes": "alexscaves:primordial_caves",
+	"spawners": {
+		"type": "accacophony:ovivenator",
+		"weight": 100,
+		"minCount": 3,
+		"maxCount": 7
+	}
+}
