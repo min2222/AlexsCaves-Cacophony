@@ -3,6 +3,7 @@ package com.min01.acc.entity.renderer;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.entity.model.ModelOvivenator;
+import com.min01.acc.entity.renderer.layer.OvivenatorEggLayer;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -17,6 +18,7 @@ public class OvivenatorRenderer extends MobRenderer<EntityOvivenator, ModelOvive
 	public OvivenatorRenderer(Context p_174304_)
 	{
 		super(p_174304_, new ModelOvivenator(p_174304_.bakeLayer(ModelOvivenator.LAYER_LOCATION)), 0.5F);
+		this.addLayer(new OvivenatorEggLayer(this));
 	}
 
 	@Override

@@ -1,8 +1,7 @@
 package com.min01.acc.entity;
 
-import com.github.alexmodguy.alexscaves.server.entity.ai.AdvancedPathNavigateNoTeleport;
 import com.github.alexmodguy.alexscaves.server.entity.living.DinosaurEntity;
-import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.IAdvancedPathingMob;
+import com.min01.acc.entity.ai.navigation.FixedPathNavigation;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,13 +12,12 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implements IAdvancedPathingMob, IAnimatable
+public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implements IAnimatable
 {
 	public static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(AbstractAnimatableDinosaur.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Integer> ANIMATION_TICK = SynchedEntityData.defineId(AbstractAnimatableDinosaur.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Boolean> CAN_LOOK = SynchedEntityData.defineId(AbstractAnimatableDinosaur.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> CAN_MOVE = SynchedEntityData.defineId(AbstractAnimatableDinosaur.class, EntityDataSerializers.BOOLEAN);
-	public static final EntityDataAccessor<Boolean> IS_USING_SKILL = SynchedEntityData.defineId(AbstractAnimatableDinosaur.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> HAS_TARGET = SynchedEntityData.defineId(AbstractAnimatableDinosaur.class, EntityDataSerializers.BOOLEAN);
 
 	public Vec3[] posArray;
@@ -38,7 +36,6 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
 		this.entityData.define(ANIMATION_TICK, 0);
 		this.entityData.define(CAN_LOOK, true);
 		this.entityData.define(CAN_MOVE, true);
-		this.entityData.define(IS_USING_SKILL, false);
 		this.entityData.define(HAS_TARGET, false);
 	}
     
@@ -62,7 +59,6 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
     public void readAdditionalSaveData(CompoundTag p_21450_) 
     {
     	super.readAdditionalSaveData(p_21450_);
-    	this.setUsingSkill(p_21450_.getBoolean("isUsingSkill"));
     	this.setCanLook(p_21450_.getBoolean("CanLook"));
     	this.setCanMove(p_21450_.getBoolean("CanMove"));
     	this.setAnimationTick(p_21450_.getInt("AnimationTick"));
@@ -73,7 +69,6 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
     public void addAdditionalSaveData(CompoundTag p_21484_) 
     {
     	super.addAdditionalSaveData(p_21484_);
-    	p_21484_.putBoolean("isUsingSkill", this.isUsingSkill());
     	p_21484_.putBoolean("CanLook", this.canLook());
     	p_21484_.putBoolean("CanMove", this.canMove());
     	p_21484_.putInt("AnimationTick", this.getAnimationTick());
@@ -83,14 +78,8 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
     @Override
     protected PathNavigation createNavigation(Level p_21480_)
     {
-    	return new AdvancedPathNavigateNoTeleport(this, p_21480_);
+    	return new FixedPathNavigation(this, p_21480_);
     }
-    
-	@Override
-	public boolean stopTickingPathing()
-	{
-		return !this.canMove();
-	}
 	
 	public void setHasTarget(boolean value)
 	{
@@ -103,15 +92,9 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
 	}
 
     @Override
-	public void setUsingSkill(boolean value) 
-	{
-		this.entityData.set(IS_USING_SKILL, value);
-	}
-
-    @Override
 	public boolean isUsingSkill() 
 	{
-		return this.getAnimationTick() > 0 || this.entityData.get(IS_USING_SKILL);
+		return this.getAnimationTick() > 0;
 	}
 	
     public void setCanLook(boolean value)
@@ -156,5 +139,10 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
     public int getAnimationState()
     {
         return this.entityData.get(ANIMATION_STATE);
+    }
+    
+    public boolean isUsingSkill(int state)
+    {
+    	return this.getAnimationState() == state && this.isUsingSkill();
     }
 }

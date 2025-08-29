@@ -98,6 +98,7 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		entity.danceAnimationState.animate(this, OvivenatorAnimation.DANCE, ageInTicks);
 		entity.pickupAnimationState.animate(this, OvivenatorAnimation.PICK_UP_ITEM, ageInTicks);
 		entity.eatAnimationState.animate(this, OvivenatorAnimation.EAT_ITEM, ageInTicks);
+		entity.sitAnimationState.animate(this, OvivenatorAnimation.SIT, ageInTicks);
 		
 		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
 		

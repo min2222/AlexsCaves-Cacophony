@@ -13,13 +13,19 @@ import com.github.alexmodguy.alexscaves.server.misc.ACSoundRegistry;
 import com.min01.acc.block.ACCBlocks;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.AbstractAnimatableDinosaur;
+import com.min01.acc.entity.ai.goal.OvivenatorEatEggGoal;
+import com.min01.acc.entity.ai.goal.OvivenatorStealEggGoal;
 import com.min01.acc.misc.ACCTags;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -40,14 +46,20 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityOvivenator extends AbstractAnimatableDinosaur
 {
 	public static final EntityDataAccessor<Boolean> IS_PANIC = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.BOOLEAN);
-	public static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.BOOLEAN);
+	public static final EntityDataAccessor<Boolean> HOLDING_EGG = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.BOOLEAN);
+	public static final EntityDataAccessor<BlockPos> EGG_POS = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.BLOCK_POS);
+	public static final EntityDataAccessor<ItemStack> CURRENT_EGG = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.ITEM_STACK);
+	public static final EntityDataAccessor<Integer> EGG_HOLDING_TICK = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.INT);
 	
 	public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState idleWithEggAnimationState = new SmoothAnimationState();
@@ -59,6 +71,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	public final SmoothAnimationState danceAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState pickupAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState eatAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState sitAnimationState = new SmoothAnimationState(1.0F);
 	
 	public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
 	
@@ -74,7 +87,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
     {
         return Monster.createMonsterAttributes()
     			.add(Attributes.MAX_HEALTH, 18.0F)
-    			.add(Attributes.MOVEMENT_SPEED, 0.2F);
+    			.add(Attributes.MOVEMENT_SPEED, 0.5F);
     }
 	
 	@Override
@@ -95,6 +108,8 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
         });
         this.goalSelector.addGoal(3, new AnimalBreedEggsGoal(this, 1));
         this.goalSelector.addGoal(4, new AnimalLayEggGoal(this, 100, 1));
+        this.goalSelector.addGoal(0, new OvivenatorStealEggGoal(this));
+        this.goalSelector.addGoal(0, new OvivenatorEatEggGoal(this));
 	}
 	
     @Override
@@ -102,7 +117,10 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
     {
     	super.defineSynchedData();
     	this.entityData.define(IS_PANIC, false);
-    	this.entityData.define(HAS_EGG, false);
+    	this.entityData.define(HOLDING_EGG, false);
+    	this.entityData.define(EGG_POS, BlockPos.ZERO);
+    	this.entityData.define(CURRENT_EGG, ItemStack.EMPTY);
+    	this.entityData.define(EGG_HOLDING_TICK, 0);
     }
     
 	@Override
@@ -125,7 +143,103 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
                 this.level.addParticle(options, this.getX(), this.getY(0.5F), this.getZ(), 0, 0, 0);
             }
         }
+		if(p_21375_ == 99 && !this.getCurrentEgg().isEmpty()) 
+		{
+			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(this.getXRot(), this.yBodyRot), this.position(), 0.0F, 1.5F, 1.5F);
+            for(int i = 0; i < 15 + this.random.nextInt(5); i++) 
+            {
+    			this.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getCurrentEgg()), lookPos.x, lookPos.y, lookPos.z, this.random.nextGaussian() * 0.03F, 0.0F, this.random.nextGaussian() * 0.03F);
+            }
+		}
 	}
+
+	@Override
+	public BlockState createEggBlockState() 
+	{
+		return ACCBlocks.OVIVENATOR_EGG.get().defaultBlockState().setValue(MultipleDinosaurEggsBlock.EGGS, 1 + this.random.nextInt(2));
+	}
+
+	@Override
+	public AgeableMob getBreedOffspring(ServerLevel p_146743_, AgeableMob p_146744_) 
+	{
+		return ACCEntities.OVIVENATOR.get().create(p_146743_);
+	}
+	
+	@Override
+	public void tick() 
+	{
+		super.tick();
+		if(this.level.isClientSide)
+		{
+			this.idleAnimationState.updateWhen(!this.isHoldingEgg() && !this.isDancing() && !this.isOrderedToSit() && this.getAnimationState() == 0, this.tickCount);
+			this.idleWithEggAnimationState.updateWhen(this.isHoldingEgg() && !this.isDancing() && !this.isOrderedToSit() && this.getAnimationState() == 0, this.tickCount);
+			this.holdAnimationState.updateWhen(this.isHoldingEgg() && !this.isDancing(), this.tickCount);
+			this.noiseAnimationState.updateWhen(this.ambientType == AmbientType.NOISE && !this.isDancing() && !this.isOrderedToSit(), this.tickCount);
+			this.scratchRightAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_RIGHT && !this.isDancing() && !this.isHoldingEgg() && !this.isOrderedToSit(), this.tickCount);
+			this.scratchLeftAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_LEFT && !this.isDancing() && !this.isHoldingEgg() && !this.isOrderedToSit(), this.tickCount);
+			this.lookAnimationState.updateWhen(this.ambientType == AmbientType.LOOK && !this.isDancing(), this.tickCount);
+			this.danceAnimationState.updateWhen(this.isDancing(), this.tickCount);
+			this.pickupAnimationState.updateWhen(this.isUsingSkill(1) && !this.isDancing(), this.tickCount);
+			this.eatAnimationState.updateWhen(this.isUsingSkill(2) && !this.isDancing(), this.tickCount);
+			this.sitAnimationState.updateWhen(this.isOrderedToSit() && !this.isDancing(), this.tickCount);
+			this.runAnimationState.updateWhen(this.isPanic() && this.getAnimationState() == 0, this.tickCount);
+		}
+		if(this.ambientType != null)
+		{
+			this.ambientTick--;
+			if(this.ambientTick <= 0)
+			{
+				this.ambientType = null;
+			}
+		}
+		if(this.isPanic() && this.getNavigation().isDone())
+		{
+			this.setPanic(false);
+		}
+		if(!this.getEggPos().equals(BlockPos.ZERO))
+		{
+			if(this.getEggPos().distToCenterSqr(this.position()) <= 1.5F && this.getCurrentEgg().isEmpty())
+			{
+				BlockState state = this.level.getBlockState(this.getEggPos());
+				this.setAnimationState(1);
+				this.setAnimationTick(18);
+				if(!state.isAir())
+				{
+					this.level.destroyBlock(this.getEggPos(), false);
+					this.setCurrentEgg(new ItemStack(Item.BY_BLOCK.get(state.getBlock())));
+				}
+			}
+		}
+		if(this.getAnimationTick() <= 0)
+		{
+			if(this.getAnimationState() == 1)
+			{
+				this.setHoldingEgg(true);
+				this.setAnimationState(0);
+			}
+		}
+		if(this.isHoldingEgg())
+		{
+			this.setEggHoldingTick(this.getEggHoldingTick() + 1);
+		}
+	}
+    
+    @Override
+    public boolean hurt(DamageSource p_27567_, float p_27568_) 
+    {
+    	if(!this.isPanic() && p_27567_.getDirectEntity() != null && !this.isTame())
+    	{
+    		List<EntityOvivenator> list = this.level.getEntitiesOfClass(EntityOvivenator.class, this.getBoundingBox().inflate(10), t -> !t.isPanic() && !t.isTame());
+    		list.forEach(t -> 
+    		{
+    			t.setPanic(true);
+        		ACCUtil.runAway(t, p_27567_.getSourcePosition());
+    		});
+    		this.setPanic(true);
+    		ACCUtil.runAway(this, p_27567_.getSourcePosition());
+    	}
+    	return super.hurt(p_27567_, p_27568_);
+    }
 	
     public int getAltSkinForItem(ItemStack stack) 
     {
@@ -194,77 +308,13 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
         }
         return type;
     }
-
-	@Override
-	public BlockState createEggBlockState() 
-	{
-		return ACCBlocks.OVIVENATOR_EGG.get().defaultBlockState().setValue(MultipleDinosaurEggsBlock.EGGS, 1 + this.random.nextInt(2));
-	}
-
-	@Override
-	public AgeableMob getBreedOffspring(ServerLevel p_146743_, AgeableMob p_146744_) 
-	{
-		return ACCEntities.OVIVENATOR.get().create(p_146743_);
-	}
-	
-	@Override
-	public void tick() 
-	{
-		super.tick();
-		if(this.level.isClientSide)
-		{
-			this.idleAnimationState.updateWhen(!this.hasEgg() && !this.isDancing() && this.getAnimationState() == 0, this.tickCount);
-			this.idleWithEggAnimationState.updateWhen(this.hasEgg() && !this.isDancing() && this.getAnimationState() == 0, this.tickCount);
-			this.holdAnimationState.updateWhen(this.hasEgg() && !this.isDancing(), this.tickCount);
-			this.noiseAnimationState.updateWhen(this.ambientType == AmbientType.NOISE && !this.isDancing(), this.tickCount);
-			this.scratchRightAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_RIGHT && !this.isDancing() && !this.hasEgg(), this.tickCount);
-			this.scratchLeftAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_LEFT && !this.isDancing() && !this.hasEgg(), this.tickCount);
-			this.lookAnimationState.updateWhen(this.ambientType == AmbientType.LOOK && !this.isDancing(), this.tickCount);
-			this.danceAnimationState.updateWhen(this.isDancing(), this.tickCount);
-			this.pickupAnimationState.updateWhen(this.getAnimationState() == 1 && !this.isDancing(), this.tickCount);
-			this.eatAnimationState.updateWhen(this.getAnimationState() == 2 && !this.isDancing(), this.tickCount);
-			this.runAnimationState.updateWhen(this.isPanic() && this.getAnimationState() == 0, this.tickCount);
-		}
-		if(this.ambientType != null)
-		{
-			this.ambientTick--;
-			if(this.ambientTick <= 0)
-			{
-				this.ambientType = null;
-			}
-		}
-		if(this.isPanic() && this.getNavigation().isDone())
-		{
-			this.setPanic(false);
-		}
-	}
     
-    @Override
-    public boolean hurt(DamageSource p_27567_, float p_27568_) 
-    {
-    	if(!this.isPanic() && p_27567_.getDirectEntity() != null && !this.isTame())
-    	{
-    		List<EntityOvivenator> list = this.level.getEntitiesOfClass(EntityOvivenator.class, this.getBoundingBox().inflate(10), t -> !t.isPanic() && !t.isTame());
-    		list.forEach(t -> 
-    		{
-    			t.setPanic(true);
-        		ACCUtil.runAway(t, p_27567_.getSourcePosition());
-    		});
-    		this.setPanic(true);
-    		ACCUtil.runAway(this, p_27567_.getSourcePosition());
-    	}
-    	return super.hurt(p_27567_, p_27568_);
-    }
-	
 	@Override
 	public void playAmbientSound() 
 	{
 		AmbientType type = AmbientType.getRandom(this.random);
-		if(!this.hasEgg())
-		{
-			this.ambientType = type;
-			this.ambientTick = type.tick;
-		}
+		this.ambientType = type;
+		this.ambientTick = type.tick;
 		if(type == AmbientType.NOISE)
 		{
 			super.playAmbientSound();
@@ -319,7 +369,13 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	{
 		super.readAdditionalSaveData(p_21450_);
 		this.setPanic(p_21450_.getBoolean("isPanic"));
-		this.setHasEgg(p_21450_.getBoolean("HasEgg"));
+		this.setHoldingEgg(p_21450_.getBoolean("HoldingEgg"));
+		this.setEggPos(NbtUtils.readBlockPos(p_21450_.getCompound("EggPos")));
+		this.setEggHoldingTick(p_21450_.getInt("EggHoldingTick"));
+		if(p_21450_.contains("CurrentEgg"))
+		{
+			this.setCurrentEgg(ItemStack.of(p_21450_.getCompound("CurrentEgg")));
+		}
 	}
 
 	@Override
@@ -327,7 +383,43 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	{
 		super.addAdditionalSaveData(p_21484_);
 		p_21484_.putBoolean("isPanic", this.isPanic());
-		p_21484_.putBoolean("HasEgg", this.hasEgg());
+		p_21484_.putBoolean("HoldingEgg", this.isHoldingEgg());
+		p_21484_.put("EggPos", NbtUtils.writeBlockPos(this.getEggPos()));
+		p_21484_.putInt("EggHoldingTick", this.getEggHoldingTick());
+		if(!this.getCurrentEgg().isEmpty())
+		{
+			p_21484_.put("CurrentEgg", this.getCurrentEgg().save(new CompoundTag()));
+		}
+	}
+	
+	public void setEggHoldingTick(int value)
+	{
+		this.entityData.set(EGG_HOLDING_TICK, value);
+	}
+	
+	public int getEggHoldingTick()
+	{
+		return this.entityData.get(EGG_HOLDING_TICK);
+	}
+	
+	public void setCurrentEgg(ItemStack stack)
+	{
+		this.entityData.set(CURRENT_EGG, stack);
+	}
+	
+	public ItemStack getCurrentEgg()
+	{
+		return this.entityData.get(CURRENT_EGG);
+	}
+	
+	public void setEggPos(BlockPos value)
+	{
+		this.entityData.set(EGG_POS, value);
+	}
+	
+	public BlockPos getEggPos()
+	{
+		return this.entityData.get(EGG_POS);
 	}
 	
 	public void setPanic(boolean value)
@@ -340,14 +432,14 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 		return this.entityData.get(IS_PANIC);
 	}
 	
-	public void setHasEgg(boolean value)
+	public void setHoldingEgg(boolean value)
 	{
-		this.entityData.set(HAS_EGG, value);
+		this.entityData.set(HOLDING_EGG, value);
 	}
 	
-	public boolean hasEgg()
+	public boolean isHoldingEgg()
 	{
-		return this.entityData.get(HAS_EGG);
+		return this.entityData.get(HOLDING_EGG);
 	}
 	
 	public static enum AmbientType

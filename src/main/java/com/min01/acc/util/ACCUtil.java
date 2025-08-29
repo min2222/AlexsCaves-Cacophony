@@ -48,7 +48,7 @@ public class ACCUtil
             Vec3 randomShake = new Vec3(mob.level.random.nextFloat() - 0.5F, 0, mob.level.random.nextFloat() - 0.5F).scale(0.1F);
             mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.7F, 1, 0.7F).add(randomShake));
         }
-        Vec3 vec = LandRandomPos.getPosAway(mob, 15, 7, pos);
+        Vec3 vec = LandRandomPos.getPosAway(mob, 16, 7, pos);
         if(vec != null)
         {
             mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0D);
