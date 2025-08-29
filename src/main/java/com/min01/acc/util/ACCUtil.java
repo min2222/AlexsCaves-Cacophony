@@ -304,9 +304,4 @@ public class ACCUtil
         double z = startPos.z + (level.random.nextDouble() - level.random.nextDouble()) * range + 0.5D;
         return new Vec3(x, y, z);
 	}
-	
-    public static boolean isMoving(Entity entity) 
-    {
-    	return entity.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6D;
-    }
 }

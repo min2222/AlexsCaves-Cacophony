@@ -14,6 +14,7 @@ import com.min01.acc.block.ACCBlocks;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.AbstractAnimatableDinosaur;
 import com.min01.acc.misc.ACCTags;
+import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.Util;
@@ -29,7 +30,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -49,16 +49,18 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	public static final EntityDataAccessor<Boolean> IS_PANIC = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(EntityOvivenator.class, EntityDataSerializers.BOOLEAN);
 	
-	public final AnimationState idleAnimationState = new AnimationState();
-	public final AnimationState idleWithEggAnimationState = new AnimationState();
-	public final AnimationState holdAnimationState = new AnimationState();
-	public final AnimationState noiseAnimationState = new AnimationState();
-	public final AnimationState scratchRightAnimationState = new AnimationState();
-	public final AnimationState scratchLeftAnimationState = new AnimationState();
-	public final AnimationState lookAnimationState = new AnimationState();
-	public final AnimationState danceAnimationState = new AnimationState();
-	public final AnimationState pickupAnimationState = new AnimationState();
-	public final AnimationState eatAnimationState = new AnimationState();
+	public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState idleWithEggAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState holdAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState noiseAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState scratchRightAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState scratchLeftAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState lookAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState danceAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState pickupAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState eatAnimationState = new SmoothAnimationState();
+	
+	public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
 	
 	public AmbientType ambientType;
 	public int ambientTick;
@@ -102,41 +104,6 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
     	this.entityData.define(IS_PANIC, false);
     	this.entityData.define(HAS_EGG, false);
     }
-    
-	@Override
-	public void onSyncedDataUpdated(EntityDataAccessor<?> p_219422_) 
-	{
-        if(ANIMATION_STATE.equals(p_219422_) && this.level.isClientSide) 
-        {
-            switch(this.getAnimationState()) 
-            {
-        		case 0: 
-        		{
-        			this.stopAllAnimationStates();
-        			break;
-        		}
-        		case 1: 
-        		{
-        			this.stopAllAnimationStates();
-        			this.pickupAnimationState.start(this.tickCount);
-        			break;
-        		}
-        		case 2: 
-        		{
-        			this.stopAllAnimationStates();
-        			this.eatAnimationState.start(this.tickCount);
-        			break;
-        		}
-            }
-        }
-	}
-	
-	@Override
-	public void stopAllAnimationStates() 
-	{
-		this.pickupAnimationState.stop();
-		this.eatAnimationState.stop();
-	}
     
 	@Override
 	public void handleEntityEvent(byte p_21375_) 
@@ -246,14 +213,17 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 		super.tick();
 		if(this.level.isClientSide)
 		{
-			this.idleAnimationState.animateWhen(!ACCUtil.isMoving(this) && !this.hasEgg() && !this.isDancing(), this.tickCount);
-			this.idleWithEggAnimationState.animateWhen(!ACCUtil.isMoving(this) && this.hasEgg() && !this.isDancing(), this.tickCount);
-			this.holdAnimationState.animateWhen(this.hasEgg() && !this.isDancing(), this.tickCount);
-			this.noiseAnimationState.animateWhen(this.ambientType == AmbientType.NOISE && !this.isDancing(), this.tickCount);
-			this.scratchRightAnimationState.animateWhen(this.ambientType == AmbientType.SCRATCH_RIGHT && !this.isDancing(), this.tickCount);
-			this.scratchLeftAnimationState.animateWhen(this.ambientType == AmbientType.SCRATCH_LEFT && !this.isDancing(), this.tickCount);
-			this.lookAnimationState.animateWhen(this.ambientType == AmbientType.LOOK && !this.isDancing(), this.tickCount);
-			this.danceAnimationState.animateWhen(this.isDancing(), this.tickCount);
+			this.idleAnimationState.updateWhen(!this.hasEgg() && !this.isDancing() && this.getAnimationState() == 0, this.tickCount);
+			this.idleWithEggAnimationState.updateWhen(this.hasEgg() && !this.isDancing() && this.getAnimationState() == 0, this.tickCount);
+			this.holdAnimationState.updateWhen(this.hasEgg() && !this.isDancing(), this.tickCount);
+			this.noiseAnimationState.updateWhen(this.ambientType == AmbientType.NOISE && !this.isDancing(), this.tickCount);
+			this.scratchRightAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_RIGHT && !this.isDancing() && !this.hasEgg(), this.tickCount);
+			this.scratchLeftAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_LEFT && !this.isDancing() && !this.hasEgg(), this.tickCount);
+			this.lookAnimationState.updateWhen(this.ambientType == AmbientType.LOOK && !this.isDancing(), this.tickCount);
+			this.danceAnimationState.updateWhen(this.isDancing(), this.tickCount);
+			this.pickupAnimationState.updateWhen(this.getAnimationState() == 1 && !this.isDancing(), this.tickCount);
+			this.eatAnimationState.updateWhen(this.getAnimationState() == 2 && !this.isDancing(), this.tickCount);
+			this.runAnimationState.updateWhen(this.isPanic() && this.getAnimationState() == 0, this.tickCount);
 		}
 		if(this.ambientType != null)
 		{

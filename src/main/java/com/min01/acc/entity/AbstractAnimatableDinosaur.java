@@ -57,11 +57,6 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
 			this.setAnimationTick(this.getAnimationTick() - 1);
 		}
     }
-    
-	public void stopAllAnimationStates()
-	{
-		
-	}
 	
     @Override
     public void readAdditionalSaveData(CompoundTag p_21450_) 

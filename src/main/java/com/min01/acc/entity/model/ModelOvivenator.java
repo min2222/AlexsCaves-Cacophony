@@ -88,24 +88,21 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		ACCClientUtil.animateHead(this.root.getChild("ovivenator").getChild("body").getChild("neck").getChild("head"), netHeadYaw, headPitch);
-		this.animate(entity.idleAnimationState, OvivenatorAnimation.IDLE, ageInTicks);
-		this.animate(entity.idleWithEggAnimationState, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks);
-		this.animate(entity.holdAnimationState, OvivenatorAnimation.HOLD, ageInTicks);
-		this.animate(entity.noiseAnimationState, OvivenatorAnimation.NOISE, ageInTicks);
-		this.animate(entity.scratchRightAnimationState, OvivenatorAnimation.SCRATCH_RIGHT, ageInTicks);
-		this.animate(entity.scratchLeftAnimationState, OvivenatorAnimation.SCRATCH_LEFT, ageInTicks);
-		this.animate(entity.lookAnimationState, OvivenatorAnimation.LOOK, ageInTicks);
-		this.animate(entity.danceAnimationState, OvivenatorAnimation.DANCE, ageInTicks);
-		this.animate(entity.pickupAnimationState, OvivenatorAnimation.PICK_UP_ITEM, ageInTicks);
-		this.animate(entity.eatAnimationState, OvivenatorAnimation.EAT_ITEM, ageInTicks);
-		if(!entity.isPanic())
-		{
-			this.animateWalk(OvivenatorAnimation.WALK, limbSwing, limbSwingAmount, 1.0F, 2.5F);
-		}
-		else
-		{
-			this.animateWalk(OvivenatorAnimation.RUN, limbSwing, limbSwingAmount, 1.0F, 2.5F);
-		}
+		entity.idleAnimationState.animate(this, OvivenatorAnimation.IDLE, ageInTicks, limbSwingAmount);
+		entity.idleWithEggAnimationState.animate(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, limbSwingAmount);
+		entity.holdAnimationState.animate(this, OvivenatorAnimation.HOLD, ageInTicks);
+		entity.noiseAnimationState.animate(this, OvivenatorAnimation.NOISE, ageInTicks);
+		entity.scratchRightAnimationState.animate(this, OvivenatorAnimation.SCRATCH_RIGHT, ageInTicks);
+		entity.scratchLeftAnimationState.animate(this, OvivenatorAnimation.SCRATCH_LEFT, ageInTicks);
+		entity.lookAnimationState.animate(this, OvivenatorAnimation.LOOK, ageInTicks);
+		entity.danceAnimationState.animate(this, OvivenatorAnimation.DANCE, ageInTicks);
+		entity.pickupAnimationState.animate(this, OvivenatorAnimation.PICK_UP_ITEM, ageInTicks);
+		entity.eatAnimationState.animate(this, OvivenatorAnimation.EAT_ITEM, ageInTicks);
+		
+		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
+		
+		this.animateWalk(OvivenatorAnimation.WALK, limbSwing, limbSwingAmount * factor, 1.0F, 2.5F);
+		this.animateWalk(OvivenatorAnimation.RUN, limbSwing, Math.max(limbSwingAmount - factor, 0.0F), 1.0F, 2.5F);
 	}
 	
 	@Override
