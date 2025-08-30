@@ -61,17 +61,17 @@ public class ACCUtil
     	Vec3 vec3 = (new Vec3(p_37266_, p_37267_, p_37268_)).normalize().add(random.triangle(0.0D, 0.0172275D * (double)p_37270_), random.triangle(0.0D, 0.0172275D * (double)p_37270_), random.triangle(0.0D, 0.0172275D * (double)p_37270_)).scale((double)p_37269_);
     	projectile.setDeltaMovement(vec3);
     	double d0 = vec3.horizontalDistance();
-    	projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
-    	projectile.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180F / (float)Math.PI)));
+    	projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180.0F / (float)Math.PI)));
+    	projectile.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180.0F / (float)Math.PI)));
     	projectile.yRotO = projectile.getYRot();
     	projectile.xRotO = projectile.getXRot();
     }
 
     public static void shootFromRotation(Entity projectile, Entity p_37252_, float p_37253_, float p_37254_, float p_37255_, float p_37256_, float p_37257_) 
     {
-    	float f = -Mth.sin(p_37254_ * ((float)Math.PI / 180F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180F));
-    	float f1 = -Mth.sin((p_37253_ + p_37255_) * ((float)Math.PI / 180F));
-    	float f2 = Mth.cos(p_37254_ * ((float)Math.PI / 180F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180F));
+    	float f = -Mth.sin(p_37254_ * ((float)Math.PI / 180.0F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180.0F));
+    	float f1 = -Mth.sin((p_37253_ + p_37255_) * ((float)Math.PI / 180.0F));
+    	float f2 = Mth.cos(p_37254_ * ((float)Math.PI / 180.0F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180.0F));
     	shoot(projectile, (double)f, (double)f1, (double)f2, p_37256_, p_37257_);
     	Vec3 vec3 = p_37252_.getDeltaMovement();
     	projectile.setDeltaMovement(projectile.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));

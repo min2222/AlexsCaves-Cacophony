@@ -37,7 +37,6 @@ public class MastcarverItem extends SwordItem
 		{
 			setStackedDmg(p_41404_, 6.0F);
 		}
-		super.inventoryTick(p_41404_, p_41405_, p_41406_, p_41407_, p_41408_);
 	}
 	
 	@Override
@@ -95,25 +94,25 @@ public class MastcarverItem extends SwordItem
     
     public static Entity getLastHitEntity(ItemStack stack, Level level)
     {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null && compoundtag.contains(LAST_HIT_ENTITY) ? ACCUtil.getEntityByUUID(level, compoundtag.getUUID(LAST_HIT_ENTITY)) : null;
+        CompoundTag tag = stack.getTag();
+        return tag != null && tag.contains(LAST_HIT_ENTITY) ? ACCUtil.getEntityByUUID(level, tag.getUUID(LAST_HIT_ENTITY)) : null;
     }
 
     public static void setLastHitEntity(ItemStack stack, Entity entity)
     {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putUUID(LAST_HIT_ENTITY, entity.getUUID());
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putUUID(LAST_HIT_ENTITY, entity.getUUID());
     }
     
     public static float getStackedDmg(ItemStack stack)
     {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null && compoundtag.contains(STACKED_DMG) ? compoundtag.getFloat(STACKED_DMG) : 6.0F;
+        CompoundTag tag = stack.getTag();
+        return tag != null && tag.contains(STACKED_DMG) ? tag.getFloat(STACKED_DMG) : 6.0F;
     }
 
-    public static void setStackedDmg(ItemStack stack, float charge)
+    public static void setStackedDmg(ItemStack stack, float dmg)
     {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        compoundtag.putFloat(STACKED_DMG, charge);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putFloat(STACKED_DMG, dmg);
     }
 }

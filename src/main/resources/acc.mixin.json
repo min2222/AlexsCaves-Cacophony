@@ -4,11 +4,8 @@
 	"package": "com.min01.acc.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"MixinRelicheirusEntity",
-		"MixinVallumraptorEntity",
-		"MixinLivingEntity",
-		"MixinMob",
-		"MixinFallingBlockEntity"
+		"MixinFallingBlockEntity",
+		"MixinThornwoodTreeFeature"
 	],
 	"client": [
 		"MixinPlayerModel",

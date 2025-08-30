@@ -6,6 +6,7 @@ import com.min01.acc.AlexsCavesCacophony;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -35,6 +36,16 @@ public class ACCTags
 		private static TagKey<Item> create(String name) 
 		{
 			return TagKey.create(Registries.ITEM, new ResourceLocation(AlexsCavesCacophony.MODID, name));
+		}
+	}
+	
+	public static class ACCEntity
+	{
+		public static final TagKey<EntityType<?>> PAINTABLE = create("paintable");
+		
+		private static TagKey<EntityType<?>> create(String name) 
+		{
+			return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(AlexsCavesCacophony.MODID, name));
 		}
 	}
 }

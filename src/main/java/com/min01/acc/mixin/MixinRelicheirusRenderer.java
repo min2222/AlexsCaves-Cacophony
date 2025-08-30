@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.github.alexmodguy.alexscaves.client.render.entity.RelicheirusRenderer;
 import com.github.alexmodguy.alexscaves.server.entity.living.RelicheirusEntity;
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.entity.IPainted;
+import com.min01.acc.capabilities.ACCCapabilities;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -18,9 +18,12 @@ public class MixinRelicheirusRenderer
     @Inject(at = @At("HEAD"), method = "getTextureLocation", cancellable = true, remap = false)
     private void getTextureLocation(RelicheirusEntity entity, CallbackInfoReturnable<ResourceLocation> cir)
     {
-    	if(((IPainted) entity).isPainted())
+    	entity.getCapability(ACCCapabilities.PAINTED).ifPresent(t -> 
     	{
-    		cir.setReturnValue(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/relicheirus_painted.png"));
-    	}
+    		if(t.isPainted())
+    		{
+        		cir.setReturnValue(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/relicheirus_painted.png"));
+    		}
+    	});
     }
 }

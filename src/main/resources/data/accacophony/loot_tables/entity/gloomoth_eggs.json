@@ -1,0 +1,63 @@
+{
+	"type": "minecraft:entity",
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "accacophony:gloomoth_eggs",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"type": "minecraft:uniform",
+								"min": 0,
+								"max": 1
+							},
+							"add": false,
+							"conditions": [
+								{
+									"condition": "minecraft:entity_properties",
+									"entity": "this",
+									"predicate": {
+										"type": "alexscaves:gloomoth"
+									}
+								}
+							]
+						},
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"type": "minecraft:uniform",
+								"min": 1,
+								"max": 2
+							},
+							"add": false,
+							"conditions": [
+								{
+									"condition": "minecraft:entity_properties",
+									"entity": "this",
+									"predicate": {
+										"type": "alexscaves:watcher"
+									}
+								}
+							]
+						}
+					]
+				}
+			],
+			"functions": [
+				{
+					"function": "minecraft:looting_enchant",
+					"count": {
+						"type": "minecraft:uniform",
+						"min": 0,
+						"max": 1
+					},
+					"limit": 3
+				}
+			]
+		}
+	]
+}

@@ -19,6 +19,7 @@ public class ACCCapabilities
 	public static final Capability<IPlayerAnimationCapability> PLAYER_ANIMATION = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<IItemAnimationCapability> ITEM_ANIMATION = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<IOwnerCapability> OWNER = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final Capability<IPaintedCapability> PAINTED = CapabilityManager.get(new CapabilityToken<>() {});
 	
 	public static void attachItemStackCapability(AttachCapabilitiesEvent<ItemStack> e)
 	{
@@ -99,6 +100,34 @@ public class ACCCapabilities
 			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) 
 			{
 				return OWNER.orEmpty(capability, this.inst.cast());
+			}
+
+			@Override
+			public CompoundTag serializeNBT() 
+			{
+				return this.inst.orElseThrow(NullPointerException::new).serializeNBT();
+			}
+
+			@Override
+			public void deserializeNBT(CompoundTag nbt)
+			{
+				this.inst.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
+			}
+		});
+		e.addCapability(IPaintedCapability.ID, new ICapabilitySerializable<CompoundTag>() 
+		{
+			LazyOptional<IPaintedCapability> inst = LazyOptional.of(() -> 
+			{
+				PaintedCapabilityImpl i = new PaintedCapabilityImpl();
+				i.setEntity(e.getObject());
+				return i;
+			});
+
+			@Nonnull
+			@Override
+			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) 
+			{
+				return PAINTED.orEmpty(capability, this.inst.cast());
 			}
 
 			@Override
