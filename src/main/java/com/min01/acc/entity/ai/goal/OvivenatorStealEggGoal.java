@@ -32,7 +32,7 @@ public class OvivenatorStealEggGoal extends Goal
 	@Override
 	public boolean canUse() 
 	{
-		if(this.mob.isHoldingEgg() || this.mob.isDancing() || this.mob.getAnimationState() != 0 || !this.mob.getEggPos().equals(BlockPos.ZERO))
+		if(this.mob.isHoldingEgg() || this.mob.isDancing() || this.mob.getAnimationState() != 0 || !this.mob.getEggPos().equals(BlockPos.ZERO) || this.mob.isBaby())
 		{
 			return false;
 		}

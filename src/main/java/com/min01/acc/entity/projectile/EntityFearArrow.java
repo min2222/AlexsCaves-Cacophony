@@ -3,18 +3,17 @@ package com.min01.acc.entity.projectile;
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.item.ACCItems;
+import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 
 public class EntityFearArrow extends AbstractArrow
 {
@@ -48,18 +47,7 @@ public class EntityFearArrow extends AbstractArrow
         {
         	if(!mob.getType().is(ACTagRegistry.RESISTS_TREMORSAURUS_ROAR))
         	{
-                mob.setTarget(null);
-                mob.setLastHurtByMob(null);
-                if(mob.onGround())
-                {
-                    Vec3 randomShake = new Vec3(this.level.random.nextFloat() - 0.5F, 0, this.level.random.nextFloat() - 0.5F).scale(0.1F);
-                    mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.7F, 1, 0.7F).add(randomShake));
-                }
-                Vec3 vec = LandRandomPos.getPosAway(mob, 16, 7, this.position());
-                if(vec != null)
-                {
-                    mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0D);
-                }
+        		ACCUtil.runAway(mob, this.position());
         	}
         }
 	}

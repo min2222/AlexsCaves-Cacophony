@@ -103,7 +103,7 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
 		
 		this.animateWalk(OvivenatorAnimation.WALK, limbSwing, limbSwingAmount * factor, 2.5F, 2.5F);
-		this.animateWalk(OvivenatorAnimation.RUN, limbSwing, Math.max(limbSwingAmount - factor, 0.0F), 1.5F, 2.5F);
+		this.animateWalk(OvivenatorAnimation.RUN, limbSwing, Math.max(limbSwingAmount - factor, 0.0F), 1.0F, 1.0F);
 	}
 	
 	@Override

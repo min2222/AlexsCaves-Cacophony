@@ -83,7 +83,7 @@ public class EventHandlerForge
 		Entity entity = event.getEntity();
 		if(entity instanceof DinosaurEntity dino)
 		{
-			dino.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(dino, EntityOvivenator.class, false));
+			dino.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(dino, EntityOvivenator.class, false, t -> !t.isBaby()));
 		}
 		if(entity.getType().is(ACCTags.ACCEntity.PAINTABLE) && Math.random() <= 0.1F)
 		{

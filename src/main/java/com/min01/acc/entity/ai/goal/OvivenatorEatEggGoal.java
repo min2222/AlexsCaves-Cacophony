@@ -35,7 +35,7 @@ public class OvivenatorEatEggGoal extends BasicAnimationSkillGoal<EntityOvivenat
 	@Override
 	public boolean additionalStartCondition()
 	{
-		return this.mob.getEggHoldingTick() >= 160 && this.mob.isHoldingEgg() && !this.mob.getCurrentEgg().isEmpty();
+		return this.mob.getEggHoldingTick() >= 160 && this.mob.isHoldingEgg() && !this.mob.getCurrentEgg().isEmpty() && !this.mob.isBaby();
 	}
 	
 	@Override
