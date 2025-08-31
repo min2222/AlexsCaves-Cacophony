@@ -15,6 +15,7 @@ import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.AbstractAnimatableDinosaur;
 import com.min01.acc.entity.ai.goal.OvivenatorEatEggGoal;
 import com.min01.acc.entity.ai.goal.OvivenatorStealEggGoal;
+import com.min01.acc.entity.ai.goal.OvivenatorTickBoostGoal;
 import com.min01.acc.misc.ACCTags;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.util.ACCUtil;
@@ -110,6 +111,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
         this.goalSelector.addGoal(4, new AnimalLayEggGoal(this, 100, 1));
         this.goalSelector.addGoal(0, new OvivenatorStealEggGoal(this));
         this.goalSelector.addGoal(0, new OvivenatorEatEggGoal(this));
+        this.goalSelector.addGoal(0, new OvivenatorTickBoostGoal(this));
 	}
 	
     @Override
@@ -192,9 +194,25 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 				this.ambientType = null;
 			}
 		}
-		if(this.isPanic() && this.getNavigation().isDone())
+		if(this.getNavigation().isDone())
 		{
-			this.setPanic(false);
+			if(this.isHoldingEgg())
+			{
+				List<DinosaurEntity> list = this.level.getEntitiesOfClass(DinosaurEntity.class, this.getBoundingBox().inflate(3.0F), t -> !(t instanceof EntityOvivenator));
+				if(!list.isEmpty())
+				{
+					ACCUtil.runAway(this, list.get(0).position());
+					this.setPanic(true);
+				}
+				else if(this.isPanic())
+				{
+					this.setPanic(false);
+				}
+			}
+			else if(this.isPanic())
+			{
+				this.setPanic(false);
+			}
 		}
 		if(!this.getEggPos().equals(BlockPos.ZERO))
 		{
@@ -295,7 +313,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
                     this.heal(5);
                     this.tame(player);
                     this.navigation.stop();
-                    this.setCommand(1);
+                    this.setCommand(0);
                     this.setOrderedToSit(true);
                     this.level.broadcastEntityEvent(this, (byte) 7);
             	}

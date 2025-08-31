@@ -21,6 +21,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -41,18 +42,26 @@ public class ACCUtil
     
     public static void runAway(PathfinderMob mob, Vec3 pos)
     {
-        mob.setTarget(null);
-        mob.setLastHurtByMob(null);
-        if(mob.onGround())
-        {
-            Vec3 randomShake = new Vec3(mob.level.random.nextFloat() - 0.5F, 0, mob.level.random.nextFloat() - 0.5F).scale(0.1F);
-            mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.7F, 1, 0.7F).add(randomShake));
-        }
-        Vec3 vec = LandRandomPos.getPosAway(mob, 16, 7, pos);
-        if(vec != null)
-        {
-            mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0F);
-        }
+    	boolean flag = true;
+    	if(mob instanceof TamableAnimal animal)
+    	{
+    		flag = !animal.isOrderedToSit();
+    	}
+    	if(flag)
+    	{
+            mob.setTarget(null);
+            mob.setLastHurtByMob(null);
+            if(mob.onGround())
+            {
+                Vec3 randomShake = new Vec3(mob.level.random.nextFloat() - 0.5F, 0, mob.level.random.nextFloat() - 0.5F).scale(0.1F);
+                mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.7F, 1, 0.7F).add(randomShake));
+            }
+            Vec3 vec = LandRandomPos.getPosAway(mob, 16, 7, pos);
+            if(vec != null)
+            {
+                mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0F);
+            }
+    	}
     }
     
     public static void shoot(Entity projectile, double p_37266_, double p_37267_, double p_37268_, float p_37269_, float p_37270_) 

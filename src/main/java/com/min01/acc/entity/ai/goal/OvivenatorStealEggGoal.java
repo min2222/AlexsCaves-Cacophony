@@ -32,7 +32,7 @@ public class OvivenatorStealEggGoal extends Goal
 	@Override
 	public boolean canUse() 
 	{
-		if(this.mob.isHoldingEgg() || this.mob.isDancing() || this.mob.getAnimationState() != 0 || !this.mob.getEggPos().equals(BlockPos.ZERO) || this.mob.isBaby())
+		if(this.mob.isHoldingEgg() || this.mob.isDancing() || this.mob.getAnimationState() != 0 || !this.mob.getEggPos().equals(BlockPos.ZERO) || this.mob.isBaby() || this.mob.isTame())
 		{
 			return false;
 		}
@@ -70,11 +70,11 @@ public class OvivenatorStealEggGoal extends Goal
 	@Nullable
 	public Vec3 findEgg()
 	{
-		RandomSource randomsource = this.mob.getRandom();
-		BlockPos blockpos = this.mob.blockPosition();
+		RandomSource random = this.mob.getRandom();
+		BlockPos blockPos = this.mob.blockPosition();
 		for(int i = 0; i < 10; ++i) 
 		{
-			BlockPos blockPos1 = blockpos.offset(randomsource.nextInt(20) - 10, 0, randomsource.nextInt(20) - 10);
+			BlockPos blockPos1 = blockPos.offset(random.nextInt(20) - 10, 0, random.nextInt(20) - 10);
 			BlockState state = this.level.getBlockState(blockPos1);
 			if(state.is(ACCTags.ACCBlocks.DINOSAUR_EGGS) && !state.is(ACCTags.ACCBlocks.OVIVENATOR_CANT_STEAL))
 			{
