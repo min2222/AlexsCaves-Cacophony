@@ -51,7 +51,7 @@ public class ACCUtil
         Vec3 vec = LandRandomPos.getPosAway(mob, 16, 7, pos);
         if(vec != null)
         {
-            mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 1.0F);
+            mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0F);
         }
     }
     

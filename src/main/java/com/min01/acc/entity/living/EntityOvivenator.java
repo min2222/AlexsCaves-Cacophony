@@ -87,7 +87,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
     {
         return Monster.createMonsterAttributes()
     			.add(Attributes.MAX_HEALTH, 18.0F)
-    			.add(Attributes.MOVEMENT_SPEED, 0.5F);
+    			.add(Attributes.MOVEMENT_SPEED, 0.2F);
     }
 	
 	@Override
