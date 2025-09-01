@@ -13,7 +13,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -37,7 +37,7 @@ public class EntityGloomworm extends AbstractAnimatableCreature
 	protected void registerGoals() 
 	{
 		this.goalSelector.addGoal(1, new FloatGoal(this));
-		this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0F));
+		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0F));
 		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
 	}
