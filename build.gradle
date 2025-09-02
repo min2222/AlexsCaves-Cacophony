@@ -29,7 +29,6 @@ base {
 
 mixin {
     add sourceSets.main, "acc.refmap.json"
-
     config "acc.mixin.json"
 }
 

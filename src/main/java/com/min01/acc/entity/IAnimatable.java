@@ -2,6 +2,8 @@ package com.min01.acc.entity;
 
 public interface IAnimatable
 {
+	void setUsingSkill(boolean value);
+	
 	boolean isUsingSkill();
 	
 	void setAnimationTick(int value);
