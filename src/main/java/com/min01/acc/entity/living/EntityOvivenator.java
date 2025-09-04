@@ -176,7 +176,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 			this.danceAnimationState.updateWhen(this.isDancing(), this.tickCount);
 			this.pickupAnimationState.updateWhen(this.isUsingSkill(1) && !this.isDancing(), this.tickCount);
 			this.eatAnimationState.updateWhen(this.isUsingSkill(2) && !this.isDancing(), this.tickCount);
-			this.sitAnimationState.updateWhen(this.isOrderedToSit() && !this.isDancing(), this.tickCount);
+			this.sitAnimationState.updateWhen(this.isInSittingPose() && !this.isDancing(), this.tickCount);
 			this.runAnimationState.updateWhen(this.isPanic() && this.getAnimationState() == 0, this.tickCount);
 		}
 		if(this.ambientType != null)
