@@ -1,6 +1,5 @@
 package com.min01.acc.item;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -8,16 +7,9 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import com.github.alexmodguy.alexscaves.AlexsCaves;
-import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
-import com.github.alexmodguy.alexscaves.server.item.UpdatesStackTags;
-import com.github.alexmodguy.alexscaves.server.message.UpdateEffectVisualityEntityMessage;
-import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
-import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
-import com.github.alexmodguy.alexscaves.server.potion.ACEffectRegistry;
-import com.github.alexmodguy.alexscaves.server.potion.IrradiatedEffect;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.RadrifleRenderer;
 import com.min01.acc.util.ACCClientUtil;
@@ -27,41 +19,34 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableItem
+public class RadrifleItem extends Item implements IAnimatableItem
 {
     public static final int MAX_CHARGE = 1000;
-    public static final String BEAM_LENGTH = "BeamLength";
     public static final String RADRIFLE_FIRE = "RadrifleFire";
+    public static final String RADRIFLE_HOLD = "RadrifleHold";
+    public static final String RADRIFLE_RUNNING = "RadrifleRunning";
+    public static final String RADRIFLE_HOLD_TO_RUN = "RadrifleHoldToRun";
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
         return stack.getItem() == ACBlockRegistry.URANIUM_ROD.get().asItem();
     };
     
-	public RadrifleItem() 
+	public RadrifleItem()
 	{
 		super(new Item.Properties().stacksTo(1).rarity(ACItemRegistry.RARITY_NUCLEAR));
 	}
@@ -69,11 +54,6 @@ public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableI
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
-		int tick = ACCUtil.getItemAnimationTick(p_41404_);
-    	if(tick <= 0 && ACCUtil.getItemAnimation(p_41404_, RADRIFLE_FIRE).isStarted())
-    	{
-        	ACCUtil.stopItemAnimation(p_41404_, RADRIFLE_FIRE);
-    	}
         if(p_41404_.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
         {
             int charge = ACCUtil.getCharge(p_41404_);
@@ -97,64 +77,27 @@ public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableI
 		int charge = ACCUtil.getCharge(stack);
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
-        	ACCUtil.startItemAnimation(stack, RADRIFLE_FIRE);
-        	ACCUtil.setItemAnimationTick(stack, 13);
-        	
-        	Vec3 riflePos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), player.getEyePosition(), 0.0F, 0.0F, 3.0F);
-			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(player.getXRot(), player.getYHeadRot()), riflePos, 0.0F, 0.0F, 100.0F);
-			HitResult hitResult = level.clip(new ClipContext(riflePos, lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-        	Vec3 pos = hitResult.getLocation();
-        	setBeamLength(stack, (float) riflePos.distanceTo(pos));
-
-    		List<LivingEntity> arrayList = new ArrayList<>();
-            Vec3 vec3 = riflePos;
-            Vec3 vec31 = pos.subtract(vec3);
-            Vec3 vec32 = vec31.normalize();
-
-            for(int i = 1; i < Mth.floor(vec31.length()) + riflePos.distanceTo(pos); ++i)
-            {
-            	Vec3 vec33 = vec3.add(vec32.scale(i));
-            	List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(0.1F));
-            	list.removeIf(t -> t == player || t.isAlliedTo(player) || t.getType().is(ACTagRegistry.RESISTS_RADIATION));
-            	list.forEach(t -> 
-            	{
-            		if(!arrayList.contains(t))
-            		{
-            			arrayList.add(t);
-            		}
-            	});
-            }
-            
-        	arrayList.forEach(t -> 
-        	{
-                boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
-                int radiationLevel = gamma ? IrradiatedEffect.BLUE_LEVEL : 0;
-                if(t.hurt(ACDamageTypes.causeRaygunDamage(level.registryAccess(), player), gamma ? 2.0F : 1.5F)) 
-                {
-                    if(t.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), 800, radiationLevel)))
-                    {
-                    	if(!level.isClientSide)
-                    	{
-                            AlexsCaves.sendMSGToAll(new UpdateEffectVisualityEntityMessage(t.getId(), player.getId(), gamma ? 4 : 0, 800));
-                    	}
-                    }
-                }
-        	});
-        	
-        	if(hitResult instanceof BlockHitResult blockHit)
-        	{
-        		Direction direction = blockHit.getDirection();
-	            float offset = 0.05F + level.random.nextFloat() * 0.09F;
-	            Vec3 particleVec = pos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
-	            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
-        	}
-        	
+        	ACCUtil.setPlayerAnimationState(player, 1);
+        	ACCUtil.setPlayerAnimationTick(player, 10);
         	if(!player.getAbilities().instabuild)
         	{
-                ACCUtil.setCharge(player, stack, Math.min(charge + 1, MAX_CHARGE));
+        		int units = 100;
+        		int enchantLevel = stack.getEnchantmentLevel(ACEnchantmentRegistry.ENERGY_EFFICIENCY.get());
+        		if(enchantLevel == 1)
+        		{
+        			units = 80;
+        		}
+        		else if(enchantLevel == 2)
+        		{
+        			units = 66;
+        		}
+        		else if(enchantLevel >= 3)
+        		{
+        			units = 33;
+        		}
+                ACCUtil.setCharge(player, stack, Math.min(charge + units, MAX_CHARGE));
         	}
-        	
-        	player.getCooldowns().addCooldown(stack.getItem(), 60);
+        	player.getCooldowns().addCooldown(stack.getItem(), 20);
         }
         else if(!ammo.isEmpty())
         {
@@ -162,12 +105,6 @@ public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableI
             ACCUtil.setCharge(player, stack, 0);
         }
 		return InteractionResultHolder.pass(stack);
-	}
-	
-	@Override
-	public UseAnim getUseAnimation(ItemStack p_41452_) 
-	{
-		return UseAnim.BOW;
 	}
 	
 	@Override
@@ -187,18 +124,6 @@ public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableI
             }
         }
         return ItemStack.EMPTY;
-    }
-    
-    public static float getBeamLength(ItemStack stack)
-    {
-        CompoundTag tag = stack.getTag();
-        return tag != null ? tag.getFloat(BEAM_LENGTH) : 0;
-    }
-
-    public static void setBeamLength(ItemStack stack, float length)
-    {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putFloat(BEAM_LENGTH, length);
     }
     
     @Override
@@ -246,8 +171,14 @@ public class RadrifleItem extends Item implements UpdatesStackTags, IAnimatableI
 			@Override
 			public @org.jetbrains.annotations.Nullable ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) 
 			{
-				return ArmPose.BOW_AND_ARROW;
+				return ArmPose.EMPTY;
 			}
 		});
+	}
+	
+	@Override
+	public Vec3 getOffset() 
+	{
+		return new Vec3(0.0F, 4.0F, -5.0F);
 	}
 }

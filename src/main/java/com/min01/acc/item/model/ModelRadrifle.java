@@ -1,9 +1,6 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.item.RadrifleItem;
-import com.min01.acc.item.animation.RadrifleAnimation;
-import com.min01.acc.util.ACCUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -35,23 +32,17 @@ public class ModelRadrifle extends HierarchicalItemModel
 
 		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition rifle = root.addOrReplaceChild("rifle", CubeListBuilder.create().texOffs(24, 21).addBox(-3.5F, -2.0F, 0.0F, 7.0F, 4.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(24, 0).addBox(-3.5F, -2.0F, 0.0F, 7.0F, 4.0F, 7.0F, new CubeDeformation(0.1F))
-		.texOffs(0, 21).addBox(-1.5F, -2.0F, -18.0F, 3.0F, 3.0F, 18.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 0).addBox(-1.5F, -2.0F, -18.2F, 3.0F, 3.0F, 18.0F, new CubeDeformation(0.1F))
-		.texOffs(10, 4).addBox(0.0F, 1.0F, -4.0F, 0.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
-		.texOffs(24, 11).addBox(-1.5F, 2.0F, 5.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 1.0F));
+		PartDefinition radrifle = root.addOrReplaceChild("radrifle", CubeListBuilder.create().texOffs(10, 41).addBox(-1.0F, 0.0F, 5.0F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 0).addBox(-1.0F, -3.0F, -14.0F, 2.0F, 3.0F, 22.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 25).addBox(-1.0F, 0.0F, -14.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 41).addBox(0.0F, 0.0F, 0.0F, 0.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
+		.texOffs(32, 25).addBox(-1.0F, -3.0F, -14.0F, 2.0F, 5.0F, 11.0F, new CubeDeformation(0.1F)), PartPose.offset(0.0F, -1.0F, 1.0F));
 
-		rifle.addOrReplaceChild("rods", CubeListBuilder.create().texOffs(0, 21).addBox(-3.5F, -2.0F, -0.8F, 7.0F, 4.0F, 2.0F, new CubeDeformation(0.1F))
-		.texOffs(0, 8).mirror().addBox(-2.5F, -1.0F, -6.8F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)).mirror(false)
-		.texOffs(0, 0).mirror().addBox(-2.5F, -1.0F, -6.8F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.1F)).mirror(false)
-		.texOffs(0, 8).addBox(0.5F, -1.0F, -6.8F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 0).addBox(0.5F, -1.0F, -6.8F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.1F)), PartPose.offset(0.0F, 0.0F, 14.0F));
+		radrifle.addOrReplaceChild("right_charger", CubeListBuilder.create().texOffs(20, 41).addBox(-1.01F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+		.texOffs(30, 41).addBox(-2.0F, -1.5F, -1.5F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, -5.0F));
 
-		PartDefinition beam = root.addOrReplaceChild("beam", CubeListBuilder.create().texOffs(31, 32).addBox(0.0F, -2.0F, -16.0F, 0.0F, 3.0F, 16.0F, new CubeDeformation(0.0F))
-		.texOffs(23, 32).addBox(-1.5F, -0.5F, -16.0F, 3.0F, 0.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, -17.0F));
-
-		beam.addOrReplaceChild("beam_end", CubeListBuilder.create().texOffs(45, 0).addBox(-4.0F, -4.0F, 0.01F, 7.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, -16.0F));
+		radrifle.addOrReplaceChild("left_charger", CubeListBuilder.create().texOffs(30, 41).mirror().addBox(1.0F, -1.5F, -1.5F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false)
+		.texOffs(20, 41).mirror().addBox(-1.99F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, -1.0F, -5.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
@@ -60,9 +51,6 @@ public class ModelRadrifle extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) 
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animate(stack, RadrifleItem.RADRIFLE_FIRE, RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
-		this.root.getChild("beam").visible = ACCUtil.getItemAnimationTick(stack) >= 8;
-		this.root.getChild("beam").zScale = RadrifleItem.getBeamLength(stack);
 	}
 	
 	@Override

@@ -6,19 +6,17 @@ import java.util.function.Consumer;
 
 import org.joml.Math;
 
-import com.github.alexmodguy.alexscaves.AlexsCaves;
-import com.github.alexmodguy.alexscaves.server.message.UpdateItemTagMessage;
 import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.capabilities.IItemAnimationCapability;
 import com.min01.acc.capabilities.IPlayerAnimationCapability;
 import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
+import com.min01.acc.misc.SmoothAnimationState;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
@@ -39,13 +37,14 @@ public class ACCUtil
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String IS_VISIBLE = "isVisible";
+    public static final String TICK_COUNT = "TickCount";
     
     public static void runAway(PathfinderMob mob, Vec3 pos)
     {
     	boolean flag = true;
     	if(mob instanceof TamableAnimal animal)
     	{
-    		flag = !animal.isOrderedToSit();
+    		flag = !animal.isInSittingPose();
     	}
     	if(flag)
     	{
@@ -94,131 +93,70 @@ public class ACCUtil
 		});
 	}
 	
-    public static CompoundTag getPlayerAnimationTag(Entity player)
+    public static void tickPlayerAnimation(Entity player)
     {
-    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
-    	{
-    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-    		return cap.getCompoundTag();
-    	}
-    	return new CompoundTag();
-    }
-	
-    public static AnimationState getPlayerAnimation(Entity player, String name)
-    {
-    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
-    	{
-    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-    		return cap.getAnimationState(name);
-    	}
-    	return new AnimationState();
+		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+		cap.tick();
     }
     
-    public static void startPlayerAnimation(Entity player, String name)
+    public static void setPlayerAnimationState(Entity player, int state)
     {
-    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
-    	{
-    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-    		cap.startPlayerAnimation(name);
-    	}
+		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+		cap.setAnimationState(state);
     }
     
-    public static void stopPlayerAnimation(Entity player, String name)
+    public static int getPlayerAnimationState(Entity player)
     {
-    	if(player.getCapability(ACCCapabilities.PLAYER_ANIMATION).isPresent())
-    	{
-    		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-    		cap.stopPlayerAnimation(name);
-    	}
+		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+		return cap.getAnimationState();
     }
     
-    public static AnimationState getItemAnimation(ItemStack stack, String name)
+    public static SmoothAnimationState getPlayerAnimationStateByName(Entity player, String name)
     {
-    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
-    	{
-    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-    		return cap.getAnimationState(name);
-    	}
-    	return new AnimationState();
+		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+		return cap.getAnimationStateByName(name);
     }
     
-    public static void startItemAnimation(ItemStack stack, String name)
+    public static void setPlayerAnimationTick(Entity player, int tick)
     {
-    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
-    	{
-    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-    		cap.startItemAnimation(name);
-    	}
+		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+		cap.setAnimationTick(tick * 2);
     }
     
-    public static void stopItemAnimation(ItemStack stack, String name)
+    public static int getPlayerAnimationTick(Entity player)
     {
-    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
-    	{
-    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-    		cap.stopItemAnimation(name);
-    	}
+		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
+		return cap.getAnimationTick();
+    }
+    
+    public static void setItemAnimationState(ItemStack stack, int state)
+    {
+		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+		cap.setAnimationState(state);
+    }
+    
+    public static int getItemAnimationState(ItemStack stack)
+    {
+		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+		return cap.getAnimationState();
+    }
+    
+    public static SmoothAnimationState getItemAnimationStateByName(ItemStack stack, String name)
+    {
+		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+		return cap.getAnimationStateByName(name);
     }
     
     public static void setItemAnimationTick(ItemStack stack, int tick)
     {
-    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
-    	{
-    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-    		cap.setAnimationTick(tick);
-    	}
+		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+		cap.setAnimationTick(tick * 2);
     }
     
     public static int getItemAnimationTick(ItemStack stack)
     {
-    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
-    	{
-    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-    		return cap.getAnimationTick();
-    	}
-    	return 0;
-    }
-    
-    public static int getTickCount(ItemStack stack)
-    {
-    	if(stack.getCapability(ACCCapabilities.ITEM_ANIMATION).isPresent())
-    	{
-    		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-    		return cap.getTickCount();
-    	}
-    	return 0;
-    }
-    
-    public static void writeAnimationTime(CompoundTag tag, String name, AnimationState state)
-    {
-        CompoundTag animationsTag;
-        if(tag.contains("Animations", 10))
-        {
-            animationsTag = tag.getCompound("Animations");
-        }
-        else
-        {
-            animationsTag = new CompoundTag();
-            tag.put("Animations", animationsTag);
-        }
-        CompoundTag timeTag = new CompoundTag();
-        timeTag.putLong("LastTime", state.lastTime);
-        timeTag.putLong("AccumulatedTime", state.accumulatedTime);
-        animationsTag.put(name, timeTag);
-    }
-    
-    public static void readAnimationTime(CompoundTag tag, String name, AnimationState state)
-    {
-        if(tag.contains("Animations", 10)) 
-        {
-            CompoundTag animationsTag = tag.getCompound("Animations");
-            if(animationsTag.contains(name, 10))
-            {
-                CompoundTag timeTag = animationsTag.getCompound(name);
-                state.lastTime = timeTag.getLong("LastTime");
-                state.accumulatedTime = timeTag.getLong("AccumulatedTime");
-            }
-        }
+		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+		return cap.getAnimationTick();
     }
 
     public static boolean isVisible(ItemStack stack)
@@ -231,6 +169,18 @@ public class ACCUtil
     {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putBoolean(IS_VISIBLE, visible);
+    }
+    
+    public static int getTickCount(ItemStack stack)
+    {
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getInt(TICK_COUNT) : 0;
+    }
+
+    public static void setTickCount(ItemStack stack, int tickCount)
+    {
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt(TICK_COUNT, tickCount);
     }
     
     public static boolean hasCharge(ItemStack stack, int maxCharge)
@@ -248,11 +198,6 @@ public class ACCUtil
     {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putInt(CHARGE_USED, charge);
-        
-    	if(player.level.isClientSide)
-    	{
-            AlexsCaves.sendMSGToServer(new UpdateItemTagMessage(player.getId(), stack));
-    	}
     }
 	
 	@SuppressWarnings("unchecked")

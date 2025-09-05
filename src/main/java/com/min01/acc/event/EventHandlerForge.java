@@ -71,10 +71,11 @@ public class EventHandlerForge
 				stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
 				{
 					t.setEntity(event.player);
-					t.update();
+					t.tick();
 				});
 			}
 		}
+		ACCUtil.tickPlayerAnimation(event.player);
 	}
 	
 	@SubscribeEvent

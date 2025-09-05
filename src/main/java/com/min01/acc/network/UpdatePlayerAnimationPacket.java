@@ -11,32 +11,40 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-public class UpdatePlayerAnimationTickPacket 
+public class UpdatePlayerAnimationPacket 
 {
 	public final UUID uuid;
+	public final int animationState;
 	public final int animationTick;
+	public final boolean isState;
 
-	public UpdatePlayerAnimationTickPacket(UUID uuid, int animationTick) 
+	public UpdatePlayerAnimationPacket(UUID uuid, int animationState, int animationTick, boolean isState) 
 	{
 		this.uuid = uuid;
+		this.animationState = animationState;
 		this.animationTick = animationTick;
+		this.isState = isState;
 	}
 
-	public UpdatePlayerAnimationTickPacket(FriendlyByteBuf buf)
+	public UpdatePlayerAnimationPacket(FriendlyByteBuf buf)
 	{
 		this.uuid = buf.readUUID();
+		this.animationState = buf.readInt();
 		this.animationTick = buf.readInt();
+		this.isState = buf.readBoolean();
 	}
 
 	public void encode(FriendlyByteBuf buf)
 	{
 		buf.writeUUID(this.uuid);
+		buf.writeInt(this.animationState);
 		buf.writeInt(this.animationTick);
+		buf.writeBoolean(this.isState);
 	}
 
 	public static class Handler 
 	{
-		public static boolean onMessage(UpdatePlayerAnimationTickPacket message, Supplier<NetworkEvent.Context> ctx)
+		public static boolean onMessage(UpdatePlayerAnimationPacket message, Supplier<NetworkEvent.Context> ctx)
 		{
 			ctx.get().enqueueWork(() ->
 			{
@@ -49,7 +57,14 @@ public class UpdatePlayerAnimationTickPacket
 						{
 							player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
 							{
-								t.setAnimationTick(message.animationTick);
+								if(message.isState)
+								{
+									t.setAnimationState(message.animationState);
+								}
+								else
+								{
+									t.setAnimationTick(message.animationTick);
+								}
 							});
 						}
 					});
