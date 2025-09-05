@@ -155,52 +155,52 @@
 		],
 		"eggs=4,hatch=0": [
 			{
-				"model": "accacophony:block/ovivenator_egg_4"
+				"model": "accacophony:block/ovivenator_egg_3"
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4",
+				"model": "accacophony:block/ovivenator_egg_3",
 				"y": 90
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4",
+				"model": "accacophony:block/ovivenator_egg_3",
 				"y": 180
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4",
+				"model": "accacophony:block/ovivenator_egg_3",
 				"y": 270
 			}
 		],
 		"eggs=4,hatch=1": [
 			{
-				"model": "accacophony:block/ovivenator_egg_4_cracked"
+				"model": "accacophony:block/ovivenator_egg_3_cracked"
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4_cracked",
+				"model": "accacophony:block/ovivenator_egg_3_cracked",
 				"y": 90
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4_cracked",
+				"model": "accacophony:block/ovivenator_egg_3_cracked",
 				"y": 180
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4_cracked",
+				"model": "accacophony:block/ovivenator_egg_3_cracked",
 				"y": 270
 			}
 		],
 		"eggs=4,hatch=2": [
 			{
-				"model": "accacophony:block/ovivenator_egg_4_very_cracked"
+				"model": "accacophony:block/ovivenator_egg_3_very_cracked"
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4_very_cracked",
+				"model": "accacophony:block/ovivenator_egg_3_very_cracked",
 				"y": 90
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4_very_cracked",
+				"model": "accacophony:block/ovivenator_egg_3_very_cracked",
 				"y": 180
 			},
 			{
-				"model": "accacophony:block/ovivenator_egg_4_very_cracked",
+				"model": "accacophony:block/ovivenator_egg_3_very_cracked",
 				"y": 270
 			}
 		]

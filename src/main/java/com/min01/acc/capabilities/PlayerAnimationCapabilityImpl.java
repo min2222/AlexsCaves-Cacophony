@@ -55,27 +55,27 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 			this.radrifleHoldAnimationState.updateWhen(this.getAnimationState() == 0 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && !this.entity.isSprinting(), this.entity.tickCount);
 			this.radrifleHoldToRunAnimationState.updateWhen(this.getAnimationState() == 2 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && this.entity.isSprinting(), this.entity.tickCount);
 			this.radrifleRunningAnimationState.updateWhen(this.getAnimationState() == 0 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && this.entity.isSprinting(), this.entity.tickCount);
-			if(this.entity.isSprinting() && this.getAnimationState() == 0 && this.prevAnimationState != 2)
+		}
+		if(this.entity.isSprinting() && this.getAnimationState() == 0 && this.prevAnimationState != 2)
+		{
+			this.setAnimationState(2);
+			this.setAnimationTick(10);
+		}
+		if(this.getAnimationTick() >= 0)
+		{
+			this.setAnimationTick(this.getAnimationTick() - 1);
+		}
+		else
+		{
+			if(this.getAnimationState() == 2 && this.entity.isSprinting())
 			{
-				this.setAnimationState(2);
-				this.setAnimationTick(10);
+				this.prevAnimationState = 2;
 			}
-			if(this.getAnimationTick() >= 0)
+			if(!this.entity.isSprinting() && this.prevAnimationState == 2)
 			{
-				this.setAnimationTick(this.getAnimationTick() - 1);
+				this.prevAnimationState = 0;
 			}
-			else
-			{
-				if(this.getAnimationState() == 2 && this.entity.isSprinting())
-				{
-					this.prevAnimationState = 2;
-				}
-				if(!this.entity.isSprinting() && this.prevAnimationState == 2)
-				{
-					this.prevAnimationState = 0;
-				}
-				this.setAnimationState(0);
-			}
+			this.setAnimationState(0);
 		}
 	}
 

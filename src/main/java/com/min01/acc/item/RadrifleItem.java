@@ -10,6 +10,9 @@ import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
+import com.min01.acc.enchantment.ACCEnchantments;
+import com.min01.acc.entity.ACCEntities;
+import com.min01.acc.entity.projectile.EntityRadrifleBeam;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.RadrifleRenderer;
 import com.min01.acc.util.ACCClientUtil;
@@ -29,7 +32,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
@@ -75,6 +82,11 @@ public class RadrifleItem extends Item implements IAnimatableItem
 		ItemStack stack = player.getItemInHand(hand);
         ItemStack ammo = this.findAmmo(player);
 		int charge = ACCUtil.getCharge(stack);
+		boolean isGamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
+		boolean isXRay = stack.getEnchantmentLevel(ACEnchantmentRegistry.X_RAY.get()) > 0;
+		boolean isRecochet = stack.getEnchantmentLevel(ACCEnchantments.RECOCHET.get()) > 0;
+		boolean isPulse = stack.getEnchantmentLevel(ACCEnchantments.PULSE.get()) > 0;
+		int count = isPulse ? 3 : 1;
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
         	ACCUtil.setPlayerAnimationState(player, 1);
@@ -97,6 +109,24 @@ public class RadrifleItem extends Item implements IAnimatableItem
         		}
                 ACCUtil.setCharge(player, stack, Math.min(charge + units, MAX_CHARGE));
         	}
+        	for(int i = 0; i < count; i++)
+        	{
+            	Vec2 headRotation = new Vec2(player.getXRot(), player.yHeadRot);
+            	Vec2 headRotation2 = new Vec2(player.getXRot(), (player.yHeadRot - 25.0F) + (25.0F * i));
+            	Vec3 startPos = ACCUtil.getLookPos(headRotation, player.getEyePosition(), -0.25F, -0.15, 1.0F);
+            	Vec3 endPos = ACCUtil.getLookPos(isPulse ? headRotation2 : headRotation, startPos, 0, 0, 20.0F);
+            	BlockHitResult blockHit = player.level.clip(new ClipContext(startPos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+            	Vec3 hitPos = blockHit.getLocation();
+            	EntityRadrifleBeam beam = new EntityRadrifleBeam(ACCEntities.RADRIFLE_BEAM.get(), level);
+            	beam.setOwner(player);
+            	beam.setPos(startPos);
+            	beam.setGamma(isGamma);
+            	beam.setEndPos(isXRay ? endPos : hitPos);
+            	beam.setEndDir(blockHit.getDirection());
+            	beam.setRecochet(isRecochet);
+        		beam.onHitBlock(blockHit);
+            	level.addFreshEntity(beam);
+        	}
         	player.getCooldowns().addCooldown(stack.getItem(), 20);
         }
         else if(!ammo.isEmpty())
@@ -105,6 +135,28 @@ public class RadrifleItem extends Item implements IAnimatableItem
             ACCUtil.setCharge(player, stack, 0);
         }
 		return InteractionResultHolder.pass(stack);
+	}
+	
+    @Override
+    public int getEnchantmentValue()
+    {
+        return 1;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack)
+    {
+        return stack.getCount() == 1;
+    }
+	
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
+	{
+		if(enchantment.category == ACEnchantmentRegistry.RAYGUN)
+		{
+			return true;
+		}
+		return super.canApplyAtEnchantingTable(stack, enchantment);
 	}
 	
 	@Override

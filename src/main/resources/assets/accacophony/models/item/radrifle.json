@@ -2,6 +2,11 @@
 	"parent": "builtin/entity",
     "gui_light": "front",
     "display": {
+	    "gui": {
+		    "rotation": [ 30, 225, 0 ],
+		    "translation": [ -2.5, 2.5, 0 ],
+		    "scale":[ 0.9, 0.9, 0.9 ]
+	    },
         "ground": {
             "rotation": [ 0, 0, 0 ],
             "translation": [ 0, 2, 0],

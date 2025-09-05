@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -43,7 +42,7 @@ public class EntityFearArrow extends AbstractArrow
 	{
 		super.onHitEntity(p_36757_);
 		Entity entity = p_36757_.getEntity();
-        if(entity instanceof PathfinderMob mob && (!(mob instanceof TamableAnimal) || !((TamableAnimal) mob).isInSittingPose())) 
+        if(entity instanceof PathfinderMob mob) 
         {
         	if(!mob.getType().is(ACTagRegistry.RESISTS_TREMORSAURUS_ROAR))
         	{

@@ -13,6 +13,7 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -32,7 +33,7 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
 	public void renderByItem(ItemStack p_108830_, ItemDisplayContext p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) 
 	{
 		p_108832_.pushPose();
-		VertexConsumer vertexconsumer = p_108833_.getBuffer(RenderType.entityCutoutNoCull(this.getTexture(p_108830_)));
+		VertexConsumer vertexconsumer = ItemRenderer.getFoilBuffer(p_108833_, RenderType.entityCutoutNoCull(this.getTexture(p_108830_)), false, p_108830_.hasFoil());
 		p_108832_.scale(-1.0F, -1.0F, 1.0F);
 		p_108832_.translate(0.0F, -1.5F, 0.0F);
 		p_108832_.translate(-0.5F, -0.25F, 0.3F);
@@ -41,7 +42,7 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
 		p_108832_.popPose();
 		
 		p_108832_.pushPose();
-		VertexConsumer vertexconsumer2 = p_108833_.getBuffer(ACCRenderType.eyesFix(this.getLayerTexture(p_108830_)));
+		VertexConsumer vertexconsumer2 = ItemRenderer.getFoilBuffer(p_108833_, ACCRenderType.eyesFix(this.getLayerTexture(p_108830_)), false, p_108830_.hasFoil());
 		p_108832_.scale(-1.0F, -1.0F, 1.0F);
 		p_108832_.translate(0.0F, -1.5F, 0.0F);
 		p_108832_.translate(-0.5F, -0.25F, 0.3F);

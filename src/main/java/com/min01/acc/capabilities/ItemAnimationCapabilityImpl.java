@@ -48,17 +48,18 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	@Override
 	public void tick() 
 	{
+		ACCUtil.setTickCount(this.stack, ACCUtil.getTickCount(this.stack) + 1);
 		if(this.entity.level.isClientSide)
 		{
-			ACCUtil.setTickCount(this.stack, ACCUtil.getTickCount(this.stack) + 1);
-			if(this.getAnimationTick() >= 0)
-			{
-				this.setAnimationTick(this.getAnimationTick() - 1);
-			}
-			else
-			{
-				this.setAnimationState(0);
-			}
+
+		}
+		if(this.getAnimationTick() >= 0)
+		{
+			this.setAnimationTick(this.getAnimationTick() - 1);
+		}
+		else
+		{
+			this.setAnimationState(0);
 		}
 	}
 
