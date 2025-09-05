@@ -26,7 +26,8 @@ public class ModelRadrifleBeamEnd extends EntityModel<EntityRadrifleBeam>
 		this.beam_end = root.getChild("beam_end");
 	}
 
-	public static LayerDefinition createBodyLayer() {
+	public static LayerDefinition createBodyLayer()
+	{
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

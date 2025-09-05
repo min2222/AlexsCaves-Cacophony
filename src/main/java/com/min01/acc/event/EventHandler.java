@@ -1,8 +1,10 @@
 package com.min01.acc.event;
 
+import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.github.alexmodguy.alexscaves.server.misc.ACCreativeTabRegistry;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.effect.ACCEffects;
+import com.min01.acc.enchantment.ACCEnchantments;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.entity.living.EntityOvivenator;
@@ -57,6 +59,7 @@ public class EventHandler
     		event.accept(ACCItems.RAYBLAE.get());
     		event.accept(ACCItems.RAY_CATALYST.get());
     		event.accept(ACCItems.RADRIFLE.get());
+    		ACCEnchantments.addAllEnchantsToCreativeTab(event, ACEnchantmentRegistry.RAYGUN);
     	}
     	if(event.getTabKey() == ACCreativeTabRegistry.ABYSSAL_CHASM.getKey())
     	{

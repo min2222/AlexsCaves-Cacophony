@@ -21,6 +21,8 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	private final SmoothAnimationState radrifleHoldAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState radrifleHoldToRunAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F);
+	private final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState();
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -49,33 +51,38 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	@Override
 	public void tick() 
 	{
-		if(this.entity.level.isClientSide)
+		if(this.entity != null)
 		{
-			this.radrifleFireAnimationState.updateWhen(this.getAnimationState() == 1 && this.entity.isHolding(ACCItems.RADRIFLE.get()), this.entity.tickCount);
-			this.radrifleHoldAnimationState.updateWhen(this.getAnimationState() == 0 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && !this.entity.isSprinting(), this.entity.tickCount);
-			this.radrifleHoldToRunAnimationState.updateWhen(this.getAnimationState() == 2 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && this.entity.isSprinting(), this.entity.tickCount);
-			this.radrifleRunningAnimationState.updateWhen(this.getAnimationState() == 0 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && this.entity.isSprinting(), this.entity.tickCount);
-		}
-		if(this.entity.isSprinting() && this.getAnimationState() == 0 && this.prevAnimationState != 2)
-		{
-			this.setAnimationState(2);
-			this.setAnimationTick(10);
-		}
-		if(this.getAnimationTick() >= 0)
-		{
-			this.setAnimationTick(this.getAnimationTick() - 1);
-		}
-		else
-		{
-			if(this.getAnimationState() == 2 && this.entity.isSprinting())
+			if(this.entity.level.isClientSide)
 			{
-				this.prevAnimationState = 2;
+				this.radrifleFireAnimationState.updateWhen(this.getAnimationState() == 1 && this.entity.isHolding(ACCItems.RADRIFLE.get()), this.entity.tickCount);
+				this.radrifleHoldAnimationState.updateWhen(this.getAnimationState() == 0 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && !this.entity.isSprinting(), this.entity.tickCount);
+				this.radrifleHoldToRunAnimationState.updateWhen(this.getAnimationState() == 2 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && this.entity.isSprinting(), this.entity.tickCount);
+				this.radrifleRunningAnimationState.updateWhen(this.getAnimationState() == 0 && this.entity.isHolding(ACCItems.RADRIFLE.get()) && this.entity.isSprinting(), this.entity.tickCount);
+				this.radrifleOverchargeFireAnimationState.updateWhen(this.getAnimationState() == 3 && this.entity.isHolding(ACCItems.RADRIFLE.get()), this.entity.tickCount);
+				this.radrifleOverheatAnimationState.updateWhen(this.getAnimationState() == 4 && this.entity.isHolding(ACCItems.RADRIFLE.get()), this.entity.tickCount);
 			}
-			if(!this.entity.isSprinting() && this.prevAnimationState == 2)
+			if(this.entity.isSprinting() && this.getAnimationState() == 0 && this.prevAnimationState != 2)
 			{
-				this.prevAnimationState = 0;
+				this.setAnimationState(2);
+				this.setAnimationTick(10);
 			}
-			this.setAnimationState(0);
+			if(this.getAnimationTick() >= 0)
+			{
+				this.setAnimationTick(this.getAnimationTick() - 1);
+			}
+			else
+			{
+				if(this.getAnimationState() == 2 && this.entity.isSprinting())
+				{
+					this.prevAnimationState = 2;
+				}
+				if(!this.entity.isSprinting() && this.prevAnimationState == 2)
+				{
+					this.prevAnimationState = 0;
+				}
+				this.setAnimationState(0);
+			}
 		}
 	}
 
@@ -110,6 +117,14 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		if(name.equals(RadrifleItem.RADRIFLE_HOLD_TO_RUN))
 		{
 			return this.radrifleHoldToRunAnimationState;
+		}
+		if(name.equals(RadrifleItem.RADRIFLE_OVERCHARGE_FIRE))
+		{
+			return this.radrifleOverchargeFireAnimationState;
+		}
+		if(name.equals(RadrifleItem.RADRIFLE_OVERHEAT))
+		{
+			return this.radrifleOverheatAnimationState;
 		}
 		return new SmoothAnimationState();
 	}

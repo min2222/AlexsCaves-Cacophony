@@ -2,6 +2,7 @@ package com.min01.acc.item.renderer;
 
 import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.enchantment.ACCEnchantments;
 import com.min01.acc.item.model.ModelRadrifle;
 import com.min01.acc.misc.ACCRenderType;
 import com.min01.acc.util.ACCClientUtil;
@@ -54,12 +55,22 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
 	public ResourceLocation getLayerTexture(ItemStack stack)
 	{
         boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
+        boolean overcharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
+        if(overcharge)
+        {
+        	return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_overcharged_layer.png");
+        }
 		return gamma ? new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_gamma_layer.png") : new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_layer.png");
 	}
 	
 	public ResourceLocation getTexture(ItemStack stack)
 	{
         boolean gamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
+        boolean overcharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
+        if(overcharge)
+        {
+        	return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_overcharged.png");
+        }
 		return gamma ? new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_gamma.png") : new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle.png");
 	}
 }

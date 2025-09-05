@@ -48,6 +48,8 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
     	this.animate(entity, RadrifleItem.RADRIFLE_HOLD, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD, ageInTicks);
     	this.animate(entity, RadrifleItem.RADRIFLE_RUNNING, PlayerAnimation.RadrifleAnimation.RADRIFLE_RUNNING, ageInTicks);
     	this.animate(entity, RadrifleItem.RADRIFLE_HOLD_TO_RUN, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD_TO_RUN, ageInTicks);
+    	this.animate(entity, RadrifleItem.RADRIFLE_OVERCHARGE_FIRE, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERCHARGE_FIRE, ageInTicks);
+    	this.animate(entity, RadrifleItem.RADRIFLE_OVERHEAT, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERHEAT, ageInTicks);
     }
     
 	@Override

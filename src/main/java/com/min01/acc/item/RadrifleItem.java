@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import com.github.alexmodguy.alexscaves.AlexsCaves;
+import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
@@ -22,6 +23,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +31,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -36,6 +39,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -47,6 +52,8 @@ public class RadrifleItem extends Item implements IAnimatableItem
     public static final String RADRIFLE_HOLD = "RadrifleHold";
     public static final String RADRIFLE_RUNNING = "RadrifleRunning";
     public static final String RADRIFLE_HOLD_TO_RUN = "RadrifleHoldToRun";
+    public static final String RADRIFLE_OVERCHARGE_FIRE = "RadrifleOverchargeFire";
+    public static final String RADRIFLE_OVERHEAT = "RadrifleOverheat";
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -84,13 +91,22 @@ public class RadrifleItem extends Item implements IAnimatableItem
 		int charge = ACCUtil.getCharge(stack);
 		boolean isGamma = stack.getEnchantmentLevel(ACEnchantmentRegistry.GAMMA_RAY.get()) > 0;
 		boolean isXRay = stack.getEnchantmentLevel(ACEnchantmentRegistry.X_RAY.get()) > 0;
-		boolean isRecochet = stack.getEnchantmentLevel(ACCEnchantments.RECOCHET.get()) > 0;
+		boolean isRicochet = stack.getEnchantmentLevel(ACCEnchantments.RICOCHET.get()) > 0;
 		boolean isPulse = stack.getEnchantmentLevel(ACCEnchantments.PULSE.get()) > 0;
+		boolean isOvercharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
 		int count = isPulse ? 3 : 1;
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
-        	ACCUtil.setPlayerAnimationState(player, 1);
-        	ACCUtil.setPlayerAnimationTick(player, 10);
+        	if(isOvercharge)
+        	{
+            	ACCUtil.setPlayerAnimationState(player, 3);
+            	ACCUtil.setPlayerAnimationTick(player, 20);
+        	}
+        	else
+        	{
+            	ACCUtil.setPlayerAnimationState(player, 1);
+            	ACCUtil.setPlayerAnimationTick(player, 10);
+        	}
         	if(!player.getAbilities().instabuild)
         	{
         		int units = 100;
@@ -107,6 +123,10 @@ public class RadrifleItem extends Item implements IAnimatableItem
         		{
         			units = 33;
         		}
+        		if(isOvercharge)
+        		{
+        			units = MAX_CHARGE;
+        		}
                 ACCUtil.setCharge(player, stack, Math.min(charge + units, MAX_CHARGE));
         	}
         	for(int i = 0; i < count; i++)
@@ -115,23 +135,45 @@ public class RadrifleItem extends Item implements IAnimatableItem
             	Vec2 headRotation2 = new Vec2(player.getXRot(), (player.yHeadRot - 25.0F) + (25.0F * i));
             	Vec3 startPos = ACCUtil.getLookPos(headRotation, player.getEyePosition(), -0.25F, -0.15, 1.0F);
             	Vec3 endPos = ACCUtil.getLookPos(isPulse ? headRotation2 : headRotation, startPos, 0, 0, 20.0F);
-            	BlockHitResult blockHit = player.level.clip(new ClipContext(startPos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-            	Vec3 hitPos = blockHit.getLocation();
+            	HitResult hitResult = player.level.clip(new ClipContext(startPos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+				EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, startPos, endPos, player.getBoundingBox().expandTowards(ACCUtil.fromToVector(startPos, hitResult.getLocation(), 5.0F)).inflate(1.0D), Entity::canBeHitByProjectile);
+        		Direction direction = Direction.DOWN;
+        		if(hitResult instanceof BlockHitResult blockHit)
+        		{
+        			direction = blockHit.getDirection();
+        		}
+        		else if(entityHit != null)
+        		{
+        			Vec3 pos = entityHit.getLocation();
+        			hitResult = entityHit;
+        			direction = Direction.getNearest(pos.x, pos.y, pos.z);
+        		}
+            	Vec3 hitPos = hitResult.getLocation();
             	EntityRadrifleBeam beam = new EntityRadrifleBeam(ACCEntities.RADRIFLE_BEAM.get(), level);
             	beam.setOwner(player);
             	beam.setPos(startPos);
             	beam.setGamma(isGamma);
+            	beam.setRicochet(isRicochet);
+        		beam.setOvercharge(isOvercharge);
             	beam.setEndPos(isXRay ? endPos : hitPos);
-            	beam.setEndDir(blockHit.getDirection());
-            	beam.setRecochet(isRecochet);
-        		beam.onHitBlock(blockHit);
+            	beam.setEndDir(direction);
+        		beam.onHit(hitResult);
             	level.addFreshEntity(beam);
+            	if(!isRicochet && !isOvercharge)
+            	{
+    	            float offset = 0.05F + level.random.nextFloat() * 0.09F;
+    	            Vec3 particleVec = hitPos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
+    	            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
+            	}
         	}
-        	player.getCooldowns().addCooldown(stack.getItem(), 20);
+        	player.getCooldowns().addCooldown(stack.getItem(), isOvercharge ? 40 : 20);
         }
         else if(!ammo.isEmpty())
         {
-            ammo.shrink(1);
+        	if(!player.getAbilities().instabuild)
+        	{
+                ammo.shrink(1);
+        	}
             ACCUtil.setCharge(player, stack, 0);
         }
 		return InteractionResultHolder.pass(stack);

@@ -3,7 +3,7 @@
 	"biomes": "alexscaves:primordial_caves",
 	"spawners": {
 		"type": "accacophony:ovivenator",
-		"weight": 10,
+		"weight": 5,
 		"minCount": 3,
 		"maxCount": 7
 	}

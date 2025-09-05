@@ -8,6 +8,7 @@ import com.min01.acc.entity.model.ModelNeodymiumShackle;
 import com.min01.acc.entity.model.ModelOvivenator;
 import com.min01.acc.entity.model.ModelRadrifleBeam;
 import com.min01.acc.entity.model.ModelRadrifleBeamEnd;
+import com.min01.acc.entity.model.ModelRadrifleSuperBeam;
 import com.min01.acc.entity.renderer.FearArrowRenderer;
 import com.min01.acc.entity.renderer.GloomwormRenderer;
 import com.min01.acc.entity.renderer.NeodymiumShackleRenderer;
@@ -37,6 +38,7 @@ public class ClientEventHandler
     	event.registerLayerDefinition(ModelOvivenator.LAYER_LOCATION, ModelOvivenator::createBodyLayer);
     	event.registerLayerDefinition(ModelRadrifleBeam.LAYER_LOCATION, ModelRadrifleBeam::createBodyLayer);
     	event.registerLayerDefinition(ModelRadrifleBeamEnd.LAYER_LOCATION, ModelRadrifleBeamEnd::createBodyLayer);
+    	event.registerLayerDefinition(ModelRadrifleSuperBeam.LAYER_LOCATION, ModelRadrifleSuperBeam::createBodyLayer);
     }
     
     @SubscribeEvent
