@@ -62,7 +62,7 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 				this.radrifleOverchargeFireAnimationState.updateWhen(this.getAnimationState() == 3 && this.entity.isHolding(ACCItems.RADRIFLE.get()), this.entity.tickCount);
 				this.radrifleOverheatAnimationState.updateWhen(this.getAnimationState() == 4 && this.entity.isHolding(ACCItems.RADRIFLE.get()), this.entity.tickCount);
 			}
-			if(this.entity.isSprinting() && this.getAnimationState() == 0 && this.prevAnimationState != 2)
+			if(this.entity.isSprinting() && this.getAnimationState() == 0 && this.prevAnimationState != 2 && this.entity.isHolding(ACCItems.RADRIFLE.get()))
 			{
 				this.setAnimationState(2);
 				this.setAnimationTick(10);

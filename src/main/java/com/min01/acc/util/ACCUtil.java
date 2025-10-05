@@ -120,7 +120,7 @@ public class ACCUtil
     public static void setPlayerAnimationTick(Entity player, int tick)
     {
 		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		cap.setAnimationTick(tick * 2);
+		cap.setAnimationTick(tick);
     }
     
     public static int getPlayerAnimationTick(Entity player)

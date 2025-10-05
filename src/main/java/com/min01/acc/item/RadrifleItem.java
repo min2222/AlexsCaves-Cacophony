@@ -211,10 +211,10 @@ public class RadrifleItem extends Item implements IAnimatableItem
     {
         for(int i = 0; i < entity.getInventory().getContainerSize(); ++i)
         {
-            ItemStack itemstack1 = entity.getInventory().getItem(i);
-            if(AMMO.test(itemstack1))
+            ItemStack stack = entity.getInventory().getItem(i);
+            if(AMMO.test(stack))
             {
-                return itemstack1;
+                return stack;
             }
         }
         return ItemStack.EMPTY;
