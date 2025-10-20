@@ -4,44 +4,44 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 public class UpdateItemAnimationPacket 
 {
-	public final UUID uuid;
 	public final ItemStack stack;
+	public final UUID entityUUID;
 	public final int animationState;
 	public final int animationTick;
-	public final boolean isState;
 
-	public UpdateItemAnimationPacket(UUID uuid, ItemStack stack, int animationState, int animationTick, boolean isState) 
+	public UpdateItemAnimationPacket(ItemStack stack, UUID entityUUID, int animationState, int animationTick) 
 	{
-		this.uuid = uuid;
 		this.stack = stack;
+		this.entityUUID = entityUUID;
 		this.animationState = animationState;
 		this.animationTick = animationTick;
-		this.isState = isState;
 	}
 
 	public UpdateItemAnimationPacket(FriendlyByteBuf buf)
 	{
-		this.uuid = buf.readUUID();
 		this.stack = buf.readItem();
+		this.entityUUID = buf.readUUID();
 		this.animationState = buf.readInt();
 		this.animationTick = buf.readInt();
-		this.isState = buf.readBoolean();
 	}
 
 	public void encode(FriendlyByteBuf buf)
 	{
-		buf.writeUUID(this.uuid);
 		buf.writeItem(this.stack);
+		buf.writeUUID(this.entityUUID);
 		buf.writeInt(this.animationState);
 		buf.writeInt(this.animationTick);
-		buf.writeBoolean(this.isState);
 	}
 
 	public static class Handler 
@@ -50,19 +50,33 @@ public class UpdateItemAnimationPacket
 		{
 			ctx.get().enqueueWork(() ->
 			{
-				if(ctx.get().getDirection().getReceptionSide().isClient()) 
+				if(ctx.get().getDirection().getReceptionSide().isClient())
 				{
-                	message.stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
-                	{
-						if(message.isState)
+					ACCUtil.getClientLevel(level -> 
+					{
+						Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
+						if(entity instanceof LivingEntity living) 
 						{
-							t.setAnimationState(message.animationState);
+			                ItemStack stackFrom = message.stack;
+			                ItemStack to = null;
+			                if(living.getItemInHand(InteractionHand.MAIN_HAND).is(stackFrom.getItem()))
+			                {
+			                    to = living.getItemInHand(InteractionHand.MAIN_HAND);
+			                }
+			                else if(living.getItemInHand(InteractionHand.OFF_HAND).is(stackFrom.getItem()))
+			                {
+			                    to = living.getItemInHand(InteractionHand.OFF_HAND);
+			                }
+			                if(to != null)
+			                {
+			                	to.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+			                	{
+			    					t.setAnimationState(message.animationState);
+			    					t.setAnimationTick(message.animationTick);
+			                	});
+			                }
 						}
-						else
-						{
-							t.setAnimationTick(message.animationTick);
-						}
-                	});
+					});
 				}
 			});
 			ctx.get().setPacketHandled(true);

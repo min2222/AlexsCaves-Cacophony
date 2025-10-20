@@ -8,9 +8,12 @@ import org.joml.Math;
 
 import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.capabilities.IItemAnimationCapability;
+import com.min01.acc.capabilities.IOverlayCapability;
 import com.min01.acc.capabilities.IPlayerAnimationCapability;
 import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
+import com.min01.acc.capabilities.OverlayCapabilityImpl;
 import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
+import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.misc.SmoothAnimationState;
 
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -18,9 +21,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.LevelEntityGetter;
@@ -37,7 +42,6 @@ public class ACCUtil
 	public static final String ALEXS_CAVES = "alexscaves";
     public static final String CHARGE_USED = "ChargeUsed";
     public static final String IS_VISIBLE = "isVisible";
-    public static final String TICK_COUNT = "TickCount";
     
     public static void runAway(PathfinderMob mob, Vec3 pos)
     {
@@ -93,10 +97,43 @@ public class ACCUtil
 		});
 	}
 	
-    public static void tickPlayerAnimation(Entity player)
+    public static void tickOverlayProgress(LivingEntity player)
+    {
+		IOverlayCapability cap = player.getCapability(ACCCapabilities.OVERLAY).orElse(new OverlayCapabilityImpl());
+		cap.tick(player);
+    }
+    
+    public static void setOverlayProgress(String name, int value, Entity player)
+    {
+		IOverlayCapability cap = player.getCapability(ACCCapabilities.OVERLAY).orElse(new OverlayCapabilityImpl());
+		cap.setOverlayProgress(name, value);
+    }
+    
+    public static int getOverlayProgress(String name, Entity player)
+    {
+		IOverlayCapability cap = player.getCapability(ACCCapabilities.OVERLAY).orElse(new OverlayCapabilityImpl());
+		return cap.getOverlayProgress(name);
+    }
+    
+    public static void tickItemAnimation(Player player)
+    {
+		for(int i = 0; i < player.getInventory().getContainerSize(); i++)
+		{
+			ItemStack stack = player.getInventory().getItem(i);
+			if(stack.getItem() instanceof IAnimatableItem)
+			{
+				stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+				{
+					t.tick(player, stack);
+				});
+			}
+		}
+    }
+    
+    public static void tickPlayerAnimation(LivingEntity player)
     {
 		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		cap.tick();
+		cap.tick(player);
     }
     
     public static void setPlayerAnimationState(Entity player, int state)
@@ -150,13 +187,19 @@ public class ACCUtil
     public static void setItemAnimationTick(ItemStack stack, int tick)
     {
 		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		cap.setAnimationTick(tick * 2);
+		cap.setAnimationTick(tick);
     }
     
     public static int getItemAnimationTick(ItemStack stack)
     {
 		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
 		return cap.getAnimationTick();
+    }
+    
+    public static int getItemTickCount(ItemStack stack)
+    {
+		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
+		return cap.getTickCount();
     }
 
     public static boolean isVisible(ItemStack stack)
@@ -169,18 +212,6 @@ public class ACCUtil
     {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putBoolean(IS_VISIBLE, visible);
-    }
-    
-    public static int getTickCount(ItemStack stack)
-    {
-        CompoundTag tag = stack.getTag();
-        return tag != null ? tag.getInt(TICK_COUNT) : 0;
-    }
-
-    public static void setTickCount(ItemStack stack, int tickCount)
-    {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(TICK_COUNT, tickCount);
     }
     
     public static boolean hasCharge(ItemStack stack, int maxCharge)

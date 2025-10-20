@@ -5,7 +5,7 @@ import com.min01.acc.misc.SmoothAnimationState;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -13,14 +13,16 @@ import net.minecraftforge.common.util.INBTSerializable;
 public interface IPlayerAnimationCapability extends INBTSerializable<CompoundTag>
 {
 	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "player_animation");
-
-	void setEntity(Player entity);
 	
-	void tick();
+	void tick(LivingEntity entity);
 	
 	void setAnimationState(int state);
 	
 	int getAnimationState();
+	
+	void setPrevAnimationState(int state);
+	
+	int getPrevAnimationState();
 	
 	SmoothAnimationState getAnimationStateByName(String name);
 	

@@ -20,6 +20,7 @@ public class ACCCapabilities
 	public static final Capability<IItemAnimationCapability> ITEM_ANIMATION = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<IOwnerCapability> OWNER = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<IPaintedCapability> PAINTED = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final Capability<IOverlayCapability> OVERLAY = CapabilityManager.get(new CapabilityToken<>() {});
 	
 	public static void attachItemStackCapability(AttachCapabilitiesEvent<ItemStack> e)
 	{
@@ -28,7 +29,6 @@ public class ACCCapabilities
 			LazyOptional<IItemAnimationCapability> inst = LazyOptional.of(() -> 
 			{
 				ItemAnimationCapabilityImpl i = new ItemAnimationCapabilityImpl();
-				i.setItemStack(e.getObject());
 				return i;
 			});
 
@@ -55,14 +55,13 @@ public class ACCCapabilities
 	
 	public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> e)
 	{
-		if(e.getObject() instanceof Player player) 
+		if(e.getObject() instanceof Player) 
 		{
 			e.addCapability(IPlayerAnimationCapability.ID, new ICapabilitySerializable<CompoundTag>() 
 			{
 				LazyOptional<IPlayerAnimationCapability> inst = LazyOptional.of(() -> 
 				{
 					PlayerAnimationCapabilityImpl i = new PlayerAnimationCapabilityImpl();
-					i.setEntity(player);
 					return i;
 				});
 
@@ -71,6 +70,33 @@ public class ACCCapabilities
 				public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) 
 				{
 					return PLAYER_ANIMATION.orEmpty(capability, this.inst.cast());
+				}
+
+				@Override
+				public CompoundTag serializeNBT() 
+				{
+					return this.inst.orElseThrow(NullPointerException::new).serializeNBT();
+				}
+
+				@Override
+				public void deserializeNBT(CompoundTag nbt)
+				{
+					this.inst.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
+				}
+			});
+			e.addCapability(IOverlayCapability.ID, new ICapabilitySerializable<CompoundTag>() 
+			{
+				LazyOptional<IOverlayCapability> inst = LazyOptional.of(() -> 
+				{
+					OverlayCapabilityImpl i = new OverlayCapabilityImpl();
+					return i;
+				});
+
+				@Nonnull
+				@Override
+				public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) 
+				{
+					return OVERLAY.orEmpty(capability, this.inst.cast());
 				}
 
 				@Override

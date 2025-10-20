@@ -68,9 +68,19 @@ public class RadrifleItem extends Item implements IAnimatableItem
 	@Override
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
+        int charge = ACCUtil.getCharge(p_41404_);
+		int overheat = ACCUtil.getOverlayProgress("Overheat", p_41406_);
+		if(overheat >= 1000)
+		{
+			ACCUtil.setCharge(p_41406_, p_41404_, Math.min(charge + 500, MAX_CHARGE));
+			ACCUtil.setOverlayProgress("Overheat", 0, p_41406_);
+			ACCUtil.setItemAnimationState(p_41404_, 1);
+			ACCUtil.setItemAnimationTick(p_41404_, 80);
+        	ACCUtil.setPlayerAnimationState(p_41406_, 4);
+        	ACCUtil.setPlayerAnimationTick(p_41406_, 80);
+		}
         if(p_41404_.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
         {
-            int charge = ACCUtil.getCharge(p_41404_);
             if(charge > 0 && p_41405_.random.nextFloat() < 0.02F)
             {
                 BlockPos playerPos = p_41406_.blockPosition().above();
@@ -97,76 +107,84 @@ public class RadrifleItem extends Item implements IAnimatableItem
 		int count = isPulse ? 3 : 1;
         if(ACCUtil.getCharge(stack) < MAX_CHARGE)
         {
-        	if(isOvercharge)
+        	if(ACCUtil.getItemAnimationState(stack) == 0)
         	{
-            	ACCUtil.setPlayerAnimationState(player, 3);
-            	ACCUtil.setPlayerAnimationTick(player, 20);
-        	}
-        	else
-        	{
-            	ACCUtil.setPlayerAnimationState(player, 1);
-            	ACCUtil.setPlayerAnimationTick(player, 10);
-        	}
-        	if(!player.getAbilities().instabuild)
-        	{
-        		int units = 100;
-        		int enchantLevel = stack.getEnchantmentLevel(ACEnchantmentRegistry.ENERGY_EFFICIENCY.get());
-        		if(enchantLevel == 1)
-        		{
-        			units = 80;
-        		}
-        		else if(enchantLevel == 2)
-        		{
-        			units = 66;
-        		}
-        		else if(enchantLevel >= 3)
-        		{
-        			units = 33;
-        		}
-        		if(isOvercharge)
-        		{
-        			units = MAX_CHARGE;
-        		}
-                ACCUtil.setCharge(player, stack, Math.min(charge + units, MAX_CHARGE));
-        	}
-        	for(int i = 0; i < count; i++)
-        	{
-            	Vec2 headRotation = new Vec2(player.getXRot(), player.yHeadRot);
-            	Vec2 headRotation2 = new Vec2(player.getXRot(), (player.yHeadRot - 25.0F) + (25.0F * i));
-            	Vec3 startPos = ACCUtil.getLookPos(headRotation, player.getEyePosition(), -0.25F, -0.15, 1.0F);
-            	Vec3 endPos = ACCUtil.getLookPos(isPulse ? headRotation2 : headRotation, startPos, 0, 0, 20.0F);
-            	HitResult hitResult = player.level.clip(new ClipContext(startPos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-				EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, startPos, endPos, player.getBoundingBox().expandTowards(ACCUtil.fromToVector(startPos, hitResult.getLocation(), 5.0F)).inflate(1.0D), Entity::canBeHitByProjectile);
-        		Direction direction = Direction.DOWN;
-        		if(hitResult instanceof BlockHitResult blockHit)
-        		{
-        			direction = blockHit.getDirection();
-        		}
-        		else if(entityHit != null)
-        		{
-        			Vec3 pos = entityHit.getLocation();
-        			hitResult = entityHit;
-        			direction = Direction.getNearest(pos.x, pos.y, pos.z);
-        		}
-            	Vec3 hitPos = hitResult.getLocation();
-            	EntityRadrifleBeam beam = new EntityRadrifleBeam(ACCEntities.RADRIFLE_BEAM.get(), level);
-            	beam.setOwner(player);
-            	beam.setPos(startPos);
-            	beam.setGamma(isGamma);
-            	beam.setRicochet(isRicochet);
-        		beam.setOvercharge(isOvercharge);
-            	beam.setEndPos(isXRay ? endPos : hitPos);
-            	beam.setEndDir(direction);
-        		beam.onHit(hitResult);
-            	level.addFreshEntity(beam);
-            	if(!isRicochet && !isOvercharge)
+            	if(isOvercharge)
             	{
-    	            float offset = 0.05F + level.random.nextFloat() * 0.09F;
-    	            Vec3 particleVec = hitPos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
-    	            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
+                	ACCUtil.setPlayerAnimationState(player, 3);
+                	ACCUtil.setPlayerAnimationTick(player, 40);
             	}
+            	else
+            	{
+                	ACCUtil.setPlayerAnimationState(player, 1);
+                	ACCUtil.setPlayerAnimationTick(player, 20);
+            	}
+            	if(!player.getAbilities().instabuild)
+            	{
+            		int overheat = ACCUtil.getOverlayProgress("Overheat", player);
+            		if(overheat < 1000)
+            		{
+            			ACCUtil.setOverlayProgress("Overheat", Math.min(overheat + 100, 1000), player);
+            		}
+            		int units = 100;
+            		int enchantLevel = stack.getEnchantmentLevel(ACEnchantmentRegistry.ENERGY_EFFICIENCY.get());
+            		if(enchantLevel == 1)
+            		{
+            			units = 80;
+            		}
+            		else if(enchantLevel == 2)
+            		{
+            			units = 66;
+            		}
+            		else if(enchantLevel >= 3)
+            		{
+            			units = 33;
+            		}
+            		if(isOvercharge)
+            		{
+            			units = MAX_CHARGE;
+            		}
+                    ACCUtil.setCharge(player, stack, Math.min(charge + units, MAX_CHARGE));
+            	}
+            	for(int i = 0; i < count; i++)
+            	{
+                	Vec2 headRotation = new Vec2(player.getXRot(), player.yHeadRot);
+                	Vec2 headRotation2 = new Vec2(player.getXRot(), (player.yHeadRot - 25.0F) + (25.0F * i));
+                	Vec3 startPos = ACCUtil.getLookPos(headRotation, player.getEyePosition(), -0.25F, -0.15, 1.0F);
+                	Vec3 endPos = ACCUtil.getLookPos(isPulse ? headRotation2 : headRotation, startPos, 0, 0, 20.0F);
+                	HitResult hitResult = player.level.clip(new ClipContext(startPos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+    				EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, startPos, endPos, player.getBoundingBox().expandTowards(ACCUtil.fromToVector(startPos, hitResult.getLocation(), 5.0F)).inflate(1.0D), Entity::canBeHitByProjectile);
+            		Direction direction = Direction.DOWN;
+            		if(hitResult instanceof BlockHitResult blockHit)
+            		{
+            			direction = blockHit.getDirection();
+            		}
+            		else if(entityHit != null)
+            		{
+            			Vec3 pos = entityHit.getLocation();
+            			hitResult = entityHit;
+            			direction = Direction.getNearest(pos.x, pos.y, pos.z);
+            		}
+                	Vec3 hitPos = hitResult.getLocation();
+                	EntityRadrifleBeam beam = new EntityRadrifleBeam(ACCEntities.RADRIFLE_BEAM.get(), level);
+                	beam.setOwner(player);
+                	beam.setPos(startPos);
+                	beam.setGamma(isGamma);
+                	beam.setRicochet(isRicochet);
+            		beam.setOvercharge(isOvercharge);
+                	beam.setEndPos(isXRay ? endPos : hitPos);
+                	beam.setEndDir(direction);
+            		beam.onHit(hitResult);
+                	level.addFreshEntity(beam);
+                	if(!isRicochet && !isOvercharge)
+                	{
+        	            float offset = 0.05F + level.random.nextFloat() * 0.09F;
+        	            Vec3 particleVec = hitPos.add(offset * direction.getStepX(), offset * direction.getStepY(), offset * direction.getStepZ());
+        	            level.addParticle(ACParticleRegistry.RAYGUN_BLAST.get(), particleVec.x, particleVec.y, particleVec.z, direction.get3DDataValue(), 0, 0);
+                	}
+            	}
+            	player.getCooldowns().addCooldown(stack.getItem(), isOvercharge ? 40 : 20);
         	}
-        	player.getCooldowns().addCooldown(stack.getItem(), isOvercharge ? 40 : 20);
         }
         else if(!ammo.isEmpty())
         {

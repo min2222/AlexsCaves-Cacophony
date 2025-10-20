@@ -5,7 +5,6 @@ import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.item.ACCItems;
-import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.misc.ACCLootTables;
 import com.min01.acc.misc.ACCTags;
 import com.min01.acc.util.ACCUtil;
@@ -14,7 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
@@ -64,19 +62,9 @@ public class EventHandlerForge
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event)
 	{
-		for(int i = 0; i < event.player.getInventory().getContainerSize(); i++)
-		{
-			ItemStack stack = event.player.getInventory().getItem(i);
-			if(stack.getItem() instanceof IAnimatableItem)
-			{
-				stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
-				{
-					t.setEntity(event.player);
-					t.tick();
-				});
-			}
-		}
+		ACCUtil.tickItemAnimation(event.player);
 		ACCUtil.tickPlayerAnimation(event.player);
+		ACCUtil.tickOverlayProgress(event.player);
 	}
 	
 	@SubscribeEvent

@@ -1,9 +1,10 @@
 package com.min01.acc.capabilities;
 
+import com.min01.acc.item.ACCItems;
+import com.min01.acc.item.RadrifleItem;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.network.ACCNetwork;
 import com.min01.acc.network.UpdateItemAnimationPacket;
-import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -12,10 +13,11 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 {
-	private ItemStack stack;
-	private Entity entity;
 	private int animationTick;
 	private int animationState;
+	private int tickCount;
+	
+	private final SmoothAnimationState overheatAnimationState = new SmoothAnimationState();
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -32,26 +34,19 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 		this.animationTick = nbt.getInt("AnimationTick");
 		this.animationState = nbt.getInt("AnimationState");
 	}
-	
-	@Override
-	public void setEntity(Entity entity) 
-	{
-		this.entity = entity;
-	}
-	
-	@Override
-	public void setItemStack(ItemStack stack) 
-	{
-		this.stack = stack;
-	}
 
 	@Override
-	public void tick() 
+	public void tick(Entity player, ItemStack stack) 
 	{
-		if(this.entity.level.isClientSide)
+		this.tickCount++;
+		
+		if(player.level.isClientSide)
 		{
-			ACCUtil.setTickCount(this.stack, ACCUtil.getTickCount(this.stack) + 1);
-			if(this.getAnimationTick() >= 0)
+			this.overheatAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.RADRIFLE.get()), this.tickCount);
+		}
+		else
+		{
+			if(this.getAnimationTick() > 0)
 			{
 				this.setAnimationTick(this.getAnimationTick() - 1);
 			}
@@ -59,6 +54,7 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 			{
 				this.setAnimationState(0);
 			}
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new UpdateItemAnimationPacket(stack, player.getUUID(), this.animationState, this.animationTick));
 		}
 	}
 
@@ -66,7 +62,6 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	public void setAnimationState(int state) 
 	{
 		this.animationState = state;
-		this.sendUpdatePacket(true);
 	}
 
 	@Override
@@ -78,6 +73,10 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	@Override
 	public SmoothAnimationState getAnimationStateByName(String name) 
 	{
+		if(name.equals(RadrifleItem.RADRIFLE_OVERHEAT))
+		{
+			return this.overheatAnimationState;
+		}
 		return new SmoothAnimationState();
 	}
 	
@@ -85,7 +84,6 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	public void setAnimationTick(int tick) 
 	{
 		this.animationTick = tick;
-		this.sendUpdatePacket(false);
 	}
 	
 	@Override
@@ -94,11 +92,9 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 		return this.animationTick;
 	}
 	
-	public void sendUpdatePacket(boolean isState)
+	@Override
+	public int getTickCount() 
 	{
-		if(this.entity != null && !this.entity.level.isClientSide)
-		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateItemAnimationPacket(this.entity.getUUID(), this.stack, this.animationState, this.animationTick, isState));
-		}
+		return this.tickCount;
 	}
 }
