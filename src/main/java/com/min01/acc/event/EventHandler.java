@@ -3,6 +3,7 @@ package com.min01.acc.event;
 import com.github.alexmodguy.alexscaves.server.enchantment.ACEnchantmentRegistry;
 import com.github.alexmodguy.alexscaves.server.misc.ACCreativeTabRegistry;
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.advancements.ACCCriteriaTriggers;
 import com.min01.acc.effect.ACCEffects;
 import com.min01.acc.enchantment.ACCEnchantments;
 import com.min01.acc.entity.ACCEntities;
@@ -10,6 +11,7 @@ import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.item.ACCItems;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -36,6 +38,7 @@ public class EventHandler
 		ItemStack strongFear = PotionUtils.setPotion(new ItemStack(Items.POTION), ACCEffects.STRONG_FEAR_POTION.get());
 		BrewingRecipeRegistry.addRecipe(Ingredient.of(water), Ingredient.of(ACCItems.TREMORSAURUS_TOOTH.get()), fear);
 		BrewingRecipeRegistry.addRecipe(Ingredient.of(fear), Ingredient.of(Items.GLOWSTONE_DUST), strongFear);
+		CriteriaTriggers.register(ACCCriteriaTriggers.SHOOT_NUCLEAR_BOMB);
 	}
 	
     @SubscribeEvent
@@ -56,7 +59,7 @@ public class EventHandler
     {
     	if(event.getTabKey() == ACCreativeTabRegistry.TOXIC_CAVES.getKey())
     	{
-    		event.accept(ACCItems.RAYBLAE.get());
+    		event.accept(ACCItems.RAYBLADE.get());
     		event.accept(ACCItems.RAY_CATALYST.get());
     		event.accept(ACCItems.RADRIFLE.get());
     		ACCEnchantments.addAllEnchantsToCreativeTab(event, ACEnchantmentRegistry.RAYGUN);
@@ -85,6 +88,7 @@ public class EventHandler
     	{
     		event.accept(ACCItems.NEODYMIUM_SHACKLE.get());
     		event.accept(ACCItems.MAGNETIC_RAILGUN.get());
+    		ACCEnchantments.addAllEnchantsToCreativeTab(event, ACCEnchantments.NEODYMIUM_SHACKLE);
     	}
     }
 }

@@ -1,13 +1,20 @@
 package com.min01.acc.capabilities;
 
+import java.util.List;
+
 import com.min01.acc.item.ACCItems;
 import com.min01.acc.item.RadrifleItem;
+import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.network.ACCNetwork;
 import com.min01.acc.network.UpdatePlayerAnimationPacket;
+import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 
 public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
@@ -22,6 +29,12 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	private final SmoothAnimationState radrifleHoldToRunAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F);
 	private final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState(0.999F);
+	
+	private final SmoothAnimationState raybladeDrawRightAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState raybladeSwingRightAnimationState = new SmoothAnimationState();
+	
+	private final SmoothAnimationState raybladeDrawLeftAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState raybladeSwingLeftAnimationState = new SmoothAnimationState();
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -52,9 +65,28 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 			this.radrifleRunningAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.RADRIFLE.get()) && entity.isSprinting(), entity.tickCount);
 			this.radrifleOverchargeFireAnimationState.updateWhen(this.getAnimationState() == 3 && entity.isHolding(ACCItems.RADRIFLE.get()), entity.tickCount);
 			this.radrifleOverheatAnimationState.updateWhen(this.getAnimationState() == 4 && entity.isHolding(ACCItems.RADRIFLE.get()), entity.tickCount);
+			
+			this.raybladeDrawRightAnimationState.updateWhen(this.getAnimationState() == 0 && entity.getMainHandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
+			this.raybladeSwingRightAnimationState.updateWhen(this.getAnimationState() == 1 && entity.getMainHandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
+			this.raybladeDrawLeftAnimationState.updateWhen(this.getAnimationState() == 0 && entity.getOffhandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
+			this.raybladeSwingLeftAnimationState.updateWhen(this.getAnimationState() == 1 && entity.getOffhandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
 		}
 		else
 		{
+			if(this.getAnimationState() == 1 && entity.isHolding(ACCItems.RAYBLADE.get()))
+			{
+				if(this.getAnimationTick() == 25)
+				{
+					float size = 1.5F;
+					Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), 0, 0, 1.5F);
+					AABB aabb = new AABB(-size, -size, -size, size, size, size).move(lookPos);
+					List<LivingEntity> list = entity.level.getEntitiesOfClass(LivingEntity.class, aabb, t -> t != entity && !t.isAlliedTo(entity));
+					list.forEach(t -> 
+					{
+						t.hurt(entity.damageSources().mobAttack(entity), entity.getRandom().nextInt(100, 200) + 1);
+					});
+				}
+			}
 			if(entity.isSprinting() && this.getAnimationState() == 0 && this.getPrevAnimationState() != 2 && entity.isHolding(ACCItems.RADRIFLE.get()))
 			{
 				this.setAnimationState(2);
@@ -131,6 +163,22 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		if(name.equals(RadrifleItem.RADRIFLE_OVERHEAT))
 		{
 			return this.radrifleOverheatAnimationState;
+		}
+		if(name.equals(RaybladeItem.RAYBLADE_DRAW_RIGHT))
+		{
+			return this.raybladeDrawRightAnimationState;
+		}
+		if(name.equals(RaybladeItem.RAYBLADE_SWING_RIGHT))
+		{
+			return this.raybladeSwingRightAnimationState;
+		}
+		if(name.equals(RaybladeItem.RAYBLADE_DRAW_LEFT))
+		{
+			return this.raybladeDrawLeftAnimationState;
+		}
+		if(name.equals(RaybladeItem.RAYBLADE_SWING_LEFT))
+		{
+			return this.raybladeSwingLeftAnimationState;
 		}
 		return new SmoothAnimationState();
 	}

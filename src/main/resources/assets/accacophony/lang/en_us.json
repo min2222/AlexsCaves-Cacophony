@@ -31,6 +31,7 @@
 	"entity.accacophony.ovivenator": "Ovivenator",
 	"entity.accacophony.neodymium_shackle": "Neodymium Shackle",
 	"entity.accacophony.radrifle_beam": "Radrifle Beam",
+	"entity.accacophony.throwable_falling_block": "Throwble Falling Block",
 	"effect.accacophony.fear": "Fear",
 	"effect.accacophony.fear.description": "makes mobs run away from anything that currently has it.",
 	"enchantment.accacophony.ricochet": "Ricochet",
@@ -39,6 +40,12 @@
 	"enchantment.accacophony.pulse.desc": "for the same ammo cost, the beam fires in pulses of three",
 	"enchantment.accacophony.overcharge": "Overcharge",
 	"enchantment.accacophony.overcharge.desc": "use all of the energy to shoot one massive beam that deals incredible damage",
+	"enchantment.accacophony.orbiting": "Orbiting",
+	"enchantment.accacophony.orbiting.desc": "Instead of throwing the shackle, it will orbit the player, stunning anything it hits, and flying around the player for 15 seconds",
+	"enchantment.accacophony.voltage": "Voltage",
+	"enchantment.accacophony.voltage.desc": "The flying shackle will now streak lightning",
+	"enchantment.accacophony.impact": "Impact",
+	"enchantment.accacophony.impact.desc": "(incompatible with Orbiting) the shackle explodes and creates a stunning AoE attack (shackle drops on ground)",
 	"advancements.accacophony.rayblade.title": "Rip and Tear",
 	"advancements.accacophony.rayblade.desc": "Acquire a Rayblade",
 	"advancements.accacophony.rayblade_challenge.title": "...Until it is done",
@@ -48,5 +55,11 @@
 	"advancements.accacophony.arrow_of_fear.title": "The only thing they fear is you",
 	"advancements.accacophony.arrow_of_fear.desc": "Use an arrow of fear on any mob",
 	"advancements.accacophony.gloomoth_eggs.title": "Desperate Measures",
-	"advancements.accacophony.gloomoth_eggs.desc": "Eat Gloomoth eggs, the unborn children of small defenseless moths-- You monster!"
+	"advancements.accacophony.gloomoth_eggs.desc": "Eat Gloomoth eggs, the unborn children of small defenseless moths-- You monster!",
+	"advancements.accacophony.neodymium_shackle.title": "You're yanking my chain!",
+	"advancements.accacophony.neodymium_shackle.desc": "Hit any mob from 100 blocks away with a Neodymium Shackle",
+	"advancements.accacophony.railgun.title": "I call it...THE THUNDERGUN!",
+	"advancements.accacophony.railgun.desc": "Acquire a Magnetic Railgun",
+	"advancements.accacophony.railgun_challenge.title": "What could go wrong?",
+	"advancements.accacophony.railgun_challenge.desc": "Use a Magnetic Railgun to fling a nuclear bomb, causing it to detonate immediately."
 }

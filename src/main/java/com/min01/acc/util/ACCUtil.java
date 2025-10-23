@@ -9,9 +9,11 @@ import org.joml.Math;
 import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.capabilities.IItemAnimationCapability;
 import com.min01.acc.capabilities.IOverlayCapability;
+import com.min01.acc.capabilities.IOwnerCapability;
 import com.min01.acc.capabilities.IPlayerAnimationCapability;
 import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.capabilities.OverlayCapabilityImpl;
+import com.min01.acc.capabilities.OwnerCapabilityImpl;
 import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.misc.SmoothAnimationState;
@@ -66,6 +68,24 @@ public class ACCUtil
             }
     	}
     }
+    
+	public static void tickOwner(Entity entity)
+	{
+		IOwnerCapability cap = entity.getCapability(ACCCapabilities.OWNER).orElse(new OwnerCapabilityImpl());
+		cap.tick(entity);
+	}
+	
+	public static void setOwner(Entity entity, Entity owner)
+	{
+		IOwnerCapability cap = entity.getCapability(ACCCapabilities.OWNER).orElse(new OwnerCapabilityImpl());
+		cap.setOwner(owner);
+	}
+    
+	public static Entity getOwner(Entity entity)
+	{
+		IOwnerCapability cap = entity.getCapability(ACCCapabilities.OWNER).orElse(new OwnerCapabilityImpl());
+		return cap.getOwner(entity);
+	}
     
     public static void shoot(Entity projectile, double p_37266_, double p_37267_, double p_37268_, float p_37269_, float p_37270_) 
     {

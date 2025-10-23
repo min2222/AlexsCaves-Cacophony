@@ -1,7 +1,5 @@
 package com.min01.acc.capabilities;
 
-import java.util.UUID;
-
 import com.min01.acc.AlexsCavesCacophony;
 
 import net.minecraft.nbt.CompoundTag;
@@ -15,9 +13,9 @@ public interface IOwnerCapability extends INBTSerializable<CompoundTag>
 {
 	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "owner");
 
-	void setEntity(Entity entity);
+	void setOwner(Entity entity);
 	
-	void setOwner(UUID uuid);
+	Entity getOwner(Entity entity);
 	
-	Entity getOwner();
+	void tick(Entity entity);
 }

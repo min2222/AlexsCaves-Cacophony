@@ -7,6 +7,59 @@ import net.minecraft.client.animation.KeyframeAnimations;
 
 public class PlayerAnimation
 {
+	public static class RaybladeAnimation
+	{
+		public static final AnimationDefinition RAYBLADE_DRAW_RIGHT = AnimationDefinition.Builder.withLength(0.5F)
+				.addAnimation("RightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-110.0F, -10.0F, 85.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.addAnimation("RightArm", new AnimationChannel(AnimationChannel.Targets.POSITION, 
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.posVec(-1.0F, -1.8828F, -1.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.build();
+
+		public static final AnimationDefinition RAYBLADE_SWING_RIGHT = AnimationDefinition.Builder.withLength(0.75F)
+				.addAnimation("RightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-110.0F, -10.0F, 85.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(50.0F, -10.0F, 85.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.addAnimation("RightArm", new AnimationChannel(AnimationChannel.Targets.POSITION, 
+					new Keyframe(0.0F, KeyframeAnimations.posVec(-1.0F, -1.8096F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.posVec(0.0F, -1.8402F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.posVec(-2.0F, -1.8448F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.build();
+		
+		public static final AnimationDefinition RAYBLADE_DRAW_LEFT = AnimationDefinition.Builder.withLength(0.5F)
+				.addAnimation("LeftArm", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-110.0F, 10.0F, -85.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.addAnimation("LeftArm", new AnimationChannel(AnimationChannel.Targets.POSITION, 
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.posVec(1.0F, -1.8071F, -1.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.build();
+
+		public static final AnimationDefinition RAYBLADE_SWING_LEFT = AnimationDefinition.Builder.withLength(0.75F)
+				.addAnimation("LeftArm", new AnimationChannel(AnimationChannel.Targets.ROTATION, 
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-110.0F, 10.0F, -85.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(50.0F, 10.0F, -85.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.addAnimation("LeftArm", new AnimationChannel(AnimationChannel.Targets.POSITION, 
+					new Keyframe(0.0F, KeyframeAnimations.posVec(1.0F, -1.7244F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.posVec(0.0F, -1.8175F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.posVec(2.0F, -1.8781F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
+				))
+				.build();
+	}
+	
 	public static class RadrifleAnimation
 	{
 		public static final AnimationDefinition RADRIFLE_FIRE = AnimationDefinition.Builder.withLength(0.4583F)

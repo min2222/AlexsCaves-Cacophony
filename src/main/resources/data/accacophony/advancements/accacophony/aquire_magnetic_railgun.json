@@ -1,0 +1,28 @@
+{
+	"display": {
+		"icon": {
+			"item": "alexscaves:tesla_bulb"
+		},
+		"title": {
+			"translate": "advancements.accacophony.railgun.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.railgun.desc"
+		}
+	},
+	"parent": "alexscaves:alexscaves/neodymium_ingot",
+	"criteria": {
+		"railgun": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": [
+							"accacophony:magnetic_railgun"
+						]
+					}
+				]
+			}
+		}
+	}
+}

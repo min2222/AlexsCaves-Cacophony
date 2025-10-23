@@ -55,11 +55,11 @@ public class RaybladeRenderer extends BlockEntityWithoutLevelRenderer
 	
 	public ResourceLocation getLayerTexture(ItemStack stack)
 	{
-		return new ResourceLocation(String.format("%s:textures/item/rayblade_layer%d.png", AlexsCavesCacophony.MODID, RaybladeItem.getFrame(stack)));
+		return new ResourceLocation(String.format("%s:textures/item/rayblade_layer%d.png", AlexsCavesCacophony.MODID, ACCUtil.getItemTickCount(stack) % 20));
 	}
 	
 	public ResourceLocation getTexture(ItemStack stack)
 	{
-		return new ResourceLocation(String.format("%s:textures/item/rayblade%d.png", AlexsCavesCacophony.MODID, RaybladeItem.getFrame(stack)));
+		return new ResourceLocation(String.format("%s:textures/item/rayblade%d.png", AlexsCavesCacophony.MODID, ACCUtil.getItemTickCount(stack) % 20));
 	}
 }

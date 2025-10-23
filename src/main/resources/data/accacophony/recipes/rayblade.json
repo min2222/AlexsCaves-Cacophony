@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+	"category": "equipment",
+    "pattern": [
+        " P ",
+        "PRP",
+        " P "
+    ],
+    "key": {
+        "P": {
+            "item": "alexscaves:polymer_plate"
+        },
+        "R": {
+            "item": "accacophony:ray_catalyst"
+        }
+    },
+    "result": {
+        "item": "accacophony:rayblade",
+        "count": 1
+    },
+	"show_notification": true
+}

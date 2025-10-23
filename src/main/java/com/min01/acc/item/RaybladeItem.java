@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.item.ACItemRegistry;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.RaybladeRenderer;
 import com.min01.acc.util.ACCClientUtil;
@@ -16,9 +18,14 @@ import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,11 +41,10 @@ import net.minecraftforge.common.ToolActions;
 public class RaybladeItem extends SwordItem implements IAnimatableItem
 {
     public static final String RAYBLADE_DRAW_RIGHT = "RaybladeDrawRight";
-    public static final String RAYBLADE_HOLD_RIGHT = "RaybladeHoldRight";
     public static final String RAYBLADE_SWING_RIGHT = "RaybladeSwingRight";
+    public static final String RAYBLADE_DRAW_LEFT = "RaybladeDrawLeft";
+    public static final String RAYBLADE_SWING_LEFT = "RaybladeSwingLeft";
     public static final String RAYBLADE_SWING = "RaybladeSwing";
-    public static final String IS_SELECTED = "isSelected";
-    public static final String FRAME = "Frame";
     public static final int MAX_CHARGE = 3;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->
@@ -64,6 +70,46 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
 	}
 	
 	@Override
+	public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_)
+	{
+		ItemStack stack = p_41433_.getItemInHand(p_41434_);
+		int charge = ACCUtil.getCharge(stack);
+        if(charge < MAX_CHARGE)
+        {
+			p_41433_.startUsingItem(p_41434_);
+        }
+		return InteractionResultHolder.pass(stack);
+	}
+	
+	@Override
+	public void releaseUsing(ItemStack p_41412_, Level p_41413_, LivingEntity p_41414_, int p_41415_) 
+	{
+		if(p_41414_ instanceof Player player)
+		{
+	        ItemStack ammo = this.findAmmo(player);
+	        if(!ammo.isEmpty())
+	        {
+	        	if(!player.getAbilities().instabuild)
+	        	{
+	                ammo.shrink(1);
+	        	}
+	            ACCUtil.setCharge(player, p_41412_, 0);
+	        }
+		}
+		ACCUtil.setPlayerAnimationState(p_41414_, 1);
+		ACCUtil.setPlayerAnimationTick(p_41414_, 30);
+		ACCUtil.setItemAnimationState(p_41412_, 1);
+		ACCUtil.setItemAnimationTick(p_41412_, 30);
+		ACCUtil.setVisible(p_41412_, true);
+	}
+	
+	@Override
+	public boolean onEntitySwing(ItemStack stack, LivingEntity entity)
+	{
+		return true;
+	}
+	
+	@Override
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) 
 	{
 		return newStack.getItem() != this;
@@ -81,34 +127,6 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
         }
         return ItemStack.EMPTY;
     }
-    
-	public static int getFrame(ItemStack stack) 
-	{
-		CompoundTag tag = stack.getTag();
-		if(tag != null)
-		{
-			return tag.getInt(FRAME);
-		}
-		return 0;
-	}
-	
-	public static void setFrame(ItemStack stack, int frame) 
-	{
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putInt(FRAME, frame);
-	}
-	
-	public static boolean isSelected(ItemStack stack) 
-	{
-		CompoundTag tag = stack.getTag();
-		return tag != null && tag.getBoolean(IS_SELECTED);
-	}
-	
-	public static void setSelected(ItemStack stack, boolean isSelected) 
-	{
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putBoolean(IS_SELECTED, isSelected);
-	}
 	
     public static boolean hasCharge(ItemStack stack)
     {
@@ -145,6 +163,12 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
             tooltip.add(Component.translatable("item.accacophony.rayblade.charge", chargeLeft, MAX_CHARGE).withStyle(ChatFormatting.GREEN));
         }
     }
+    
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) 
+    {
+    	return ImmutableMultimap.of();
+    }
 	
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) 
@@ -163,5 +187,11 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
 	public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
 	{
 		return toolAction == ToolActions.SWORD_DIG;
+	}
+	
+	@Override
+	public boolean isFirstPersonAnim() 
+	{
+		return true;
 	}
 }

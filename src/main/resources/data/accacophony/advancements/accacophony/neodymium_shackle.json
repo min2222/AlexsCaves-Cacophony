@@ -1,0 +1,43 @@
+{
+	"display": {
+		"icon": {
+			"item": "accacophony:neodymium_shackle"
+		},
+		"title": {
+			"translate": "advancements.accacophony.neodymium_shackle.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.neodymium_shackle.desc"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": true,
+		"hidden": false
+	},
+	"parent": "alexscaves:alexscaves/neodymium_ingot",
+	"criteria": {
+		"shackle": {
+			"trigger": "minecraft:player_hurt_entity",
+			"conditions": {
+				"damage": {
+					"type": {
+						"direct_entity": {
+							"type": "accacophony:neodymium_shackle",
+							"distance": {
+								"horizontal": {
+									"min": 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"requirements": [
+		[
+			"shackle"
+		]
+	],
+	"sends_telemetry_event": true
+}

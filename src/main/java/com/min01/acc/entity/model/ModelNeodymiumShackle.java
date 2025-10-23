@@ -49,10 +49,10 @@ public class ModelNeodymiumShackle extends HierarchicalModel<EntityNeodymiumShac
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
-		this.animate(entity.loopAnimationState, NeodymiumShackleAnimation.SHACKLE_LOOP, ageInTicks);
-		this.animate(entity.deployAnimationState, NeodymiumShackleAnimation.SHACKLE_DEPLOY, ageInTicks);
-		this.animate(entity.impactAnimationState, NeodymiumShackleAnimation.SHACKLE_IMPACT, ageInTicks);
-		this.animate(entity.impactCloseAnimationState, NeodymiumShackleAnimation.SHACKLE_IMPACT_CLOSE, ageInTicks);
+		entity.loopAnimationState.animate(this, NeodymiumShackleAnimation.SHACKLE_LOOP, ageInTicks);
+		entity.deployAnimationState.animate(this, NeodymiumShackleAnimation.SHACKLE_DEPLOY, ageInTicks);
+		entity.impactAnimationState.animate(this, NeodymiumShackleAnimation.SHACKLE_IMPACT, ageInTicks);
+		entity.impactCloseAnimationState.animate(this, NeodymiumShackleAnimation.SHACKLE_IMPACT_CLOSE, ageInTicks);
 	}
 	
 	@Override

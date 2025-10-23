@@ -13,7 +13,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class OwnerCapabilityImpl implements IOwnerCapability
 {
-	private Entity entity;
 	private Optional<UUID> ownerUUID = Optional.empty();
 	
 	@Override
@@ -35,43 +34,36 @@ public class OwnerCapabilityImpl implements IOwnerCapability
 			this.ownerUUID = Optional.of(nbt.getUUID("OwnerUUID"));
 		}
 	}
-
-	@Override
-	public void setEntity(Entity entity) 
-	{
-		this.entity = entity;
-	}
 	
 	@Override
-	public void setOwner(UUID uuid)
+	public void setOwner(Entity entity)
 	{
-		if(uuid == null)
+		if(entity == null)
 		{
 			this.ownerUUID = Optional.empty();
-			this.sendUpdatePacket();
 		}
-		else
+		else 
 		{
-			this.ownerUUID = Optional.of(uuid);
-			this.sendUpdatePacket();
+			this.ownerUUID = Optional.of(entity.getUUID());
 		}
 	}
 	
 	@Override
-	public Entity getOwner() 
+	public Entity getOwner(Entity entity) 
 	{
 		if(this.ownerUUID.isPresent())
 		{
-			return ACCUtil.getEntityByUUID(this.entity.level, this.ownerUUID.get());
+			return ACCUtil.getEntityByUUID(entity.level, this.ownerUUID.get());
 		}
 		return null;
 	}
 	
-	private void sendUpdatePacket() 
+	@Override
+	public void tick(Entity entity) 
 	{
-		if(!this.entity.level.isClientSide)
+		if(!entity.level.isClientSide)
 		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateOwnerCapabilityPacket(this.entity.getUUID(), this.ownerUUID));
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdateOwnerCapabilityPacket(entity.getUUID(), this.ownerUUID));
 		}
 	}
 }

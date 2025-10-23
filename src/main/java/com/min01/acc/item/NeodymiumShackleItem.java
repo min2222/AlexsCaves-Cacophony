@@ -1,5 +1,6 @@
 package com.min01.acc.item;
 
+import com.min01.acc.enchantment.ACCEnchantments;
 import com.min01.acc.entity.projectile.EntityNeodymiumShackle;
 
 import net.minecraft.world.InteractionHand;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Vanishable;
 import net.minecraft.world.level.Level;
 
@@ -15,7 +17,7 @@ public class NeodymiumShackleItem extends Item implements Vanishable
 {
 	public NeodymiumShackleItem() 
 	{
-		super(new Item.Properties().durability(250));
+		super(new Item.Properties().durability(250).rarity(Rarity.UNCOMMON));
 	}
 	
 	@Override
@@ -29,6 +31,10 @@ public class NeodymiumShackleItem extends Item implements Vanishable
         		p_43388_.broadcastBreakEvent(p_41434_);
             });
         	EntityNeodymiumShackle shackle = new EntityNeodymiumShackle(p_41432_, p_41433_, stack);
+        	if(stack.getEnchantmentLevel(ACCEnchantments.ORBITING.get()) > 0)
+        	{
+        		shackle.setNoGravity(true);
+        	}
         	shackle.shootFromRotation(p_41433_, p_41433_.getXRot(), p_41433_.getYRot(), 0.0F, 1.5F, 1.0F);
         	shackle.setAnimationState(1);
         	shackle.setAnimationTick(10);

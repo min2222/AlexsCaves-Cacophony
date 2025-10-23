@@ -105,7 +105,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
 		boolean isPulse = stack.getEnchantmentLevel(ACCEnchantments.PULSE.get()) > 0;
 		boolean isOvercharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
 		int count = isPulse ? 3 : 1;
-        if(ACCUtil.getCharge(stack) < MAX_CHARGE)
+        if(charge < MAX_CHARGE)
         {
         	if(ACCUtil.getItemAnimationState(stack) == 0)
         	{
@@ -292,5 +292,11 @@ public class RadrifleItem extends Item implements IAnimatableItem
 	public Vec3 getOffset() 
 	{
 		return new Vec3(0.0F, 4.0F, -5.0F);
+	}
+	
+	@Override
+	public boolean isFirstPersonAnim() 
+	{
+		return true;
 	}
 }

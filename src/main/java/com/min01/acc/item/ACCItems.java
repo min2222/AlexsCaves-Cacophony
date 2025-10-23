@@ -30,7 +30,7 @@ public class ACCItems
 	public static final RegistryObject<Item> GLOOMWORM_SPAWN_EGG = registerSpawnEgg("gloomworm_spawn_egg", () -> ACCEntities.GLOOMWORM.get(), 15455166, 10708554);
 	public static final RegistryObject<Item> OVIVENATOR_SPAWN_EGG = registerSpawnEgg("ovivenator_spawn_egg", () -> ACCEntities.OVIVENATOR.get(), 3165586, 12178714);
 	
-	public static final RegistryObject<Item> RAYBLAE = ITEMS.register("rayblade", () -> new RaybladeItem());
+	public static final RegistryObject<Item> RAYBLADE = ITEMS.register("rayblade", () -> new RaybladeItem());
 	public static final RegistryObject<Item> RAY_CATALYST = ITEMS.register("ray_catalyst", () -> new RayCatalystItem());
 	public static final RegistryObject<Item> RADRIFLE = ITEMS.register("radrifle", () -> new RadrifleItem());
 	

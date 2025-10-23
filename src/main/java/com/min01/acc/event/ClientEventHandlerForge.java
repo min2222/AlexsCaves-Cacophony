@@ -30,7 +30,7 @@ public class ClientEventHandlerForge
 	public static void onRenderHand(RenderHandEvent event)
 	{
 		ItemStack itemStack = event.getItemStack();
-		if(itemStack.getItem() instanceof IAnimatableItem item)
+		if(itemStack.getItem() instanceof IAnimatableItem item && item.isFirstPersonAnim())
 		{
 			PoseStack stack = event.getPoseStack();
 			MultiBufferSource bufferSource = event.getMultiBufferSource();

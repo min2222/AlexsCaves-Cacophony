@@ -1,0 +1,32 @@
+{
+	"display": {
+		"icon": {
+			"item": "alexscaves:tesla_bulb"
+		},
+		"title": {
+			"translate": "advancements.accacophony.railgun_challenge.title"
+		},
+		"description": {
+			"translate": "advancements.accacophony.railgun_challenge.desc"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": true,
+		"hidden": false
+	},
+	"parent": "accacophony:accacophony/aquire_magnetic_railgun",
+	"criteria": {
+		"shoot": {
+			"trigger": "accacophony:shoot_nuclear_bomb"
+		}
+	},
+	"requirements": [
+		[
+			"shoot"
+		]
+	],
+	"rewards": {
+		"experience": 50
+	},
+	"sends_telemetry_event": true
+}

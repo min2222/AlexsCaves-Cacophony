@@ -14,7 +14,9 @@ import com.min01.acc.entity.renderer.GloomwormRenderer;
 import com.min01.acc.entity.renderer.NeodymiumShackleRenderer;
 import com.min01.acc.entity.renderer.OvivenatorRenderer;
 import com.min01.acc.entity.renderer.RadrifleBeamRenderer;
+import com.min01.acc.entity.renderer.ThrowableFallingBlockRenderer;
 import com.min01.acc.gui.overlay.OverheatOverlay;
+import com.min01.acc.gui.overlay.PolarityOverlay;
 import com.min01.acc.item.model.ModelMagneticRailgun;
 import com.min01.acc.item.model.ModelRadrifle;
 import com.min01.acc.item.model.ModelRayblade;
@@ -52,11 +54,13 @@ public class ClientEventHandler
     	event.registerEntityRenderer(ACCEntities.NEODYMIUM_SHACKLE.get(), NeodymiumShackleRenderer::new);
     	event.registerEntityRenderer(ACCEntities.OVIVENATOR.get(), OvivenatorRenderer::new);
     	event.registerEntityRenderer(ACCEntities.RADRIFLE_BEAM.get(), RadrifleBeamRenderer::new);
+    	event.registerEntityRenderer(ACCEntities.THROWABLE_FALLING_BLOCK.get(), ThrowableFallingBlockRenderer::new);
     }
     
     @SubscribeEvent
     public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event)
     {
     	event.registerBelow(VanillaGuiOverlay.HOTBAR.id(), "overheat", OverheatOverlay::draw);
+    	event.registerBelow(VanillaGuiOverlay.HOTBAR.id(), "polarity", PolarityOverlay::draw);
     }
 }

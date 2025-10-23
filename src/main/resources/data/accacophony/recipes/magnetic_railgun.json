@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+	"category": "equipment",
+    "pattern": [
+        "SSS",
+        "STS",
+        "SSS"
+    ],
+    "key": {
+        "S": {
+            "item": "alexscaves:scrap_metal"
+        },
+        "T": {
+            "item": "alexscaves:tesla_bulb"
+        }
+    },
+    "result": {
+        "item": "accacophony:magnetic_railgun",
+        "count": 1
+    },
+	"show_notification": true
+}

@@ -49,8 +49,8 @@ public class UpdateOwnerCapabilityPacket
 						{
 							if(message.ownerUUID.isPresent())
 							{
-								Entity owner = ACCUtil.getEntityByUUID(entity.level, message.ownerUUID.get());
-								cap.setOwner(owner.getUUID());
+								Entity owner = ACCUtil.getEntityByUUID(level, message.ownerUUID.get());
+								cap.setOwner(owner);
 							}
 							else
 							{

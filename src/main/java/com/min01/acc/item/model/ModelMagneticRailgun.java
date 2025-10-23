@@ -1,6 +1,8 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.item.MagneticRailgunItem;
+import com.min01.acc.item.animation.MagneticRailgunAnimation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -53,6 +55,10 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_BASE, MagneticRailgunAnimation.RAILGUN_BASE, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_ACTIVATE, MagneticRailgunAnimation.RAILGUN_ACTIVATE, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_ACTIVE, MagneticRailgunAnimation.RAILGUN_ACTIVE, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_FIRE, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks);
 	}
 	
 	@Override
