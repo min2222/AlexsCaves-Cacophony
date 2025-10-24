@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 @Mixin(ThornwoodTreeFeature.class)
 public class MixinThornwoodTreeFeature 
 {
-	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/WorldGenLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", ordinal = 3), method = "place", remap = false)
+	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/WorldGenLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", ordinal = 3), method = "place")
 	private boolean setBlock(WorldGenLevel instance, BlockPos blockPos, BlockState blockState, int i)
 	{
 		for(Direction direction : ACMath.HORIZONTAL_DIRECTIONS)

@@ -16,6 +16,6 @@ public class ACCWeaponEnchantment extends ACWeaponEnchantment
 	@Override
 	protected boolean checkCompatibility(Enchantment enchantment)
 	{
-		return super.checkCompatibility(enchantment) && ACCEnchantments.areCompatible(this, enchantment);
+		return this != enchantment && ACCEnchantments.areCompatible(this, enchantment);
 	}
 }

@@ -10,14 +10,13 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Vanishable;
 import net.minecraft.world.level.Level;
 
-public class NeodymiumShackleItem extends Item implements Vanishable
+public class NeodymiumShackleItem extends Item
 {
 	public NeodymiumShackleItem() 
 	{
-		super(new Item.Properties().durability(250).rarity(Rarity.UNCOMMON));
+		super(new Item.Properties().durability(250).fireResistant().rarity(Rarity.UNCOMMON));
 	}
 	
 	@Override
@@ -50,4 +49,10 @@ public class NeodymiumShackleItem extends Item implements Vanishable
         }
 		return InteractionResultHolder.consume(stack);
 	}
+	
+    @Override
+    public int getEnchantmentValue()
+    {
+        return 1;
+    }
 }
