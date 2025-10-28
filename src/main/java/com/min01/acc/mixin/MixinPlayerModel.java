@@ -82,7 +82,7 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
 	public void animate(T entity, String name, AnimationDefinition definition, float ageInTicks)
 	{
 		SmoothAnimationState state = ACCUtil.getPlayerAnimationStateByName(entity, name);
-		state.animatePlayer(entity, name, PlayerModel.class.cast(this), definition, ageInTicks);
+		state.animatePlayer(PlayerModel.class.cast(this), definition, ageInTicks);
 	}
 	
 	public void setupMap()

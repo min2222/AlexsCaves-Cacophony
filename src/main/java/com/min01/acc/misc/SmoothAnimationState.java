@@ -14,7 +14,6 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -52,7 +51,7 @@ public class SmoothAnimationState extends AnimationState
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public <T extends LivingEntity> void animatePlayer(T entity, String name, PlayerModel<T> model, AnimationDefinition definition, float ageInTicks) 
+	public <T extends LivingEntity> void animatePlayer(PlayerModel<T> model, AnimationDefinition definition, float ageInTicks) 
 	{
 		this.updateTime(ageInTicks, 1.0F);
 		this.ifStarted(t -> 
@@ -63,7 +62,7 @@ public class SmoothAnimationState extends AnimationState
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void animateItem(ItemStack stack, String name, HierarchicalItemModel model, AnimationDefinition definition, float ageInTicks) 
+	public void animateItem(HierarchicalItemModel model, AnimationDefinition definition, float ageInTicks) 
 	{
 		this.updateTime(ageInTicks, 1.0F);
 		this.ifStarted(t -> 

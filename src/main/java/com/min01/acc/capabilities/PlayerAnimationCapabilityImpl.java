@@ -57,6 +57,42 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	@Override
 	public void tick(LivingEntity entity) 
 	{
+		if(this.getAnimationState() == 1 && entity.isHolding(ACCItems.RAYBLADE.get()))
+		{
+			if(this.getAnimationTick() == 25)
+			{
+				float size = 1.5F;
+				Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), 0, 0, 1.5F);
+				AABB aabb = new AABB(-size, -size, -size, size, size, size).move(lookPos);
+				List<LivingEntity> list = entity.level.getEntitiesOfClass(LivingEntity.class, aabb, t -> t != entity && !t.isAlliedTo(entity));
+				list.forEach(t -> 
+				{
+					t.hurt(entity.damageSources().mobAttack(entity), entity.getRandom().nextInt(100, 200) + 1);
+				});
+			}
+		}
+		if(entity.isSprinting() && this.getAnimationState() == 0 && this.getPrevAnimationState() != 2 && entity.isHolding(ACCItems.RADRIFLE.get()))
+		{
+			this.setAnimationState(2);
+			this.setAnimationTick(10);
+		}
+		if(this.getAnimationTick() > 0)
+		{
+			this.setAnimationTick(this.getAnimationTick() - 1);
+		}
+		else
+		{
+			if(this.getAnimationState() == 2 && entity.isSprinting())
+			{
+				this.setPrevAnimationState(0);
+			}
+			if(!entity.isSprinting() && this.getPrevAnimationState() == 2)	
+			{
+				this.setPrevAnimationState(0);
+			}
+			this.setAnimationState(0);
+			this.setAnimationTick(0);
+		}
 		if(entity.level.isClientSide)
 		{
 			this.radrifleFireAnimationState.updateWhen(this.getAnimationState() == 1 && entity.isHolding(ACCItems.RADRIFLE.get()), entity.tickCount);
@@ -73,42 +109,6 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		}
 		else
 		{
-			if(this.getAnimationState() == 1 && entity.isHolding(ACCItems.RAYBLADE.get()))
-			{
-				if(this.getAnimationTick() == 25)
-				{
-					float size = 1.5F;
-					Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), 0, 0, 1.5F);
-					AABB aabb = new AABB(-size, -size, -size, size, size, size).move(lookPos);
-					List<LivingEntity> list = entity.level.getEntitiesOfClass(LivingEntity.class, aabb, t -> t != entity && !t.isAlliedTo(entity));
-					list.forEach(t -> 
-					{
-						t.hurt(entity.damageSources().mobAttack(entity), entity.getRandom().nextInt(100, 200) + 1);
-					});
-				}
-			}
-			if(entity.isSprinting() && this.getAnimationState() == 0 && this.getPrevAnimationState() != 2 && entity.isHolding(ACCItems.RADRIFLE.get()))
-			{
-				this.setAnimationState(2);
-				this.setAnimationTick(10);
-			}
-			if(this.getAnimationTick() > 0)
-			{
-				this.setAnimationTick(this.getAnimationTick() - 1);
-			}
-			else
-			{
-				if(this.getAnimationState() == 2 && entity.isSprinting())
-				{
-					this.setPrevAnimationState(0);
-				}
-				if(!entity.isSprinting() && this.getPrevAnimationState() == 2)	
-				{
-					this.setPrevAnimationState(0);
-				}
-				this.setAnimationState(0);
-				this.setAnimationTick(0);
-			}
 			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdatePlayerAnimationPacket(entity.getUUID(), this.animationState, this.prevAnimationState, this.animationTick));
 		}
 	}
