@@ -61,6 +61,6 @@ public class ClientEventHandler
     public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event)
     {
     	event.registerBelow(VanillaGuiOverlay.HOTBAR.id(), "overheat", OverheatOverlay::draw);
-    	event.registerBelow(VanillaGuiOverlay.HOTBAR.id(), "polarity", PolarityOverlay::draw);
+    	event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "polarity", PolarityOverlay::draw);
     }
 }

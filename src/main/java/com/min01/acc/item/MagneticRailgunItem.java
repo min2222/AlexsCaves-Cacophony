@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -93,7 +94,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
     		{
     			BlockPos blockPos = blockHit.getBlockPos();
     			BlockState blockState = level.getBlockState(blockPos);
-    			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir())
+    			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir() && !blockState.is(BlockTags.DRAGON_IMMUNE))
     			{
     				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
         			ACCUtil.setOwner(fallingBlock, player);
