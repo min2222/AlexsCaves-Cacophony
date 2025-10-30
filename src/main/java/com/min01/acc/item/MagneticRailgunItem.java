@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.min01.acc.advancements.ACCCriteriaTriggers;
 import com.min01.acc.entity.ACCEntities;
+import com.min01.acc.entity.projectile.EntityMagneticRailgunBeam;
 import com.min01.acc.entity.projectile.EntityThrowableFallingBlock;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.MagneticRailgunRendrerer;
@@ -19,6 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel.ArmPose;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -37,6 +39,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class MagneticRailgunItem extends Item implements IAnimatableItem
@@ -61,54 +66,139 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) 
 	{
 		ItemStack stack = player.getItemInHand(hand);
-		if(ACCUtil.getOwner(player) != null)
+		boolean isRepel = isRepel(stack);
+        ItemStack ammo = this.findAmmo(player);
+		int charge = ACCUtil.getCharge(stack);
+		if(charge < MAX_CHARGE)
 		{
-			Entity entity = ACCUtil.getOwner(player);
-			if(entity instanceof EntityThrowableFallingBlock block && block.getBlockState().is(ACBlockRegistry.NUCLEAR_BOMB.get()) && player instanceof ServerPlayer serverPlayer)
+			if(player.isShiftKeyDown())
 			{
-				ACCCriteriaTriggers.SHOOT_NUCLEAR_BOMB.trigger(serverPlayer);
+				setRepel(stack, !isRepel);
 			}
-			ACCUtil.shootFromRotation(entity, player, player.getXRot(), player.getYRot(), 0.0F, 3.5F, 1.0F);
-			ACCUtil.setOwner(player, null);
-			ACCUtil.setOwner(entity, null);
-			ACCUtil.setItemAnimationState(stack, 3);
-			ACCUtil.setItemAnimationTick(stack, 40);
-			entity.setNoGravity(false);
+			else
+			{
+				if(ACCUtil.getOwner(player) != null)
+				{
+					Entity entity = ACCUtil.getOwner(player);
+					if(isRepel)
+					{
+						if(entity instanceof EntityThrowableFallingBlock block && block.getBlockState().is(ACBlockRegistry.NUCLEAR_BOMB.get()) && player instanceof ServerPlayer serverPlayer)
+						{
+							ACCCriteriaTriggers.SHOOT_NUCLEAR_BOMB.trigger(serverPlayer);
+						}
+						ACCUtil.shootFromRotation(entity, player, player.getXRot(), player.getYRot(), 0.0F, 3.5F, 1.0F);
+					}
+					release(player, entity, stack);
+				}
+				else
+				{
+					HitResult hit = ProjectileUtil.getHitResultOnViewVector(player, t -> t != player, 5.0F);
+		    		if(hit.getType() == Type.MISS)
+		    		{
+		    			player.startUsingItem(hand);
+		    			ACCUtil.setItemAnimationState(stack, 1);
+		    			ACCUtil.setItemAnimationTick(stack, 40);
+		    			return InteractionResultHolder.consume(stack);
+		    		}
+		    		else
+		    		{
+		        		if(hit instanceof EntityHitResult entityHit)
+		        		{
+		        			Entity entity = entityHit.getEntity();
+		        			if(entity instanceof LivingEntity living)
+		        			{
+		            			ACCUtil.setOwner(entity, player);
+		            			ACCUtil.setOwner(player, living);
+		            			ACCUtil.setItemAnimationState(stack, 1);
+		            			ACCUtil.setItemAnimationTick(stack, 40);
+		            			entity.setNoGravity(true);
+		        			}
+		        		}
+		        		else if(hit instanceof BlockHitResult blockHit)
+		        		{
+		        			BlockPos blockPos = blockHit.getBlockPos();
+		        			BlockState blockState = level.getBlockState(blockPos);
+		        			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir() && !blockState.is(BlockTags.DRAGON_IMMUNE))
+		        			{
+		        				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
+		            			ACCUtil.setOwner(fallingBlock, player);
+		            			ACCUtil.setOwner(player, fallingBlock);
+		            			ACCUtil.setItemAnimationState(stack, 1);
+		            			ACCUtil.setItemAnimationTick(stack, 40);
+		            			fallingBlock.setBlockState(blockState);
+		            			fallingBlock.setNoGravity(true);
+		        				level.removeBlock(blockPos, false);
+		        				level.addFreshEntity(fallingBlock);
+		        			}
+		        		}
+		    		}
+				}
+			}
 		}
-		else
-		{
-			HitResult hit = ProjectileUtil.getHitResultOnViewVector(player, t -> t != player, 5.0F);
-    		if(hit instanceof EntityHitResult entityHit)
-    		{
-    			Entity entity = entityHit.getEntity();
-    			if(entity instanceof LivingEntity living)
-    			{
-        			ACCUtil.setOwner(entity, player);
-        			ACCUtil.setOwner(player, living);
-        			ACCUtil.setItemAnimationState(stack, 1);
-        			ACCUtil.setItemAnimationTick(stack, 40);
-        			entity.setNoGravity(true);
-    			}
-    		}
-    		else if(hit instanceof BlockHitResult blockHit)
-    		{
-    			BlockPos blockPos = blockHit.getBlockPos();
-    			BlockState blockState = level.getBlockState(blockPos);
-    			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir() && !blockState.is(BlockTags.DRAGON_IMMUNE))
-    			{
-    				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
-        			ACCUtil.setOwner(fallingBlock, player);
-        			ACCUtil.setOwner(player, fallingBlock);
-        			ACCUtil.setItemAnimationState(stack, 1);
-        			ACCUtil.setItemAnimationTick(stack, 40);
-        			fallingBlock.setBlockState(blockState);
-        			fallingBlock.setNoGravity(true);
-    				level.removeBlock(blockPos, false);
-    				level.addFreshEntity(fallingBlock);
-    			}
-    		}
-		}
+        else if(!ammo.isEmpty())
+        {
+        	if(!player.getAbilities().instabuild)
+        	{
+                ammo.shrink(1);
+        	}
+            ACCUtil.setCharge(stack, 0);
+        }
 		return InteractionResultHolder.pass(stack);
+	}
+	
+	public static void release(Entity player, Entity entity, ItemStack stack)
+	{
+		ACCUtil.setOwner(player, null);
+		ACCUtil.setOwner(entity, null);
+		ACCUtil.setItemAnimationState(stack, 3);
+		ACCUtil.setItemAnimationTick(stack, 40);
+		entity.setNoGravity(false);
+	}
+	
+	@Override
+	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
+	{
+		ACCUtil.setItemAnimationState(p_41430_, 2);
+		ACCUtil.setItemAnimationTick(p_41430_, 20);
+		int duration = this.getUseDuration(p_41430_);
+		if(duration - p_41431_ >= 20 && duration - p_41431_ < 40)
+		{
+			setBeamCharge(p_41430_, 1);
+		}
+		if(duration - p_41431_ >= 40 && duration - p_41431_ < 150)
+		{
+			setBeamCharge(p_41430_, 2);
+		}
+		if(duration - p_41431_ >= 150 && duration - p_41431_ < 250)
+		{
+			setBeamCharge(p_41430_, 3);
+		}
+		if(duration - p_41431_ >= 250)
+		{
+			setBeamCharge(p_41430_, 4);
+		}
+	}
+	
+	@Override
+	public void releaseUsing(ItemStack p_41412_, Level p_41413_, LivingEntity p_41414_, int p_41415_)
+	{
+		int currentCharge = getBeamCharge(p_41412_);
+		EntityMagneticRailgunBeam beam = new EntityMagneticRailgunBeam(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), p_41413_);
+		Vec3 lookPos = ACCUtil.getLookPos(new Vec2(p_41414_.getXRot(), p_41414_.getYHeadRot()), p_41414_.getEyePosition(), 0, -0.5F, 2);
+		beam.setPos(lookPos);
+		beam.setOwner(p_41414_);
+		beam.setXRot(p_41414_.getXRot());
+		beam.setYRot(p_41414_.getYHeadRot());
+		beam.setRepel(isRepel(p_41412_));
+		beam.setBeamDamage(getBeamDamageAmount(currentCharge));
+		p_41413_.addFreshEntity(beam);
+		ACCUtil.setItemAnimationState(p_41412_, 3);
+		ACCUtil.setItemAnimationTick(p_41412_, 40);
+		if(p_41414_ instanceof Player player && !player.getAbilities().instabuild)
+		{
+			ACCUtil.setCharge(p_41412_, Math.min(ACCUtil.getCharge(p_41412_) + getBeamChargeUseAmount(currentCharge), MAX_CHARGE));
+		}
+		setBeamCharge(p_41412_, 0);
 	}
 	
 	@Override
@@ -150,6 +240,78 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
             String chargeLeft = "" + (int) (MAX_CHARGE - ACCUtil.getCharge(stack));
             tooltip.add(Component.translatable("item.accacophony.magnetic_railgun.charge", chargeLeft, MAX_CHARGE).withStyle(ChatFormatting.BLUE));
         }
+    }
+    
+	@Override
+	public int getUseDuration(ItemStack p_41454_) 
+	{
+		return 72000;
+	}
+	
+	public static int getBeamDamageAmount(int currentCharge)
+	{
+		if(currentCharge == 1)
+		{
+			return 10;
+		}
+		if(currentCharge == 2)
+		{
+			return 15;
+		}
+		if(currentCharge == 3)
+		{
+			return 35;
+		}
+		if(currentCharge == 4)
+		{
+			return 200;
+		}
+		return 5;
+	}
+	
+	public static int getBeamChargeUseAmount(int currentCharge)
+	{
+		if(currentCharge == 1)
+		{
+			return 100;
+		}
+		if(currentCharge == 2)
+		{
+			return 125;
+		}
+		if(currentCharge == 3)
+		{
+			return 250;
+		}
+		if(currentCharge == 4)
+		{
+			return 1000;
+		}
+		return 50;
+	}
+	
+    public static int getBeamCharge(ItemStack stack)
+    {
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getInt("BeamCharge") : 0;
+    }
+
+    public static void setBeamCharge(ItemStack stack, int charge)
+    {
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putInt("BeamCharge", charge);
+    }
+    
+    public static boolean isRepel(ItemStack stack)
+    {
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getBoolean("isRepel") : false;
+    }
+
+    public static void setRepel(ItemStack stack, boolean isRepel)
+    {
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putBoolean("isRepel", isRepel);
     }
     
 	@Override

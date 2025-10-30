@@ -93,7 +93,7 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
 	        	{
 	                ammo.shrink(1);
 	        	}
-	            ACCUtil.setCharge(player, p_41412_, 0);
+	            ACCUtil.setCharge(p_41412_, 0);
 	        }
 		}
 		ACCUtil.setPlayerAnimationState(p_41414_, 1);

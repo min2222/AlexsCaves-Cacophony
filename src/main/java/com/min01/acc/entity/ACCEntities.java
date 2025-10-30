@@ -5,6 +5,7 @@ import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.entity.projectile.EntityFearArrow;
+import com.min01.acc.entity.projectile.EntityMagneticRailgunBeam;
 import com.min01.acc.entity.projectile.EntityNeodymiumShackle;
 import com.min01.acc.entity.projectile.EntityRadrifleBeam;
 import com.min01.acc.entity.projectile.EntityThrowableFallingBlock;
@@ -25,6 +26,7 @@ public class ACCEntities
 	public static final RegistryObject<EntityType<EntityNeodymiumShackle>> NEODYMIUM_SHACKLE = registerEntity("neodymium_shackle", EntityType.Builder.<EntityNeodymiumShackle>of(EntityNeodymiumShackle::new, MobCategory.MISC).fireImmune().sized(0.5F, 0.5F));
 	public static final RegistryObject<EntityType<EntityRadrifleBeam>> RADRIFLE_BEAM = registerEntity("radrifle_beam", createBuilder(EntityRadrifleBeam::new, MobCategory.MISC).fireImmune().sized(0.5F, 0.5F).clientTrackingRange(100));
 	public static final RegistryObject<EntityType<EntityThrowableFallingBlock>> THROWABLE_FALLING_BLOCK = registerEntity("throwable_falling_block", EntityType.Builder.<EntityThrowableFallingBlock>of(EntityThrowableFallingBlock::new, MobCategory.MISC).sized(1.0F, 1.0F));
+	public static final RegistryObject<EntityType<EntityMagneticRailgunBeam>> MAGNETIC_RAILGUN_BEAM = registerEntity("magnetic_railgun_beam", createBuilder(EntityMagneticRailgunBeam::new, MobCategory.MISC).fireImmune().sized(0.5F, 0.5F));
 	
 	public static final RegistryObject<EntityType<EntityGloomworm>> GLOOMWORM = registerEntity("gloomworm", createBuilder(EntityGloomworm::new, MobCategory.CREATURE).sized(0.5F, 0.3F));
 	public static final RegistryObject<EntityType<EntityOvivenator>> OVIVENATOR = registerEntity("ovivenator", createBuilder(EntityOvivenator::new, ACEntityRegistry.CAVE_CREATURE).sized(0.875F, 2.625F));

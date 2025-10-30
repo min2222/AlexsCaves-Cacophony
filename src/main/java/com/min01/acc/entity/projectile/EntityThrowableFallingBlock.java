@@ -129,9 +129,22 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 	public void tick() 
 	{
 		super.tick();
-		if(this.getBlockState().isAir()) 
+		BlockState state = this.getBlockState();
+		if(state.isAir()) 
 		{
 			this.discard();
+		}
+		else if(this.verticalCollision || this.horizontalCollision || this.verticalCollisionBelow)
+		{
+			if(!(state.getBlock() instanceof TntBlock) && !(state.getBlock() instanceof NuclearBombBlock))
+			{
+				if(!this.level.isClientSide)
+				{
+					this.level.setBlockAndUpdate(this.blockPosition(), state);
+				}
+				this.playSound(state.getSoundType().getPlaceSound());
+				this.discard();
+			}
 		}
 		this.move(MoverType.SELF, this.getDeltaMovement());
 	}

@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.min01.acc.item.ACCItems;
+import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.world.InteractionHand;
@@ -21,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 @Mixin(Entity.class)
 public class MixinEntity
 {
-    @Inject(at = @At("HEAD"), method = "tick")
+    @Inject(at = @At("TAIL"), method = "tick")
     private void tick(CallbackInfo ci)
     {
     	Entity entity = Entity.class.cast(this);
@@ -33,11 +34,7 @@ public class MixinEntity
     		if(!living.isHolding(ACCItems.MAGNETIC_RAILGUN.get()))
     		{
     			ItemStack stack = living.getItemInHand(InteractionHand.MAIN_HAND);
-    			ACCUtil.setOwner(entity, null);
-    			ACCUtil.setOwner(living, null);
-    			ACCUtil.setItemAnimationState(stack, 3);
-    			ACCUtil.setItemAnimationTick(stack, 40);
-    			entity.setNoGravity(false);
+    			MagneticRailgunItem.release(living, entity, stack);
     		}
     		else
     		{

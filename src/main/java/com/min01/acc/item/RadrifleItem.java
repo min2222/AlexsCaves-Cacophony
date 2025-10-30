@@ -72,7 +72,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
 		int overheat = ACCUtil.getOverlayProgress("Overheat", p_41406_);
 		if(overheat >= 1000)
 		{
-			ACCUtil.setCharge(p_41406_, p_41404_, Math.min(charge + 500, MAX_CHARGE));
+			ACCUtil.setCharge(p_41404_, Math.min(charge + 500, MAX_CHARGE));
 			ACCUtil.setOverlayProgress("Overheat", 0, p_41406_);
 			ACCUtil.setItemAnimationState(p_41404_, 1);
 			ACCUtil.setItemAnimationTick(p_41404_, 80);
@@ -87,7 +87,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
                 float timeOfDay = p_41405_.getTimeOfDay(1.0F);
                 if(p_41405_.canSeeSky(playerPos) && p_41405_.isDay() && !p_41405_.dimensionType().hasFixedTime() && (timeOfDay < 0.259 || timeOfDay > 0.74))
                 {
-                	ACCUtil.setCharge(p_41406_, p_41404_, charge - 1);
+                	ACCUtil.setCharge(p_41404_, charge - 1);
                 }
             }
         }
@@ -144,7 +144,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
             		{
             			units = MAX_CHARGE;
             		}
-                    ACCUtil.setCharge(player, stack, Math.min(charge + units, MAX_CHARGE));
+                    ACCUtil.setCharge(stack, Math.min(charge + units, MAX_CHARGE));
             	}
             	for(int i = 0; i < count; i++)
             	{
@@ -192,7 +192,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
         	{
                 ammo.shrink(1);
         	}
-            ACCUtil.setCharge(player, stack, 0);
+            ACCUtil.setCharge(stack, 0);
         }
 		return InteractionResultHolder.pass(stack);
 	}

@@ -245,7 +245,7 @@ public class ACCUtil
         return tag != null ? tag.getInt(CHARGE_USED) : 0;
     }
 
-    public static void setCharge(Entity player, ItemStack stack, int charge)
+    public static void setCharge(ItemStack stack, int charge)
     {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putInt(CHARGE_USED, charge);

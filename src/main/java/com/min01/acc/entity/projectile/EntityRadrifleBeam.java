@@ -94,17 +94,11 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
             Vec3 vec31 = this.getEndPos().subtract(vec3);
             Vec3 vec32 = vec31.normalize();
             
-            for(int i = 1; i < Mth.floor(vec31.length()) + this.position().distanceTo(this.getEndPos()); ++i)
+            for(int i = 1; i < Mth.floor(vec31.length()); ++i)
             {
             	Vec3 vec33 = vec3.add(vec32.scale(i));
             	List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(this.isOvercharge() ? 0.5F : 0.1F), t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()) && !t.getType().is(ACTagRegistry.RESISTS_RADIATION));
-            	list.forEach(t -> 
-            	{
-            		if(!arrayList.contains(t))
-            		{
-            			arrayList.add(t);
-            		}
-            	});
+            	arrayList.addAll(list);
             }
             
         	arrayList.forEach(t -> 

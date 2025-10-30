@@ -31,6 +31,7 @@
 	"entity.accacophony.ovivenator": "Ovivenator",
 	"entity.accacophony.neodymium_shackle": "Neodymium Shackle",
 	"entity.accacophony.radrifle_beam": "Radrifle Beam",
+	"entity.accacophony.magnetic_railgun_beam": "Magnetic Railgun Beam",
 	"entity.accacophony.throwable_falling_block": "Throwble Falling Block",
 	"effect.accacophony.fear": "Fear",
 	"effect.accacophony.fear.description": "makes mobs run away from anything that currently has it.",

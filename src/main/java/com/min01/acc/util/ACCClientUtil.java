@@ -1,9 +1,14 @@
 package com.min01.acc.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector4f;
 
+import com.github.alexthe666.citadel.client.render.LightningRender;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -14,6 +19,16 @@ import net.minecraft.world.phys.Vec3;
 public class ACCClientUtil 
 {
 	public static final Minecraft MC = Minecraft.getInstance();
+	public static final Map<UUID, LightningRender> LIGHTNING_MAP = new HashMap<>();
+	
+    public static LightningRender getLightingRender(UUID uuid)
+    {
+        if(LIGHTNING_MAP.get(uuid) == null) 
+        {
+        	LIGHTNING_MAP.put(uuid, new LightningRender());
+        }
+        return LIGHTNING_MAP.get(uuid);
+    }
 	
 	//https://github.com/EEEAB/EEEABsMobs/blob/master/src/main/java/com/eeeab/animate/client/util/ModelPartUtils.java#L57
 	

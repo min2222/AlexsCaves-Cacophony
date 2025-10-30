@@ -11,6 +11,7 @@ import com.min01.acc.entity.model.ModelRadrifleBeamEnd;
 import com.min01.acc.entity.model.ModelRadrifleSuperBeam;
 import com.min01.acc.entity.renderer.FearArrowRenderer;
 import com.min01.acc.entity.renderer.GloomwormRenderer;
+import com.min01.acc.entity.renderer.MagneticRailgunBeamRenderer;
 import com.min01.acc.entity.renderer.NeodymiumShackleRenderer;
 import com.min01.acc.entity.renderer.OvivenatorRenderer;
 import com.min01.acc.entity.renderer.RadrifleBeamRenderer;
@@ -55,6 +56,7 @@ public class ClientEventHandler
     	event.registerEntityRenderer(ACCEntities.OVIVENATOR.get(), OvivenatorRenderer::new);
     	event.registerEntityRenderer(ACCEntities.RADRIFLE_BEAM.get(), RadrifleBeamRenderer::new);
     	event.registerEntityRenderer(ACCEntities.THROWABLE_FALLING_BLOCK.get(), ThrowableFallingBlockRenderer::new);
+    	event.registerEntityRenderer(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), MagneticRailgunBeamRenderer::new);
     }
     
     @SubscribeEvent
