@@ -37,7 +37,7 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 			VertexConsumer vertexconsumer = p_108833_.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun.png")));
 			p_108832_.scale(-1.0F, -1.0F, 1.0F);
 			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.5F, 0.2F);
+			p_108832_.translate(-0.5F, -0.65F, 0.6F);
 			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
 			this.model.renderToBuffer(p_108832_, vertexconsumer, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			p_108832_.popPose();
@@ -46,10 +46,28 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 			VertexConsumer vertexconsumer2 = p_108833_.getBuffer(ACCRenderType.eyesFix(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_layer.png")));
 			p_108832_.scale(-1.0F, -1.0F, 1.0F);
 			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.5F, 0.2F);
+			p_108832_.translate(-0.5F, -0.65F, 0.6F);
 			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
 			this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
-			p_108832_.popPose();	
+			p_108832_.popPose();
+			
+			p_108832_.pushPose();
+			VertexConsumer vertexconsumer3 = p_108833_.getBuffer(ACCRenderType.eyesFix(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_blue.png")));
+			p_108832_.scale(-1.0F, -1.0F, 1.0F);
+			p_108832_.translate(0.0F, -1.5F, 0.0F);
+			p_108832_.translate(-0.5F, -0.65F, 0.6F);
+			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			this.model.renderToBuffer(p_108832_, vertexconsumer3, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
+			p_108832_.popPose();
+			
+			p_108832_.pushPose();
+			VertexConsumer vertexconsumer4 = p_108833_.getBuffer(ACCRenderType.eyesFix(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_red.png")));
+			p_108832_.scale(-1.0F, -1.0F, 1.0F);
+			p_108832_.translate(0.0F, -1.5F, 0.0F);
+			p_108832_.translate(-0.5F, -0.65F, 0.6F);
+			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			this.model.renderToBuffer(p_108832_, vertexconsumer4, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
+			p_108832_.popPose();
 		}
 	}
 }

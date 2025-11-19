@@ -3,6 +3,7 @@ package com.min01.acc.capabilities;
 import java.util.List;
 
 import com.min01.acc.item.ACCItems;
+import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.item.RadrifleItem;
 import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.misc.SmoothAnimationState;
@@ -11,8 +12,12 @@ import com.min01.acc.network.UpdatePlayerAnimationPacket;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
@@ -23,18 +28,23 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	private int animationState;
 	private int prevAnimationState;
 	
-	private final SmoothAnimationState radrifleFireAnimationState = new SmoothAnimationState(0.999F);
+	private final SmoothAnimationState radrifleFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	private final SmoothAnimationState radrifleHoldAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState(0.999F);
-	private final SmoothAnimationState radrifleHoldToRunAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F);
-	private final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState(0.999F);
+	private final SmoothAnimationState radrifleHoldNearWallAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	private final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	private final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	
 	private final SmoothAnimationState raybladeDrawRightAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState raybladeSwingRightAnimationState = new SmoothAnimationState();
 	
 	private final SmoothAnimationState raybladeDrawLeftAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState raybladeSwingLeftAnimationState = new SmoothAnimationState();
+	
+	private final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	private final SmoothAnimationState railgunHoldAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState railgunHoldNearWallAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState railgunRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -71,33 +81,20 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 				});
 			}
 		}
-		if(entity.isSprinting() && this.getAnimationState() == 0 && this.getPrevAnimationState() != 2 && entity.isHolding(ACCItems.RADRIFLE.get()))
-		{
-			this.setAnimationState(2);
-			this.setAnimationTick(10);
-		}
 		if(this.getAnimationTick() > 0)
 		{
 			this.setAnimationTick(this.getAnimationTick() - 1);
 		}
 		else
 		{
-			if(this.getAnimationState() == 2 && entity.isSprinting())
-			{
-				this.setPrevAnimationState(0);
-			}
-			if(!entity.isSprinting() && this.getPrevAnimationState() == 2)	
-			{
-				this.setPrevAnimationState(0);
-			}
 			this.setAnimationState(0);
 			this.setAnimationTick(0);
 		}
 		if(entity.level.isClientSide)
 		{
 			this.radrifleFireAnimationState.updateWhen(this.getAnimationState() == 1 && entity.isHolding(ACCItems.RADRIFLE.get()), entity.tickCount);
-			this.radrifleHoldAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.RADRIFLE.get()) && !entity.isSprinting(), entity.tickCount);
-			this.radrifleHoldToRunAnimationState.updateWhen(this.getAnimationState() == 2 && entity.isHolding(ACCItems.RADRIFLE.get()) && entity.isSprinting(), entity.tickCount);
+			this.radrifleHoldAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.RADRIFLE.get()) && !entity.isSprinting() && !isLookingWall(entity), entity.tickCount);
+			this.radrifleHoldNearWallAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.RADRIFLE.get()) && !entity.isSprinting() && isLookingWall(entity), entity.tickCount);
 			this.radrifleRunningAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.RADRIFLE.get()) && entity.isSprinting(), entity.tickCount);
 			this.radrifleOverchargeFireAnimationState.updateWhen(this.getAnimationState() == 3 && entity.isHolding(ACCItems.RADRIFLE.get()), entity.tickCount);
 			this.radrifleOverheatAnimationState.updateWhen(this.getAnimationState() == 4 && entity.isHolding(ACCItems.RADRIFLE.get()), entity.tickCount);
@@ -106,11 +103,23 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 			this.raybladeSwingRightAnimationState.updateWhen(this.getAnimationState() == 1 && entity.getMainHandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
 			this.raybladeDrawLeftAnimationState.updateWhen(this.getAnimationState() == 0 && entity.getOffhandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
 			this.raybladeSwingLeftAnimationState.updateWhen(this.getAnimationState() == 1 && entity.getOffhandItem().is(ACCItems.RAYBLADE.get()), entity.tickCount);
+			
+			this.railgunFireAnimationState.updateWhen(this.getAnimationState() == 1 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()), entity.tickCount);
+			this.railgunHoldAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()) && (!entity.isSprinting() || ACCUtil.getOwner(entity) != null) && !isLookingWall(entity), entity.tickCount);
+			this.railgunHoldNearWallAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()) && (!entity.isSprinting() || ACCUtil.getOwner(entity) != null) && isLookingWall(entity), entity.tickCount);
+			this.railgunRunningAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()) && entity.isSprinting() && ACCUtil.getOwner(entity) == null, entity.tickCount);
 		}
 		else
 		{
 			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdatePlayerAnimationPacket(entity.getUUID(), this.animationState, this.prevAnimationState, this.animationTick));
 		}
+	}
+	
+	public static boolean isLookingWall(Entity entity)
+	{
+		Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), 0, 0, 1);
+		HitResult result = entity.level.clip(new ClipContext(entity.getEyePosition(), lookPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
+		return result.getType() == Type.BLOCK;
 	}
 
 	@Override
@@ -148,13 +157,13 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		{
 			return this.radrifleHoldAnimationState;
 		}
+		if(name.equals(RadrifleItem.RADRIFLE_HOLD_NEAR_WALL))
+		{
+			return this.radrifleHoldNearWallAnimationState;
+		}
 		if(name.equals(RadrifleItem.RADRIFLE_RUNNING))
 		{
 			return this.radrifleRunningAnimationState;
-		}
-		if(name.equals(RadrifleItem.RADRIFLE_HOLD_TO_RUN))
-		{
-			return this.radrifleHoldToRunAnimationState;
 		}
 		if(name.equals(RadrifleItem.RADRIFLE_OVERCHARGE_FIRE))
 		{
@@ -179,6 +188,22 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		if(name.equals(RaybladeItem.RAYBLADE_SWING_LEFT))
 		{
 			return this.raybladeSwingLeftAnimationState;
+		}
+		if(name.equals(MagneticRailgunItem.RAILGUN_FIRE))
+		{
+			return this.railgunFireAnimationState;
+		}
+		if(name.equals(MagneticRailgunItem.RAILGUN_HOLD))
+		{
+			return this.railgunHoldAnimationState;
+		}
+		if(name.equals(MagneticRailgunItem.RAILGUN_HOLD_NEAR_WALL))
+		{
+			return this.railgunHoldNearWallAnimationState;
+		}
+		if(name.equals(MagneticRailgunItem.RAILGUN_RUNNING))
+		{
+			return this.railgunRunningAnimationState;
 		}
 		return new SmoothAnimationState();
 	}

@@ -47,9 +47,11 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 public class MagneticRailgunItem extends Item implements IAnimatableItem
 {
     public static final int MAX_CHARGE = 1000;
-    public static final String RAILGUN_BASE = "RailgunBase";
-    public static final String RAILGUN_ACTIVATE = "RailgunActivate";
-    public static final String RAILGUN_ACTIVE = "RailgunActive";
+    public static final String RAILGUN_HOLD = "RailgunHold";
+    public static final String RAILGUN_HOLD_NEAR_WALL = "RailgunHoldNearWall";
+    public static final String RAILGUN_RUNNING = "RailgunRunning";
+    public static final String RAILGUN_INSPECT = "RailgunInspect";
+    public static final String RAILGUN_CHARGE = "RailgunCharge";
     public static final String RAILGUN_FIRE = "RailgunFire";
     
     public static final Predicate<ItemStack> AMMO = (stack) ->
@@ -96,8 +98,8 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		    		if(hit.getType() == Type.MISS)
 		    		{
 		    			player.startUsingItem(hand);
-		    			ACCUtil.setItemAnimationState(stack, 1);
-		    			ACCUtil.setItemAnimationTick(stack, 40);
+		    			ACCUtil.setItemAnimationState(stack, 2);
+		    			ACCUtil.setItemAnimationTick(stack, 15);
 		    			return InteractionResultHolder.consume(stack);
 		    		}
 		    		else
@@ -109,8 +111,8 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		        			{
 		            			ACCUtil.setOwner(entity, player);
 		            			ACCUtil.setOwner(player, living);
-		            			ACCUtil.setItemAnimationState(stack, 1);
-		            			ACCUtil.setItemAnimationTick(stack, 40);
+				    			ACCUtil.setItemAnimationState(stack, 2);
+				    			ACCUtil.setItemAnimationTick(stack, 15);
 		            			entity.setNoGravity(true);
 		        			}
 		        		}
@@ -123,8 +125,8 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		        				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
 		            			ACCUtil.setOwner(fallingBlock, player);
 		            			ACCUtil.setOwner(player, fallingBlock);
-		            			ACCUtil.setItemAnimationState(stack, 1);
-		            			ACCUtil.setItemAnimationTick(stack, 40);
+				    			ACCUtil.setItemAnimationState(stack, 2);
+				    			ACCUtil.setItemAnimationTick(stack, 15);
 		            			fallingBlock.setBlockState(blockState);
 		            			fallingBlock.setNoGravity(true);
 		        				level.removeBlock(blockPos, false);
@@ -151,15 +153,13 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		ACCUtil.setOwner(player, null);
 		ACCUtil.setOwner(entity, null);
 		ACCUtil.setItemAnimationState(stack, 3);
-		ACCUtil.setItemAnimationTick(stack, 40);
+		ACCUtil.setItemAnimationTick(stack, 30);
 		entity.setNoGravity(false);
 	}
 	
 	@Override
 	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
 	{
-		ACCUtil.setItemAnimationState(p_41430_, 2);
-		ACCUtil.setItemAnimationTick(p_41430_, 20);
 		int duration = this.getUseDuration(p_41430_);
 		if(duration - p_41431_ >= 20 && duration - p_41431_ < 40)
 		{
@@ -193,7 +193,9 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		beam.setBeamDamage(getBeamDamageAmount(currentCharge));
 		p_41413_.addFreshEntity(beam);
 		ACCUtil.setItemAnimationState(p_41412_, 3);
-		ACCUtil.setItemAnimationTick(p_41412_, 40);
+		ACCUtil.setItemAnimationTick(p_41412_, 30);
+    	ACCUtil.setPlayerAnimationState(p_41414_, 1);
+    	ACCUtil.setPlayerAnimationTick(p_41414_, 30);
 		if(p_41414_ instanceof Player player && !player.getAbilities().instabuild)
 		{
 			ACCUtil.setCharge(p_41412_, Math.min(ACCUtil.getCharge(p_41412_) + getBeamChargeUseAmount(currentCharge), MAX_CHARGE));
@@ -314,6 +316,12 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
         tag.putBoolean("isRepel", isRepel);
     }
     
+    @Override
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity)
+    {
+    	return true;
+    }
+    
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) 
 	{
@@ -328,8 +336,20 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 			@Override
 			public @org.jetbrains.annotations.Nullable ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) 
 			{
-				return ArmPose.BOW_AND_ARROW;
+				return ArmPose.EMPTY;
 			}
 		});
+	}
+	
+	@Override
+	public Vec3 getOffset() 
+	{
+		return new Vec3(0.0F, 4.0F, -5.0F);
+	}
+	
+	@Override
+	public boolean isFirstPersonAnim() 
+	{
+		return true;
 	}
 }

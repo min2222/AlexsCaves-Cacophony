@@ -32,15 +32,13 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
-
-		PartDefinition railgun = root.addOrReplaceChild("railgun", CubeListBuilder.create().texOffs(0, 48).addBox(-1.5F, -3.0F, -6.0F, 3.0F, 4.0F, 7.0F, new CubeDeformation(0.01F))
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create().texOffs(0, 48).addBox(-1.5F, -3.0F, -6.0F, 3.0F, 4.0F, 7.0F, new CubeDeformation(0.01F))
 		.texOffs(32, 16).addBox(-1.5F, -3.0F, -10.0F, 3.0F, 4.0F, 11.0F, new CubeDeformation(0.1F))
-		.texOffs(20, 53).addBox(0.0F, 0.0F, -2.0F, 0.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 7.0F));
+		.texOffs(20, 53).addBox(0.0F, 0.0F, -2.0F, 0.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 7.0F));
 
-		railgun.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(52, 53).addBox(-1.5F, -2.0F, -2.0F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.1895F, 2.3123F, 1.0908F, 0.0F, 0.0F));
+		root.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(52, 53).addBox(-1.5F, -2.0F, -2.0F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.1895F, 2.3123F, 1.0908F, 0.0F, 0.0F));
 
-		PartDefinition rail = railgun.addOrReplaceChild("rail", CubeListBuilder.create().texOffs(32, 31).addBox(-1.5F, -2.0F, -7.0F, 3.0F, 4.0F, 9.0F, new CubeDeformation(0.011F))
+		PartDefinition rail = root.addOrReplaceChild("rail", CubeListBuilder.create().texOffs(32, 31).addBox(-1.5F, -2.0F, -7.0F, 3.0F, 4.0F, 9.0F, new CubeDeformation(0.011F))
 		.texOffs(0, 0).addBox(-1.0F, -2.0F, -21.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 32).addBox(-1.0F, -2.0F, -21.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.09F)), PartPose.offset(0.0F, -1.0F, -8.0F));
 
@@ -55,9 +53,9 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_BASE, MagneticRailgunAnimation.RAILGUN_BASE, ageInTicks);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_ACTIVATE, MagneticRailgunAnimation.RAILGUN_ACTIVATE, ageInTicks);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_ACTIVE, MagneticRailgunAnimation.RAILGUN_ACTIVE, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_HOLD, MagneticRailgunAnimation.RAILGUN_HOLD, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_INSPECT, MagneticRailgunAnimation.RAILGUN_INSPECT, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_CHARGE, MagneticRailgunAnimation.RAILGUN_CHARGE, ageInTicks);
 		this.animate(stack, MagneticRailgunItem.RAILGUN_FIRE, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks);
 	}
 	

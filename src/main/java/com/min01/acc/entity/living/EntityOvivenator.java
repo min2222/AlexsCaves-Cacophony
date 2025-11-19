@@ -68,7 +68,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	public final SmoothAnimationState danceAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState pickupAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState eatAnimationState = new SmoothAnimationState();
-	public final SmoothAnimationState sitAnimationState = new SmoothAnimationState(1.0F);
+	public final SmoothAnimationState sitAnimationState = new SmoothAnimationState(1.0F, 0.4F);
 	
 	public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
 	

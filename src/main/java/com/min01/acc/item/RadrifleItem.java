@@ -50,6 +50,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
     public static final int MAX_CHARGE = 1000;
     public static final String RADRIFLE_FIRE = "RadrifleFire";
     public static final String RADRIFLE_HOLD = "RadrifleHold";
+    public static final String RADRIFLE_HOLD_NEAR_WALL = "RadrifleHoldNearWall";
     public static final String RADRIFLE_RUNNING = "RadrifleRunning";
     public static final String RADRIFLE_HOLD_TO_RUN = "RadrifleHoldToRun";
     public static final String RADRIFLE_OVERCHARGE_FIRE = "RadrifleOverchargeFire";

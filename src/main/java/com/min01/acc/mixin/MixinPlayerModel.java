@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.min01.acc.animation.IHierarchicalPlayerModel;
 import com.min01.acc.animation.PlayerAnimation;
+import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.item.RadrifleItem;
 import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.misc.SmoothAnimationState;
@@ -50,16 +51,20 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
     	this.setupMap();
     	this.animate(entity, RadrifleItem.RADRIFLE_FIRE, PlayerAnimation.RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
     	this.animate(entity, RadrifleItem.RADRIFLE_HOLD, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD, ageInTicks);
+    	this.animate(entity, RadrifleItem.RADRIFLE_HOLD_NEAR_WALL, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD_NEAR_WALL, ageInTicks);
     	this.animate(entity, RadrifleItem.RADRIFLE_RUNNING, PlayerAnimation.RadrifleAnimation.RADRIFLE_RUNNING, ageInTicks);
-    	this.animate(entity, RadrifleItem.RADRIFLE_HOLD_TO_RUN, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD_TO_RUN, ageInTicks);
     	this.animate(entity, RadrifleItem.RADRIFLE_OVERCHARGE_FIRE, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERCHARGE_FIRE, ageInTicks);
     	this.animate(entity, RadrifleItem.RADRIFLE_OVERHEAT, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERHEAT, ageInTicks);
     	
     	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
     	this.animate(entity, RaybladeItem.RAYBLADE_SWING_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
-
     	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_LEFT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_LEFT, ageInTicks);
     	this.animate(entity, RaybladeItem.RAYBLADE_SWING_LEFT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_LEFT, ageInTicks);
+    	
+    	this.animate(entity, MagneticRailgunItem.RAILGUN_FIRE, PlayerAnimation.RailgunAnimation.RAILGUN_FIRE, ageInTicks);
+    	this.animate(entity, MagneticRailgunItem.RAILGUN_HOLD, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD, ageInTicks);
+    	this.animate(entity, MagneticRailgunItem.RAILGUN_HOLD_NEAR_WALL, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD_NEAR_WALL, ageInTicks);
+    	this.animate(entity, MagneticRailgunItem.RAILGUN_RUNNING, PlayerAnimation.RailgunAnimation.RAILGUN_RUNNING, ageInTicks);
     }
     
 	@Override
