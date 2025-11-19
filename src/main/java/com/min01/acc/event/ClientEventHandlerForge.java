@@ -103,8 +103,9 @@ public class ClientEventHandlerForge
 			pos = pos.add(0.0F, 0.5F, 0.0F);
             int segCount = Mth.clamp((int) pos.distanceTo(toVec) + 2, 3, 30);
             float spreadFactor = 0.1F;
-            LightningBoltData.BoltRenderInfo boltData = new LightningBoltData.BoltRenderInfo(0.0F, spreadFactor, 0.0F, 0.0F, new Vector4f(0.1F, 0.1F, 0.9F, 0.8F), 0.1F);
-            LightningBoltData.BoltRenderInfo boltData1 = new LightningBoltData.BoltRenderInfo(0.0F, spreadFactor, 0.0F, 0.0F, new Vector4f(0.9F, 0.1F, 0.1F, 0.8F), 0.1F);
+            Vector4f color = new Vector4f(0.9F, 0.1F, 0.1F, 0.8F);
+            LightningBoltData.BoltRenderInfo boltData = new LightningBoltData.BoltRenderInfo(0.0F, spreadFactor, 0.0F, 0.0F, color, 0.1F);
+            LightningBoltData.BoltRenderInfo boltData1 = new LightningBoltData.BoltRenderInfo(0.0F, spreadFactor, 0.0F, 0.0F, color, 0.1F);
             LightningBoltData bolt1 = new LightningBoltData(boltData, pos, toVec, segCount).size(0.1F).lifespan(1).spawn(LightningBoltData.SpawnFunction.CONSECUTIVE).fade(LightningBoltData.FadeFunction.NONE);
             LightningBoltData bolt2 = new LightningBoltData(boltData1, pos, toVec, segCount).size(0.1F).lifespan(1).spawn(LightningBoltData.SpawnFunction.CONSECUTIVE).fade(LightningBoltData.FadeFunction.NONE);
             LightningRender lightningRender = ACCClientUtil.getLightingRender(entity.getUUID());

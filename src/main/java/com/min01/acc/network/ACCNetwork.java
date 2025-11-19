@@ -26,6 +26,7 @@ public class ACCNetwork
 		CHANNEL.registerMessage(ID++, UpdateOwnerCapabilityPacket.class, UpdateOwnerCapabilityPacket::encode, UpdateOwnerCapabilityPacket::new, UpdateOwnerCapabilityPacket.Handler::onMessage);
 		CHANNEL.registerMessage(ID++, UpdatePaintedCapabilityPacket.class, UpdatePaintedCapabilityPacket::encode, UpdatePaintedCapabilityPacket::new, UpdatePaintedCapabilityPacket.Handler::onMessage);
 		CHANNEL.registerMessage(ID++, UpdateOverlayCapabilityPacket.class, UpdateOverlayCapabilityPacket::encode, UpdateOverlayCapabilityPacket::new, UpdateOverlayCapabilityPacket.Handler::onMessage);
+		CHANNEL.registerMessage(ID++, UpdateMagneticRailgunItemPacket.class, UpdateMagneticRailgunItemPacket::encode, UpdateMagneticRailgunItemPacket::new, UpdateMagneticRailgunItemPacket.Handler::onMessage);
 	}
 	
     public static <MSG> void sendToServer(MSG message) 

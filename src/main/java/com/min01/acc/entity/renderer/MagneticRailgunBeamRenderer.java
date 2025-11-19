@@ -18,8 +18,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MagneticRailgunBeamRenderer extends EntityRenderer<EntityMagneticRailgunBeam>
 {
-    private static final LightningBoltData.BoltRenderInfo LIGHTNING_BOLT_INFO_RED = new LightningBoltData.BoltRenderInfo(0.0F, 0.01F, 0.3F, 0.6F, new Vector4f(0.9F, 0.1F, 0.1F, 0.3F), 0);
-    private static final LightningBoltData.BoltRenderInfo LIGHTNING_BOLT_INFO_BLUE = new LightningBoltData.BoltRenderInfo(0.0F, 0.01F, 0.3F, 0.6F, new Vector4f(0.1F, 0.1F, 0.9F, 0.3F), 0);
+    private static final LightningBoltData.BoltRenderInfo LIGHTNING_BOLT_INFO = new LightningBoltData.BoltRenderInfo(0.0F, 0.01F, 0.3F, 0.6F, new Vector4f(0.1F, 0.1F, 0.9F, 0.3F), 0);
     
 	public MagneticRailgunBeamRenderer(Context p_174008_) 
 	{
@@ -42,8 +41,7 @@ public class MagneticRailgunBeamRenderer extends EntityRenderer<EntityMagneticRa
             Vec3 pos = position.add(0.0F, 0.5F, 0.0F);
             Vec3 lookPos = ACCUtil.getLookPos(p_114485_.getRotationVector(), pos, 0, 0, 30);
             int segCount = Mth.clamp((int) Math.ceil(0.3F * pos.horizontalDistance()), 3, 30);
-            LightningBoltData bolt1 = new LightningBoltData(p_114485_.isRepel() ? LIGHTNING_BOLT_INFO_BLUE : LIGHTNING_BOLT_INFO_RED, pos, lookPos, segCount).size(0.3F).lifespan(1).spawn(LightningBoltData.SpawnFunction.CONSECUTIVE).fade(LightningBoltData.FadeFunction.NONE);
-            
+            LightningBoltData bolt1 = new LightningBoltData(LIGHTNING_BOLT_INFO, pos, lookPos, segCount).size(0.3F).lifespan(1).spawn(LightningBoltData.SpawnFunction.CONSECUTIVE).fade(LightningBoltData.FadeFunction.NONE);
             lightningRender.update(1, bolt1, p_114487_);
 		}
 	}

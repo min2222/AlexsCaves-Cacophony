@@ -7,9 +7,11 @@ import com.min01.acc.entity.AbstractOwnableEntity;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +24,6 @@ import net.minecraft.world.phys.Vec3;
 public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntity>
 {
 	public static final EntityDataAccessor<Float> BEAM_DAMAGE = SynchedEntityData.defineId(EntityMagneticRailgunBeam.class, EntityDataSerializers.FLOAT);
-	public static final EntityDataAccessor<Boolean> IS_REPEL = SynchedEntityData.defineId(EntityMagneticRailgunBeam.class, EntityDataSerializers.BOOLEAN);
 	
 	public EntityMagneticRailgunBeam(EntityType<?> p_19870_, Level p_19871_)
 	{
@@ -34,7 +35,6 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	{
 		super.defineSynchedData();
 		this.entityData.define(BEAM_DAMAGE, 0.0F);
-		this.entityData.define(IS_REPEL, false);
 	}
 	
 	@Override
@@ -64,7 +64,14 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	        arrayList.forEach(t -> 
 	        {
 	        	//TODO custom damage source;
-	        	t.hurt(this.damageSources().mobProjectile(this, this.getOwner()), this.getBeamDamage());
+	        	if(t.hurt(this.damageSources().mobProjectile(this, this.getOwner()), this.getBeamDamage()))
+	        	{
+	        		t.addDeltaMovement(ACCUtil.fromToVector(t.position(), hitPos, 1.5F));
+	        		if(t instanceof ServerPlayer player)
+	        		{
+		    			player.connection.send(new ClientboundSetEntityMotionPacket(t));
+	        		}
+	        	}
 	        });
 		}
 	}
@@ -80,7 +87,6 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	{
 		super.addAdditionalSaveData(p_37265_);
 		p_37265_.putFloat("BeamDamage", this.getBeamDamage());
-		p_37265_.putBoolean("isRepel", this.isRepel());
 	}
 	
 	@Override
@@ -88,17 +94,6 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	{
 		super.readAdditionalSaveData(p_37262_);
 		this.setBeamDamage(p_37262_.getFloat("BeamDamage"));
-		this.setRepel(p_37262_.getBoolean("isRepel"));
-	}
-	
-	public boolean isRepel()
-	{
-		return this.entityData.get(IS_REPEL);
-	}
-	
-	public void setRepel(boolean isRepel)
-	{
-		this.entityData.set(IS_REPEL, isRepel);
 	}
 	
 	public float getBeamDamage()

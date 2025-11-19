@@ -13,6 +13,8 @@ import com.min01.acc.entity.projectile.EntityMagneticRailgunBeam;
 import com.min01.acc.entity.projectile.EntityThrowableFallingBlock;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.MagneticRailgunRendrerer;
+import com.min01.acc.network.ACCNetwork;
+import com.min01.acc.network.UpdateMagneticRailgunItemPacket;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
 
@@ -82,58 +84,58 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 				if(ACCUtil.getOwner(player) != null)
 				{
 					Entity entity = ACCUtil.getOwner(player);
-					if(isRepel)
+					if(entity instanceof EntityThrowableFallingBlock block && block.getBlockState().is(ACBlockRegistry.NUCLEAR_BOMB.get()) && player instanceof ServerPlayer serverPlayer)
 					{
-						if(entity instanceof EntityThrowableFallingBlock block && block.getBlockState().is(ACBlockRegistry.NUCLEAR_BOMB.get()) && player instanceof ServerPlayer serverPlayer)
-						{
-							ACCCriteriaTriggers.SHOOT_NUCLEAR_BOMB.trigger(serverPlayer);
-						}
-						ACCUtil.shootFromRotation(entity, player, player.getXRot(), player.getYRot(), 0.0F, 3.5F, 1.0F);
+						ACCCriteriaTriggers.SHOOT_NUCLEAR_BOMB.trigger(serverPlayer);
 					}
+					ACCUtil.shootFromRotation(entity, player, player.getXRot(), player.getYRot(), 0.0F, 3.5F, 1.0F);
 					release(player, entity, stack);
 				}
 				else
 				{
-					HitResult hit = ProjectileUtil.getHitResultOnViewVector(player, t -> t != player, 5.0F);
-		    		if(hit.getType() == Type.MISS)
-		    		{
+					if(!isRepel)
+					{
+						HitResult hit = ProjectileUtil.getHitResultOnViewVector(player, t -> t != player, 5.0F);
+			    		if(hit.getType() != Type.MISS)
+			    		{
+			        		if(hit instanceof EntityHitResult entityHit)
+			        		{
+			        			Entity entity = entityHit.getEntity();
+			        			if(entity instanceof LivingEntity living)
+			        			{
+			            			ACCUtil.setOwner(entity, player);
+			            			ACCUtil.setOwner(player, living);
+					    			ACCUtil.setItemAnimationState(stack, 2);
+					    			ACCUtil.setItemAnimationTick(stack, 15);
+			            			entity.setNoGravity(true);
+			        			}
+			        		}
+			        		else if(hit instanceof BlockHitResult blockHit)
+			        		{
+			        			BlockPos blockPos = blockHit.getBlockPos();
+			        			BlockState blockState = level.getBlockState(blockPos);
+			        			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir() && !blockState.is(BlockTags.DRAGON_IMMUNE))
+			        			{
+			        				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
+			            			ACCUtil.setOwner(fallingBlock, player);
+			            			ACCUtil.setOwner(player, fallingBlock);
+					    			ACCUtil.setItemAnimationState(stack, 2);
+					    			ACCUtil.setItemAnimationTick(stack, 15);
+			            			fallingBlock.setBlockState(blockState);
+			            			fallingBlock.setNoGravity(true);
+			        				level.removeBlock(blockPos, false);
+			        				level.addFreshEntity(fallingBlock);
+			        			}
+			        		}
+			    		}
+					}
+					else
+					{
 		    			player.startUsingItem(hand);
 		    			ACCUtil.setItemAnimationState(stack, 2);
 		    			ACCUtil.setItemAnimationTick(stack, 15);
 		    			return InteractionResultHolder.consume(stack);
-		    		}
-		    		else
-		    		{
-		        		if(hit instanceof EntityHitResult entityHit)
-		        		{
-		        			Entity entity = entityHit.getEntity();
-		        			if(entity instanceof LivingEntity living)
-		        			{
-		            			ACCUtil.setOwner(entity, player);
-		            			ACCUtil.setOwner(player, living);
-				    			ACCUtil.setItemAnimationState(stack, 2);
-				    			ACCUtil.setItemAnimationTick(stack, 15);
-		            			entity.setNoGravity(true);
-		        			}
-		        		}
-		        		else if(hit instanceof BlockHitResult blockHit)
-		        		{
-		        			BlockPos blockPos = blockHit.getBlockPos();
-		        			BlockState blockState = level.getBlockState(blockPos);
-		        			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir() && !blockState.is(BlockTags.DRAGON_IMMUNE))
-		        			{
-		        				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
-		            			ACCUtil.setOwner(fallingBlock, player);
-		            			ACCUtil.setOwner(player, fallingBlock);
-				    			ACCUtil.setItemAnimationState(stack, 2);
-				    			ACCUtil.setItemAnimationTick(stack, 15);
-		            			fallingBlock.setBlockState(blockState);
-		            			fallingBlock.setNoGravity(true);
-		        				level.removeBlock(blockPos, false);
-		        				level.addFreshEntity(fallingBlock);
-		        			}
-		        		}
-		    		}
+					}
 				}
 			}
 		}
@@ -160,47 +162,57 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	@Override
 	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
 	{
-		int duration = this.getUseDuration(p_41430_);
-		if(duration - p_41431_ >= 20 && duration - p_41431_ < 40)
+		if(p_41428_.isClientSide)
 		{
-			setBeamCharge(p_41430_, 1);
-		}
-		if(duration - p_41431_ >= 40 && duration - p_41431_ < 150)
-		{
-			setBeamCharge(p_41430_, 2);
-		}
-		if(duration - p_41431_ >= 150 && duration - p_41431_ < 250)
-		{
-			setBeamCharge(p_41430_, 3);
-		}
-		if(duration - p_41431_ >= 250)
-		{
-			setBeamCharge(p_41430_, 4);
+			int duration = this.getUseDuration(p_41430_);
+			if(duration - p_41431_ >= 20 && duration - p_41431_ < 40)
+			{
+				setBeamCharge(p_41430_, 1);
+			}
+			if(duration - p_41431_ >= 40 && duration - p_41431_ < 150)
+			{
+				setBeamCharge(p_41430_, 2);
+			}
+			if(duration - p_41431_ >= 150 && duration - p_41431_ < 250)
+			{
+				setBeamCharge(p_41430_, 3);
+			}
+			if(duration - p_41431_ >= 250)
+			{
+				setBeamCharge(p_41430_, 4);
+			}
 		}
 	}
 	
 	@Override
-	public void releaseUsing(ItemStack p_41412_, Level p_41413_, LivingEntity p_41414_, int p_41415_)
+	public void releaseUsing(ItemStack stack, Level p_41413_, LivingEntity entity, int p_41415_)
 	{
-		int currentCharge = getBeamCharge(p_41412_);
-		EntityMagneticRailgunBeam beam = new EntityMagneticRailgunBeam(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), p_41413_);
-		Vec3 lookPos = ACCUtil.getLookPos(new Vec2(p_41414_.getXRot(), p_41414_.getYHeadRot()), p_41414_.getEyePosition(), 0, -0.5F, 2);
-		beam.setPos(lookPos);
-		beam.setOwner(p_41414_);
-		beam.setXRot(p_41414_.getXRot());
-		beam.setYRot(p_41414_.getYHeadRot());
-		beam.setRepel(isRepel(p_41412_));
-		beam.setBeamDamage(getBeamDamageAmount(currentCharge));
-		p_41413_.addFreshEntity(beam);
-		ACCUtil.setItemAnimationState(p_41412_, 3);
-		ACCUtil.setItemAnimationTick(p_41412_, 30);
-    	ACCUtil.setPlayerAnimationState(p_41414_, 1);
-    	ACCUtil.setPlayerAnimationTick(p_41414_, 30);
-		if(p_41414_ instanceof Player player && !player.getAbilities().instabuild)
+		if(p_41413_.isClientSide)
 		{
-			ACCUtil.setCharge(p_41412_, Math.min(ACCUtil.getCharge(p_41412_) + getBeamChargeUseAmount(currentCharge), MAX_CHARGE));
+			ACCNetwork.sendToServer(new UpdateMagneticRailgunItemPacket(stack, entity.getUUID()));
 		}
-		setBeamCharge(p_41412_, 0);
+	}
+	
+	public void releaseUsingServer(ItemStack stack, LivingEntity entity)
+	{
+		int currentCharge = getBeamCharge(stack);
+		EntityMagneticRailgunBeam beam = new EntityMagneticRailgunBeam(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), entity.level);
+		Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), 0, -0.5F, 2);
+		beam.setPos(lookPos);
+		beam.setOwner(entity);
+		beam.setXRot(entity.getXRot());
+		beam.setYRot(entity.getYHeadRot());
+		beam.setBeamDamage(getBeamDamageAmount(currentCharge));
+		entity.level.addFreshEntity(beam);
+		ACCUtil.setItemAnimationState(stack, 3);
+		ACCUtil.setItemAnimationTick(stack, 30);
+    	ACCUtil.setPlayerAnimationState(entity, 1);
+    	ACCUtil.setPlayerAnimationTick(entity, 30);
+		if(entity instanceof Player player && !player.getAbilities().instabuild)
+		{
+			ACCUtil.setCharge(stack, Math.min(ACCUtil.getCharge(stack) + getBeamChargeUseAmount(currentCharge), MAX_CHARGE));
+		}
+		setBeamCharge(stack, 0);
 	}
 	
 	@Override
