@@ -9,6 +9,7 @@ import com.min01.acc.item.ACCItems;
 import com.min01.acc.misc.ACCEntityDataSerializers;
 import com.min01.acc.misc.ACCSounds;
 import com.min01.acc.network.ACCNetwork;
+import com.min01.acc.particle.ACCParticles;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +35,7 @@ public class AlexsCavesCacophony
 		ACCEffects.EFFECTS.register(bus);
 		ACCEffects.POTIONS.register(bus);
 		ACCEnchantments.ENCHANTMENTS.register(bus);
+		ACCParticles.PARTICLES.register(bus);
 		
 		ACCNetwork.registerMessages();
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ACCCapabilities::attachEntityCapability);

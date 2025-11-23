@@ -53,7 +53,7 @@ public class ModelRadrifle extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) 
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animate(stack, RadrifleItem.RADRIFLE_OVERHEAT, RadrifleAnimation.OVERHEAT, ageInTicks);
+		this.animate(stack, RadrifleItem.RADRIFLE_OVERHEAT, RadrifleAnimation.OVERHEAT, ageInTicks / 2.0F);
 	}
 	
 	@Override

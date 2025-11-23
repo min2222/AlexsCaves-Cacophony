@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"A": {
+			"item": "alexscaves:azure_neodymium_ingot"
+		},
+		"G": {
+			"item": "alexscaves:galena"
+		},
+		"S": {
+			"item": "alexscaves:scarlet_neodymium_ingot"
+		}
+	},
+	"pattern": [
+		"S  ",
+		" G ",
+		"  A"
+	],
+	"result": {
+		"item": "accacophony:magnetic_cartridge"
+	},
+	"show_notification": true
+}

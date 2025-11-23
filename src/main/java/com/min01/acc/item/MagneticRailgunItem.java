@@ -13,6 +13,7 @@ import com.min01.acc.entity.projectile.EntityMagneticRailgunBeam;
 import com.min01.acc.entity.projectile.EntityThrowableFallingBlock;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.item.renderer.MagneticRailgunRendrerer;
+import com.min01.acc.particle.ACCParticles;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
 
@@ -182,6 +183,16 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	}
 	
 	@Override
+	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
+	{
+		if(p_41428_.isClientSide && p_41431_ % 5 == 0 && this.getUseDuration(p_41430_) - p_41431_ >= 32)
+		{
+			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(p_41429_.getXRot(), p_41429_.getYHeadRot()), p_41429_.getEyePosition(), -0.25F, -0.25F, 2);
+			p_41428_.addAlwaysVisibleParticle(ACCParticles.RAILGUN_CHARGE.get(), lookPos.x, lookPos.y, lookPos.z, 0, 0, 0);
+		}
+	}
+	
+	@Override
 	public void releaseUsing(ItemStack stack, Level p_41413_, LivingEntity entity, int p_41415_)
 	{
 		if(this.getUseDuration(stack) - p_41415_ >= 32)
@@ -190,7 +201,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 			if(charge <= MAX_CHARGE - 250)
 			{
 				EntityMagneticRailgunBeam beam = new EntityMagneticRailgunBeam(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), entity.level);
-				Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), 0, -0.5F, 2);
+				Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), -0.25F, -0.5F, 2);
 				beam.setPos(lookPos);
 				beam.setOwner(entity);
 				beam.setXRot(entity.getXRot());

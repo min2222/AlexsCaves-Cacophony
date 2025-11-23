@@ -21,10 +21,13 @@ import com.min01.acc.gui.overlay.PolarityOverlay;
 import com.min01.acc.item.model.ModelMagneticRailgun;
 import com.min01.acc.item.model.ModelRadrifle;
 import com.min01.acc.item.model.ModelRayblade;
+import com.min01.acc.particle.ACCParticles;
+import com.min01.acc.particle.RailgunChargeParticle;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -79,4 +82,11 @@ public class ClientEventHandler
     	event.registerBelow(VanillaGuiOverlay.HOTBAR.id(), "overheat", OverheatOverlay::draw);
     	event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "polarity", PolarityOverlay::draw);
     }
+    
+    
+	@SubscribeEvent
+	public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event)
+	{
+		event.registerSpriteSet(ACCParticles.RAILGUN_CHARGE.get(), RailgunChargeParticle.Provider::new);
+	}
 }
