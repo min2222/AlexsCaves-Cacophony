@@ -70,15 +70,15 @@ public class RadrifleItem extends Item implements IAnimatableItem
 	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
 	{
         int charge = ACCUtil.getCharge(p_41404_);
-		int overheat = ACCUtil.getOverlayProgress("Overheat", p_41406_);
+		float overheat = ACCUtil.getOverlayProgress("Overheat", p_41406_);
 		if(overheat >= 1000)
 		{
 			ACCUtil.setCharge(p_41404_, Math.min(charge + 500, MAX_CHARGE));
-			ACCUtil.setOverlayProgress("Overheat", 0, p_41406_);
 			ACCUtil.setItemAnimationState(p_41404_, 1);
 			ACCUtil.setItemAnimationTick(p_41404_, 80);
         	ACCUtil.setPlayerAnimationState(p_41406_, 4);
         	ACCUtil.setPlayerAnimationTick(p_41406_, 80);
+			ACCUtil.setOverlayProgress("Overheat", 0, p_41406_);
 		}
         if(p_41404_.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
         {
@@ -106,9 +106,27 @@ public class RadrifleItem extends Item implements IAnimatableItem
 		boolean isPulse = stack.getEnchantmentLevel(ACCEnchantments.PULSE.get()) > 0;
 		boolean isOvercharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
 		int count = isPulse ? 3 : 1;
-        if(charge < MAX_CHARGE)
+		int units = 100;
+		int enchantLevel = stack.getEnchantmentLevel(ACEnchantmentRegistry.ENERGY_EFFICIENCY.get());
+		if(enchantLevel == 1)
+		{
+			units = 80;
+		}
+		else if(enchantLevel == 2)
+		{
+			units = 66;
+		}
+		else if(enchantLevel >= 3)
+		{
+			units = 33;
+		}
+		if(isOvercharge)
+		{
+			units = MAX_CHARGE;
+		}
+        if(charge <= MAX_CHARGE - units)
         {
-        	if(ACCUtil.getItemAnimationState(stack) == 0)
+        	if(ACCUtil.getItemAnimationState(stack) == 0 && ACCUtil.getPlayerAnimationState(player) == 0)
         	{
             	if(isOvercharge)
             	{
@@ -125,25 +143,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
             		int overheat = ACCUtil.getOverlayProgress("Overheat", player);
             		if(overheat < 1000)
             		{
-            			ACCUtil.setOverlayProgress("Overheat", Math.min(overheat + 100, 1000), player);
-            		}
-            		int units = 100;
-            		int enchantLevel = stack.getEnchantmentLevel(ACEnchantmentRegistry.ENERGY_EFFICIENCY.get());
-            		if(enchantLevel == 1)
-            		{
-            			units = 80;
-            		}
-            		else if(enchantLevel == 2)
-            		{
-            			units = 66;
-            		}
-            		else if(enchantLevel >= 3)
-            		{
-            			units = 33;
-            		}
-            		if(isOvercharge)
-            		{
-            			units = MAX_CHARGE;
+            			ACCUtil.setOverlayProgress("Overheat", overheat + 100, player);
             		}
                     ACCUtil.setCharge(stack, Math.min(charge + units, MAX_CHARGE));
             	}

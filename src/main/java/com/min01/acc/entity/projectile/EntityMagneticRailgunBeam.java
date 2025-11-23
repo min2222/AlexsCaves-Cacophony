@@ -59,7 +59,10 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	        {
 	        	Vec3 pos = startPos.add(normalizedPos.scale(i));
 	        	List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(pos, pos).inflate(0.5F), t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()));
-	        	arrayList.addAll(list);
+	        	if(!arrayList.containsAll(list))
+	        	{
+	        		arrayList.addAll(list);
+	        	}
 	        }
 	        arrayList.forEach(t -> 
 	        {

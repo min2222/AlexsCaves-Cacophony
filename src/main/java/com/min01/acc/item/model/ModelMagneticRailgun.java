@@ -32,19 +32,29 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create().texOffs(0, 48).addBox(-1.5F, -3.0F, -6.0F, 3.0F, 4.0F, 7.0F, new CubeDeformation(0.01F))
-		.texOffs(32, 16).addBox(-1.5F, -3.0F, -10.0F, 3.0F, 4.0F, 11.0F, new CubeDeformation(0.1F))
-		.texOffs(20, 53).addBox(0.0F, 0.0F, -2.0F, 0.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 7.0F));
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create().texOffs(41, 22).addBox(-1.5F, 2.0F, -5.0F, 2.0F, 0.0F, 3.0F, new CubeDeformation(0.0F))
+		.texOffs(30, 26).addBox(-2.0F, -1.0F, -6.0F, 4.0F, 3.0F, 1.0F, new CubeDeformation(0.01F))
+		.texOffs(46, 30).addBox(1.0F, -1.0F, -5.0F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.01F))
+		.texOffs(37, 30).addBox(-2.0F, -1.0F, -5.0F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.01F))
+		.texOffs(54, 30).addBox(-2.0F, -1.0F, -2.0F, 4.0F, 3.0F, 1.0F, new CubeDeformation(0.01F))
+		.texOffs(32, 0).addBox(-2.0F, -1.0F, -10.0F, 4.0F, 7.0F, 12.0F, new CubeDeformation(0.01F))
+		.texOffs(11, 48).addBox(-2.0F, 2.0F, -10.01F, 4.0F, 4.0F, 12.0F, new CubeDeformation(-0.01F)), PartPose.offset(0.0F, 21.0F, 7.0F));
 
-		root.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(52, 53).addBox(-1.5F, -2.0F, -2.0F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.1895F, 2.3123F, 1.0908F, 0.0F, 0.0F));
+		root.addOrReplaceChild("rail", CubeListBuilder.create().texOffs(4, 9).addBox(-2.0F, -2.0F, -13.2F, 4.0F, 5.0F, 9.0F, new CubeDeformation(0.1F))
+		.texOffs(0, 23).addBox(-2.0F, -2.0F, -13.0F, 4.0F, 5.0F, 13.0F, new CubeDeformation(0.01F))
+		.texOffs(38, 38).addBox(-1.5F, 3.0F, -10.0F, 3.0F, 2.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.0F, -10.0F));
 
-		PartDefinition rail = root.addOrReplaceChild("rail", CubeListBuilder.create().texOffs(32, 31).addBox(-1.5F, -2.0F, -7.0F, 3.0F, 4.0F, 9.0F, new CubeDeformation(0.011F))
-		.texOffs(0, 0).addBox(-1.0F, -2.0F, -21.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 32).addBox(-1.0F, -2.0F, -21.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.09F)), PartPose.offset(0.0F, -1.0F, -8.0F));
+		PartDefinition cartridge = root.addOrReplaceChild("cartridge", CubeListBuilder.create().texOffs(0, 58).addBox(-0.5F, -1.5F, -1.0F, 2.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-0.5F, 0.5F, -4.0F));
 
-		rail.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(31, 44).addBox(-1.5F, -2.0F, -4.0F, 3.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 16).addBox(-1.0F, -1.0F, -18.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(32, 0).addBox(-1.0F, -1.0F, -18.0F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.09F)), PartPose.offset(0.0F, 3.0F, -3.0F));
+		cartridge.addOrReplaceChild("ammo", CubeListBuilder.create().texOffs(54, 34).addBox(0.5F, -1.5F, -2.0F, 0.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		root.addOrReplaceChild("left_charger", CubeListBuilder.create().texOffs(45, 60).mirror().addBox(-0.5F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(-0.01F)).mirror(false), PartPose.offset(0.0F, 1.0F, -1.0F));
+
+		root.addOrReplaceChild("right_charger", CubeListBuilder.create().texOffs(45, 60).addBox(-2.5F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(-0.01F)), PartPose.offset(0.0F, 1.0F, -1.0F));
+
+		root.addOrReplaceChild("right_charger2", CubeListBuilder.create().texOffs(45, 60).addBox(-3.5F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(-0.01F)), PartPose.offset(1.0F, 1.0F, -8.0F));
+
+		root.addOrReplaceChild("left_charger2", CubeListBuilder.create().texOffs(45, 60).mirror().addBox(-0.5F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(-0.01F)).mirror(false), PartPose.offset(0.0F, 1.0F, -8.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
@@ -53,8 +63,7 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_HOLD, MagneticRailgunAnimation.RAILGUN_HOLD, ageInTicks);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_INSPECT, MagneticRailgunAnimation.RAILGUN_INSPECT, ageInTicks);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_RELOAD, MagneticRailgunAnimation.RAILGUN_RELOAD, ageInTicks);
 		this.animate(stack, MagneticRailgunItem.RAILGUN_CHARGE, MagneticRailgunAnimation.RAILGUN_CHARGE, ageInTicks);
 		this.animate(stack, MagneticRailgunItem.RAILGUN_FIRE, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks);
 	}

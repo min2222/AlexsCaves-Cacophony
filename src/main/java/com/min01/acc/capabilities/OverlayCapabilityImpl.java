@@ -52,9 +52,9 @@ public class OverlayCapabilityImpl implements IOverlayCapability
 	public void tick(LivingEntity player)
 	{
 		int value = this.getOverlayProgress("Overheat");
-		if(value > 0 && player.tickCount % 100 == 0 && player.getUseItem().isEmpty())
+		if(value > 0 && player.getUseItem().isEmpty())
 		{
-			this.setOverlayProgress("Overheat", Math.max(value - 100, 0));
+			this.setOverlayProgress("Overheat", value - 1);
 		}
 		if(!player.level.isClientSide)
 		{

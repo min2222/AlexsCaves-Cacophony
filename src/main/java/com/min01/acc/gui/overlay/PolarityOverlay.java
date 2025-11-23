@@ -4,7 +4,6 @@ import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.item.ACCItems;
 import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.util.ACCClientUtil;
-import com.min01.acc.util.ACCUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -30,9 +29,8 @@ public class PolarityOverlay
 		    int blitX = (screenWidth / 2) - (19 / 2);
             int blitY = (screenHeight - forgeGuiY) - (20 / 2);
             
-		    int polarity = ACCUtil.getOverlayProgress("Polarity", player);
 		    poseStack.pushPose();
-			guiGraphics.blit(texture, blitX, blitY, 0, y, 19 - (int) Math.floor(polarity / 19), 20, 64, 64);
+			guiGraphics.blit(texture, blitX, blitY, 0, y, 19, 20, 64, 64);
 		    poseStack.popPose();
 		}
 	}

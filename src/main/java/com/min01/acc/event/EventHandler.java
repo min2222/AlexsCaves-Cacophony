@@ -88,6 +88,7 @@ public class EventHandler
     	{
     		event.accept(ACCItems.NEODYMIUM_SHACKLE.get());
     		event.accept(ACCItems.MAGNETIC_RAILGUN.get());
+    		event.accept(ACCItems.MAGNETIC_CARTRIDGE.get());
     		ACCEnchantments.addAllEnchantsToCreativeTab(event, ACCEnchantments.NEODYMIUM_SHACKLE);
     	}
     }

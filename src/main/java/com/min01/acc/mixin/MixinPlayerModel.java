@@ -65,6 +65,8 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
     	this.animate(entity, MagneticRailgunItem.RAILGUN_HOLD, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD, ageInTicks);
     	this.animate(entity, MagneticRailgunItem.RAILGUN_HOLD_NEAR_WALL, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD_NEAR_WALL, ageInTicks);
     	this.animate(entity, MagneticRailgunItem.RAILGUN_RUNNING, PlayerAnimation.RailgunAnimation.RAILGUN_RUNNING, ageInTicks);
+    	this.animate(entity, MagneticRailgunItem.RAILGUN_CHARGE, PlayerAnimation.RailgunAnimation.RAILGUN_CHARGE, ageInTicks);
+    	this.animate(entity, MagneticRailgunItem.RAILGUN_RELOAD, PlayerAnimation.RailgunAnimation.RAILGUN_RELOAD, ageInTicks);
     }
     
 	@Override

@@ -29,11 +29,11 @@ public class OverheatOverlay
 			int posY = -20;
 		    int blitX = posX + (screenWidth / 2) - (48 / 2);
 		    int blitY = posY + (screenHeight / 2) - (31 / 2);
-		    int overheat = ACCUtil.getOverlayProgress("Overheat", player);
+		    float overheat = ACCUtil.getOverlayProgress("Overheat", player) / 1000.0F;
 		    poseStack.pushPose();
 		    poseStack.scale(2.0F, 2.0F, 2.0F);
 			guiGraphics.blit(texture, blitX, blitY, 0, 33, 48, 31, 48, 96);
-			guiGraphics.blit(texture, blitX, blitY, 0, 0, 48, 31 - (int) Math.floor(overheat / 31), 48, 96);
+			guiGraphics.blit(texture, blitX, blitY, 0, 0, 48, 31 - (int) Math.floor(overheat * 31), 48, 96);
 		    poseStack.popPose();
 		}
 	}

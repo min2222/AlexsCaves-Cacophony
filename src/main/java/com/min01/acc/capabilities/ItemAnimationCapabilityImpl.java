@@ -11,6 +11,7 @@ import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -21,10 +22,11 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	private int tickCount;
 	
 	private final SmoothAnimationState overheatAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState holdAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState inspectAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState chargeAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState fireAnimationState = new SmoothAnimationState();
+	
+	private final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState();
+	private final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	
 	private final SmoothAnimationState raybladeSwingAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	
 	@Override
@@ -33,12 +35,6 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("AnimationTick", this.animationTick);
 		nbt.putInt("AnimationState", this.animationState);
-		this.overheatAnimationState.write(RadrifleItem.RADRIFLE_OVERHEAT, nbt);
-		this.holdAnimationState.write(MagneticRailgunItem.RAILGUN_HOLD, nbt);
-		this.inspectAnimationState.write(MagneticRailgunItem.RAILGUN_INSPECT, nbt);
-		this.chargeAnimationState.write(MagneticRailgunItem.RAILGUN_CHARGE, nbt);
-		this.fireAnimationState.write(MagneticRailgunItem.RAILGUN_FIRE, nbt);
-		this.raybladeSwingAnimationState.write(RaybladeItem.RAYBLADE_SWING, nbt);
 		return nbt;
 	}
 
@@ -47,12 +43,6 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	{
 		this.animationTick = nbt.getInt("AnimationTick");
 		this.animationState = nbt.getInt("AnimationState");
-		this.overheatAnimationState.read(RadrifleItem.RADRIFLE_OVERHEAT, nbt);
-		this.holdAnimationState.read(MagneticRailgunItem.RAILGUN_HOLD, nbt);
-		this.inspectAnimationState.read(MagneticRailgunItem.RAILGUN_INSPECT, nbt);
-		this.chargeAnimationState.read(MagneticRailgunItem.RAILGUN_CHARGE, nbt);
-		this.fireAnimationState.read(MagneticRailgunItem.RAILGUN_FIRE, nbt);
-		this.raybladeSwingAnimationState.read(RaybladeItem.RAYBLADE_SWING, nbt);
 	}
 
 	@Override
@@ -69,25 +59,16 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 			{
 				ACCUtil.setVisible(stack, false);
 			}
-			if(stack.is(ACCItems.MAGNETIC_RAILGUN.get()))
-			{
-				if(this.getAnimationState() != 1 && this.getAnimationState() != 2)
-				{
-					this.setAnimationState(0);
-				}
-			}
-			else
-			{
-				this.setAnimationState(0);
-			}
+			this.setAnimationState(0);
+			this.setAnimationTick(0);
 		}
 		if(player.level.isClientSide)
 		{
 			this.overheatAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.RADRIFLE.get()), this.tickCount);
-			this.holdAnimationState.updateWhen(this.getAnimationState() == 0 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
-			this.inspectAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
-			this.chargeAnimationState.updateWhen(this.getAnimationState() == 2 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
-			this.fireAnimationState.updateWhen(this.getAnimationState() == 3 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
+			
+			this.railgunReloadAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
+			this.railgunChargeAnimationState.updateWhen(this.getAnimationState() == 0 && ((LivingEntity)player).isUsingItem() && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
+			this.railgunFireAnimationState.updateWhen(this.getAnimationState() == 2 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);
 			
 			this.raybladeSwingAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.RAYBLADE.get()), this.tickCount);
 		}
@@ -116,21 +97,17 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 		{
 			return this.overheatAnimationState;
 		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_HOLD))
+		if(name.equals(MagneticRailgunItem.RAILGUN_RELOAD))
 		{
-			return this.holdAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_INSPECT))
-		{
-			return this.inspectAnimationState;
+			return this.railgunReloadAnimationState;
 		}
 		if(name.equals(MagneticRailgunItem.RAILGUN_CHARGE))
 		{
-			return this.chargeAnimationState;
+			return this.railgunChargeAnimationState;
 		}
 		if(name.equals(MagneticRailgunItem.RAILGUN_FIRE))
 		{
-			return this.fireAnimationState;
+			return this.railgunFireAnimationState;
 		}
 		if(name.equals(RaybladeItem.RAYBLADE_SWING))
 		{

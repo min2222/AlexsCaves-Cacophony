@@ -45,6 +45,8 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	private final SmoothAnimationState railgunHoldAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState railgunHoldNearWallAnimationState = new SmoothAnimationState();
 	private final SmoothAnimationState railgunRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	private final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	private final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -108,6 +110,8 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 			this.railgunHoldAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()) && (!entity.isSprinting() || ACCUtil.getOwner(entity) != null) && !isLookingWall(entity), entity.tickCount);
 			this.railgunHoldNearWallAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()) && (!entity.isSprinting() || ACCUtil.getOwner(entity) != null) && isLookingWall(entity), entity.tickCount);
 			this.railgunRunningAnimationState.updateWhen(this.getAnimationState() == 0 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()) && entity.isSprinting() && ACCUtil.getOwner(entity) == null, entity.tickCount);
+			this.railgunChargeAnimationState.updateWhen(this.getAnimationState() == 2 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()), entity.tickCount);
+			this.railgunReloadAnimationState.updateWhen(this.getAnimationState() == 3 && entity.isHolding(ACCItems.MAGNETIC_RAILGUN.get()), entity.tickCount);
 		}
 		else
 		{
@@ -204,6 +208,14 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		if(name.equals(MagneticRailgunItem.RAILGUN_RUNNING))
 		{
 			return this.railgunRunningAnimationState;
+		}
+		if(name.equals(MagneticRailgunItem.RAILGUN_RELOAD))
+		{
+			return this.railgunReloadAnimationState;
+		}
+		if(name.equals(MagneticRailgunItem.RAILGUN_CHARGE))
+		{
+			return this.railgunChargeAnimationState;
 		}
 		return new SmoothAnimationState();
 	}
