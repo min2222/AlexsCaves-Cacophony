@@ -1,6 +1,8 @@
 package com.min01.acc.item.renderer;
 
 import com.min01.acc.AlexsCavesCacophony;
+import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.item.model.ModelMagneticRailgun;
 import com.min01.acc.util.ACCClientUtil;
@@ -14,6 +16,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -47,7 +50,17 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 			p_108832_.translate(0.0F, -1.5F, 0.0F);
 			p_108832_.translate(-0.5F, -0.515F, 0.6F);
 			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 0.8F, 0.8F, 0.8F, 1.0F);
+			
+			ItemAnimationCapabilityImpl cap = (ItemAnimationCapabilityImpl) p_108830_.getCapability(ACCCapabilities.ITEM_ANIMATION).orElseGet(() -> new ItemAnimationCapabilityImpl());
+			float ageInTicks = ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime();
+	        float strength = 0.5F + Mth.clamp(((float) Math.cos((cap.glowingTicks + ageInTicks) * 0.1F)) - 0.5F, -0.5F, 0.5F);
+	        strength += Mth.lerp(ageInTicks, cap.brightnessOld, cap.brightness) * Mth.PI;
+	        strength = Mth.clamp(strength, 0.0F, 1.0F);
+			if(!MagneticRailgunItem.isRepel(p_108830_) || !MagneticRailgunItem.isFlash(p_108830_))
+			{
+				strength = 0.0F;
+			}
+			this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, strength, strength, strength, 1.0F);
 			p_108832_.popPose();
 			
 			p_108832_.pushPose();
@@ -56,7 +69,8 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 			p_108832_.translate(0.0F, -1.5F, 0.0F);
 			p_108832_.translate(-0.5F, -0.515F, 0.6F);
 			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			this.model.renderToBuffer(p_108832_, vertexconsumer3, p_108834_, OverlayTexture.NO_OVERLAY, 0.8F, 0.8F, 0.8F, 1.0F);
+			float strength2 = !MagneticRailgunItem.isRepel(p_108830_) && MagneticRailgunItem.isFlash(p_108830_) ? 0.8F : 0.0F;
+			this.model.renderToBuffer(p_108832_, vertexconsumer3, p_108834_, OverlayTexture.NO_OVERLAY, strength2, strength2, strength2, 1.0F);
 			p_108832_.popPose();
 			
 			p_108832_.pushPose();

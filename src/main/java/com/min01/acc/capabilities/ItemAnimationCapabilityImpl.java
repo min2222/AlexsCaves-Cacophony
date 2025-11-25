@@ -21,6 +21,10 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	private int animationState;
 	private int tickCount;
 	
+	public float brightness;
+	public float brightnessOld;
+	public int glowingTicks;
+	
 	private final SmoothAnimationState overheatAnimationState = new SmoothAnimationState();
 	
 	private final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState();
@@ -64,6 +68,11 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 		}
 		if(player.level.isClientSide)
 		{
+			if(stack.is(ACCItems.MAGNETIC_RAILGUN.get()))
+			{
+	            ++this.glowingTicks;
+	            this.brightness += (0.0F - this.brightness) * 0.8F;
+			}
 			this.overheatAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.RADRIFLE.get()), this.tickCount);
 			
 			this.railgunReloadAnimationState.updateWhen(this.getAnimationState() == 1 && stack.is(ACCItems.MAGNETIC_RAILGUN.get()), this.tickCount);

@@ -16,8 +16,8 @@ public class RailgunChargeParticle extends TextureSheetParticle
 	public RailgunChargeParticle(ClientLevel p_108328_, double p_108329_, double p_108330_, double p_108331_, double p_108332_, double p_108333_, double p_108334_, SpriteSet sprites)
 	{
 		super(p_108328_, p_108329_, p_108330_, p_108331_, p_108332_, p_108333_, p_108334_);
-		this.quadSize = 0.2F;
-		this.lifetime = 5;
+		this.quadSize = 0.1F;
+		this.lifetime = 20;
 		this.sprites = sprites;
 		this.setSpriteFromAge(sprites);
 	}

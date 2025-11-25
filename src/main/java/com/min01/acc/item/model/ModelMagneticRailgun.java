@@ -65,7 +65,7 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.animate(stack, MagneticRailgunItem.RAILGUN_RELOAD, MagneticRailgunAnimation.RAILGUN_RELOAD, ageInTicks / 2.0F);
 		this.animate(stack, MagneticRailgunItem.RAILGUN_CHARGE, MagneticRailgunAnimation.RAILGUN_CHARGE, ageInTicks);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_FIRE, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks / 2.0F);
+		this.animate(stack, MagneticRailgunItem.RAILGUN_FIRE, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks);
 	}
 	
 	@Override

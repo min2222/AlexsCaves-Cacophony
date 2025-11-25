@@ -130,6 +130,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 				            			ACCUtil.setOwner(entity, player);
 				            			ACCUtil.setOwner(player, living);
 				            			entity.setNoGravity(true);
+						        		setFlash(stack, true);
 				        			}
 				        		}
 				        		else if(hit instanceof BlockHitResult blockHit)
@@ -145,6 +146,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 				            			fallingBlock.setNoGravity(true);
 				        				level.removeBlock(blockPos, false);
 				        				level.addFreshEntity(fallingBlock);
+						        		setFlash(stack, true);
 				        			}
 				        		}
 				    		}
@@ -180,22 +182,31 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		ACCUtil.setOwner(player, null);
 		ACCUtil.setOwner(entity, null);
 		entity.setNoGravity(false);
+		setFlash(stack, false);
 	}
 	
 	@Override
 	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
 	{
-		if(p_41428_.isClientSide && p_41431_ % 5 == 0 && this.getUseDuration(p_41430_) - p_41431_ >= 32)
+		if(p_41428_.isClientSide && this.getUseDuration(p_41430_) - p_41431_ == 32 + 20)
 		{
-			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(p_41429_.getXRot(), p_41429_.getYHeadRot()), p_41429_.getEyePosition(), -0.25F, -0.25F, 2);
+			setFlash(p_41430_, true);
+			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(p_41429_.getXRot(), p_41429_.getYHeadRot()), p_41429_.getEyePosition(), -0.05F, -0.05F, 0.15F);
 			p_41428_.addAlwaysVisibleParticle(ACCParticles.RAILGUN_CHARGE.get(), lookPos.x, lookPos.y, lookPos.z, 0, 0, 0);
 		}
 	}
 	
 	@Override
+	public void onStopUsing(ItemStack stack, LivingEntity entity, int count)
+	{
+		setFlash(stack, false);
+	}
+	
+	@Override
 	public void releaseUsing(ItemStack stack, Level p_41413_, LivingEntity entity, int p_41415_)
 	{
-		if(this.getUseDuration(stack) - p_41415_ >= 32)
+		//32 tick = animation length, 20 tick actual charging time
+		if(this.getUseDuration(stack) - p_41415_ >= 32 + 20)
 		{
 			int charge = ACCUtil.getCharge(stack);
 			if(charge <= MAX_CHARGE - 250)
@@ -223,6 +234,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		{
 	    	ACCUtil.setPlayerAnimationState(entity, 0);
 		}
+		setFlash(stack, false);
 	}
 	
 	@Override
@@ -271,6 +283,18 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	{
 		return 72000;
 	}
+    
+    public static boolean isFlash(ItemStack stack)
+    {
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getBoolean("isFlash") : false;
+    }
+
+    public static void setFlash(ItemStack stack, boolean isFlash)
+    {
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putBoolean("isFlash", isFlash);
+    }
     
     public static boolean isRepel(ItemStack stack)
     {
