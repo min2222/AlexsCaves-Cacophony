@@ -49,11 +49,17 @@ public class DinoDrumstickItem extends Item
 	@Override
 	public ItemStack finishUsingItem(ItemStack p_43263_, Level p_43264_, LivingEntity p_43265_)
 	{
-		if(p_43265_ instanceof Player player && !player.getAbilities().instabuild)
+		ItemStack stack = super.finishUsingItem(p_43263_, p_43264_, p_43265_);
+		if(stack.getCount() > 1)
 		{
-			player.getInventory().add(new ItemStack(ACItemRegistry.HEAVY_BONE.get()));
+			if(p_43265_ instanceof Player player && !player.getAbilities().instabuild)
+			{
+				stack.shrink(1);
+				player.getInventory().add(new ItemStack(ACItemRegistry.HEAVY_BONE.get()));
+			}
+			return stack;
 		}
-		return super.finishUsingItem(p_43263_, p_43264_, p_43265_);
+		return p_43265_ instanceof Player player && player.getAbilities().instabuild ? stack : new ItemStack(ACItemRegistry.HEAVY_BONE.get());
 	}
 	
     @Override
