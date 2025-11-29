@@ -125,7 +125,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 				        		if(hit instanceof EntityHitResult entityHit)
 				        		{
 				        			Entity entity = entityHit.getEntity();
-				        			if(entity instanceof LivingEntity living)
+				        			if(entity instanceof LivingEntity living && !living.isVehicle() && !living.isPassenger())
 				        			{
 				            			ACCUtil.setOwner(entity, player);
 				            			ACCUtil.setOwner(player, living);
