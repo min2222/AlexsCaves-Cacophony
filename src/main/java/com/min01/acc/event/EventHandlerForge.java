@@ -9,7 +9,11 @@ import com.min01.acc.misc.ACCTags;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
@@ -67,7 +71,7 @@ public class EventHandlerForge
 		Entity entity = event.getEntity();
 		if(entity instanceof DinosaurEntity dino)
 		{
-			dino.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(dino, EntityOvivenator.class, false, t -> !t.isBaby() && !((EntityOvivenator) t).isTame() && ((EntityOvivenator) t).isHoldingEgg()));
+			dino.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(dino, EntityOvivenator.class, false, t -> canTargetOvivenator(dino, t)));
 		}
 		if(entity.getType().is(ACCTags.ACCEntity.PAINTABLE) && Math.random() <= 0.1F && !level.isClientSide)
 		{
@@ -79,5 +83,18 @@ public class EventHandlerForge
 				}
 			});
 		}
+	}
+	
+	public static boolean canTargetOvivenator(DinosaurEntity dino, LivingEntity living)
+	{
+		if(living instanceof EntityOvivenator ovivenator)
+		{
+			if(!ovivenator.isBaby() && !ovivenator.isTame() && ovivenator.isHoldingEgg() && !ovivenator.getCurrentEgg().isEmpty())
+			{
+				ItemStack stack = ovivenator.getCurrentEgg();
+				return stack.is(Item.BY_BLOCK.getOrDefault(dino.createEggBlockState().getBlock(), Items.AIR));
+			}
+		}
+		return false;
 	}
 }
