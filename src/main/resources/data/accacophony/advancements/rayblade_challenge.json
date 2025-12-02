@@ -11,7 +11,7 @@
 		},
 		"frame": "challenge"
 	},
-	"parent": "accacophony:accacophony/aquire_rayblade",
+	"parent": "accacophony:aquire_rayblade",
 	"criteria": {
 		"minecraft:blaze": {
 			"conditions": {

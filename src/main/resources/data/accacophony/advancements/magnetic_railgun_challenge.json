@@ -14,7 +14,7 @@
 		"announce_to_chat": true,
 		"hidden": false
 	},
-	"parent": "accacophony:accacophony/aquire_magnetic_railgun",
+	"parent": "accacophony:aquire_magnetic_railgun",
 	"criteria": {
 		"shoot": {
 			"trigger": "accacophony:shoot_nuclear_bomb"
