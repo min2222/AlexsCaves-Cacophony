@@ -54,7 +54,6 @@ public class DinoDrumstickItem extends Item
 		{
 			if(p_43265_ instanceof Player player && !player.getAbilities().instabuild)
 			{
-				stack.shrink(1);
 				player.getInventory().add(new ItemStack(ACItemRegistry.HEAVY_BONE.get()));
 			}
 			return stack;
