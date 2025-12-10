@@ -6,6 +6,7 @@ import com.min01.acc.item.ACCItems;
 import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.item.RadrifleItem;
 import com.min01.acc.item.RaybladeItem;
+import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.network.ACCNetwork;
 import com.min01.acc.network.UpdatePlayerAnimationPacket;
@@ -85,6 +86,10 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		}
 		if(this.getAnimationTick() > 0)
 		{
+			if(!(entity.getItemInHand(entity.getUsedItemHand()).getItem() instanceof IAnimatableItem))
+			{
+				this.setAnimationTick(0);
+			}
 			this.setAnimationTick(this.getAnimationTick() - 1);
 		}
 		else
