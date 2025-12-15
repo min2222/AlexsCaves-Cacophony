@@ -61,10 +61,10 @@ public class ACCUtil
                 Vec3 randomShake = new Vec3(mob.level.random.nextFloat() - 0.5F, 0, mob.level.random.nextFloat() - 0.5F).scale(0.1F);
                 mob.setDeltaMovement(mob.getDeltaMovement().multiply(0.7F, 1, 0.7F).add(randomShake));
             }
-            Vec3 vec = LandRandomPos.getPosAway(mob, 16, 7, pos);
-            if(vec != null)
+            Vec3 vec3 = LandRandomPos.getPosAway(mob, 16, 7, pos);
+            if(vec3 != null)
             {
-                mob.getNavigation().moveTo(vec.x, vec.y, vec.z, 2.0F);
+                mob.getNavigation().moveTo(vec3.x, vec3.y, vec3.z, 2.0F);
             }
     	}
     }
