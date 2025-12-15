@@ -23,7 +23,7 @@ public class OvivenatorEatEggGoal extends BasicAnimationSkillGoal<EntityOvivenat
 	@Override
 	public boolean canUse() 
 	{
-		return !this.getMob().isUsingSkill() && this.getMob().tickCount >= this.nextSkillTickCount && this.canEat();
+		return !this.mob.isUsingSkill() && this.mob.tickCount >= this.nextSkillTickCount && this.canEat();
 	}
 	
 	@Override
