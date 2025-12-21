@@ -57,12 +57,6 @@ public class OvivenatorEatEggGoal extends BasicAnimationSkillGoal<EntityOvivenat
 			this.mob.setEggPos(BlockPos.ZERO);
 		}
 	}
-
-	@Override
-	protected void performSkill() 
-	{
-		
-	}
 	
 	@Override
 	public void stop()
@@ -72,19 +66,19 @@ public class OvivenatorEatEggGoal extends BasicAnimationSkillGoal<EntityOvivenat
 	}
 
 	@Override
-	protected int getSkillUsingTime() 
+	public int getSkillUsingTime() 
 	{
 		return 35;
 	}
 	
 	@Override
-	protected int getSkillWarmupTime()
+	public int getSkillWarmupTime()
 	{
 		return 5;
 	}
 
 	@Override
-	protected int getSkillUsingInterval() 
+	public int getSkillUsingInterval() 
 	{
 		return 100;
 	}

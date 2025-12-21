@@ -24,7 +24,7 @@ public class OverheatOverlay
 		if(stack.is(ACCItems.RADRIFLE.get()))
 		{
 			PoseStack poseStack = guiGraphics.pose();
-			ResourceLocation texture = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/gui/overheat_overlay.png");
+			ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/gui/overheat_overlay.png");
 			int posX = -20;
 			int posY = -20;
 		    int blitX = posX + (screenWidth / 2) - (48 / 2);

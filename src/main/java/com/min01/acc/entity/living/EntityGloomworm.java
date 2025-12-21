@@ -7,23 +7,23 @@ import com.min01.acc.entity.AbstractAnimatableCreature;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EntityGloomworm extends AbstractAnimatableCreature
 {
-	public EntityGloomworm(EntityType<? extends PathfinderMob> p_33002_, Level p_33003_) 
+	public EntityGloomworm(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) 
 	{
-		super(p_33002_, p_33003_);
+		super(pEntityType, pLevel);
 	}
 	
     public static AttributeSupplier.Builder createAttributes()
     {
-        return Monster.createMonsterAttributes()
+        return Mob.createMobAttributes()
     			.add(Attributes.MAX_HEALTH, 3.0F)
     			.add(Attributes.MOVEMENT_SPEED, 0.1F);
     }
@@ -49,9 +49,9 @@ public class EntityGloomworm extends AbstractAnimatableCreature
 	}
 	
 	@Override
-	protected void updateWalkAnimation(float p_268283_)
+	protected void updateWalkAnimation(float pPartialTick)
 	{
-		float f = Math.min(p_268283_ * 20.0F, 1.0F);
+		float f = Math.min(pPartialTick * 20.0F, 1.0F);
 		this.walkAnimation.update(f, 0.4F);
 	}
 	

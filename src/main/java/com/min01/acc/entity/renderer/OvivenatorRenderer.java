@@ -12,28 +12,28 @@ import net.minecraft.resources.ResourceLocation;
 
 public class OvivenatorRenderer extends MobRenderer<EntityOvivenator, ModelOvivenator>
 {
-	public static final ResourceLocation TEXTURE = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/ovivenator.png");
-	public static final ResourceLocation TEXTURE_RETRO = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/ovivenator_retro.png");
-	public static final ResourceLocation TEXTURE_TECTONIC = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/ovivenator_tectonic.png");
+	public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/ovivenator.png");
+	public static final ResourceLocation TEXTURE_RETRO = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/ovivenator_retro.png");
+	public static final ResourceLocation TEXTURE_TECTONIC = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/ovivenator_tectonic.png");
 	
-	public OvivenatorRenderer(Context p_174304_)
+	public OvivenatorRenderer(Context pContext)
 	{
-		super(p_174304_, new ModelOvivenator(p_174304_.bakeLayer(ModelOvivenator.LAYER_LOCATION)), 0.5F);
+		super(pContext, new ModelOvivenator(pContext.bakeLayer(ModelOvivenator.LAYER_LOCATION)), 0.5F);
 		this.addLayer(new OvivenatorEggLayer(this));
 	}
 	
 	@Override
-	protected void scale(EntityOvivenator p_115314_, PoseStack p_115315_, float p_115316_)
+	protected void scale(EntityOvivenator pLivingEntity, PoseStack pPoseStack, float pPartialTickTime)
 	{
-		if(p_115314_.isBaby())
+		if(pLivingEntity.isBaby())
 		{
-			p_115315_.scale(0.5F, 0.5F, 0.5F);
+			pPoseStack.scale(0.5F, 0.5F, 0.5F);
 		}
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(EntityOvivenator p_115812_) 
+	public ResourceLocation getTextureLocation(EntityOvivenator pEntity) 
 	{
-		return p_115812_.getAltSkin() == 1 ? TEXTURE_RETRO : p_115812_.getAltSkin() == 2 ? TEXTURE_TECTONIC : TEXTURE;
+		return pEntity.getAltSkin() == 1 ? TEXTURE_RETRO : pEntity.getAltSkin() == 2 ? TEXTURE_TECTONIC : TEXTURE;
 	}
 }

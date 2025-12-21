@@ -21,7 +21,7 @@ public class PolarityOverlay
 		if(player.isHolding(ACCItems.MAGNETIC_RAILGUN.get()))
 		{
 			PoseStack poseStack = guiGraphics.pose();
-			ResourceLocation texture = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/gui/polarity_overlay.png");
+			ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/gui/polarity_overlay.png");
             int forgeGuiY = Math.max(gui.leftHeight, gui.rightHeight);
             
             int y = MagneticRailgunItem.isRepel(player.getMainHandItem()) ? 20 : 0;

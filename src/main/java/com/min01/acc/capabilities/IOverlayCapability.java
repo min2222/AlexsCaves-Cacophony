@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 @AutoRegisterCapability
 public interface IOverlayCapability extends INBTSerializable<CompoundTag>
 {
-	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "overlay");
+	ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "overlay");
 
 	void setOverlayProgress(String name, int value);
 	

@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 public class DinoDrumstickItem extends Item
 {
 	public boolean isRaw;
+	
 	public DinoDrumstickItem(FoodProperties properties, boolean isRaw) 
 	{
 		super(new Item.Properties().food(properties));
@@ -47,18 +48,18 @@ public class DinoDrumstickItem extends Item
 	}
 	
 	@Override
-	public ItemStack finishUsingItem(ItemStack p_43263_, Level p_43264_, LivingEntity p_43265_)
+	public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity)
 	{
-		ItemStack stack = super.finishUsingItem(p_43263_, p_43264_, p_43265_);
+		ItemStack stack = super.finishUsingItem(pStack, pLevel, pLivingEntity);
 		if(stack.getCount() > 1)
 		{
-			if(p_43265_ instanceof Player player && !player.getAbilities().instabuild)
+			if(pLivingEntity instanceof Player player && !player.getAbilities().instabuild)
 			{
 				player.getInventory().add(new ItemStack(ACItemRegistry.HEAVY_BONE.get()));
 			}
 			return stack;
 		}
-		return p_43265_ instanceof Player player && player.getAbilities().instabuild ? stack : new ItemStack(ACItemRegistry.HEAVY_BONE.get());
+		return pLivingEntity instanceof Player player && player.getAbilities().instabuild ? stack : new ItemStack(ACItemRegistry.HEAVY_BONE.get());
 	}
 	
     @Override
@@ -68,7 +69,7 @@ public class DinoDrumstickItem extends Item
     }
     
     @Override
-    public int getUseDuration(ItemStack p_41454_)
+    public int getUseDuration(ItemStack pStack)
     {
     	return 64;
     }

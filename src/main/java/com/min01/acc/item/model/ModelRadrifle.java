@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ModelRadrifle extends HierarchicalItemModel
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "radrifle"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "radrifle"), "main");
 	private final ModelPart root;
 
 	public ModelRadrifle(ModelPart root) 

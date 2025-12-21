@@ -24,11 +24,11 @@ public class MixinVallumraptorRenderer
     		{
         		if(entity.isElder())
         		{
-            		cir.setReturnValue(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/vallumraptor_elder_painted.png"));
+            		cir.setReturnValue(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/vallumraptor_elder_painted.png"));
         		}
         		else
         		{
-            		cir.setReturnValue(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/vallumraptor_painted.png"));
+            		cir.setReturnValue(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/vallumraptor_painted.png"));
         		}
     		}
     	});

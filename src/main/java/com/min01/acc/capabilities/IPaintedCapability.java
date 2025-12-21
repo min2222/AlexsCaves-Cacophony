@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 @AutoRegisterCapability
 public interface IPaintedCapability extends INBTSerializable<CompoundTag>
 {
-	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "painted");
+	ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "painted");
 
 	void setEntity(Entity entity);
 	

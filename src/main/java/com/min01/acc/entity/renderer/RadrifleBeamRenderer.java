@@ -24,75 +24,75 @@ public class RadrifleBeamRenderer extends EntityRenderer<EntityRadrifleBeam>
 	private final ModelRadrifleBeamEnd beamEnd;
 	private final ModelRadrifleSuperBeam superBeam;
 	
-	public RadrifleBeamRenderer(Context p_174008_)
+	public RadrifleBeamRenderer(Context pContext)
 	{
-		super(p_174008_);
-		this.beamSegment = new ModelRadrifleBeam(p_174008_.bakeLayer(ModelRadrifleBeam.LAYER_LOCATION));
-		this.beamEnd = new ModelRadrifleBeamEnd(p_174008_.bakeLayer(ModelRadrifleBeamEnd.LAYER_LOCATION));
-		this.superBeam = new ModelRadrifleSuperBeam(p_174008_.bakeLayer(ModelRadrifleSuperBeam.LAYER_LOCATION));
+		super(pContext);
+		this.beamSegment = new ModelRadrifleBeam(pContext.bakeLayer(ModelRadrifleBeam.LAYER_LOCATION));
+		this.beamEnd = new ModelRadrifleBeamEnd(pContext.bakeLayer(ModelRadrifleBeamEnd.LAYER_LOCATION));
+		this.superBeam = new ModelRadrifleSuperBeam(pContext.bakeLayer(ModelRadrifleSuperBeam.LAYER_LOCATION));
 	}
 	
 	@Override
-	public void render(EntityRadrifleBeam p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) 
+	public void render(EntityRadrifleBeam pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) 
 	{
-		float tick = p_114485_.tickCount * 0.08F;
+		float tick = pEntity.tickCount * 0.08F;
 		float alpha = Math.max(1.0F - tick, 0.0F);
-		if(p_114485_.isEnd())
+		if(pEntity.isEnd())
 		{
-			p_114488_.pushPose();
-			p_114488_.mulPose(p_114485_.getEndDir().getRotation());
-			p_114488_.scale(-1.0F, -1.0F, 1.0F);
-			p_114488_.scale(1.0F + tick, 1.0F + tick, 1.0F + tick);
-			p_114488_.translate(0.0F, -1.501F, 0.0F);
-			this.beamEnd.renderToBuffer(p_114488_, p_114489_.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
-			this.beamEnd.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, alpha);
-			p_114488_.popPose();
+			pPoseStack.pushPose();
+			pPoseStack.mulPose(pEntity.getEndDir().getRotation());
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.scale(1.0F + tick, 1.0F + tick, 1.0F + tick);
+			pPoseStack.translate(0.0F, -1.501F, 0.0F);
+			this.beamEnd.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
+			this.beamEnd.renderToBuffer(pPoseStack, pBuffer.getBuffer(ACCRenderType.eyesFix(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, alpha);
+			pPoseStack.popPose();
 		}
-		else if(p_114485_.isOvercharge())
+		else if(pEntity.isOvercharge())
 		{
-			float length = (float) p_114485_.position().distanceTo(p_114485_.getEndPos());
-			Vec2 rot = ACCUtil.lookAt(p_114485_.position(), p_114485_.getEndPos());
-			p_114488_.pushPose();
-			p_114488_.mulPose(Axis.YP.rotationDegrees(-rot.y + 180.0F));
-			p_114488_.mulPose(Axis.XP.rotationDegrees(-rot.x));
-			p_114488_.scale(-1.0F, -1.0F, 1.0F);
-			p_114488_.translate(0.0F, -1.5F, -(length / 2.0F));
-			p_114488_.scale(1.0F, 1.0F, length);
-			this.superBeam.renderToBuffer(p_114488_, p_114489_.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
-			this.superBeam.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, alpha);
-			p_114488_.popPose();
+			float length = (float) pEntity.position().distanceTo(pEntity.getEndPos());
+			Vec2 rot = ACCUtil.lookAt(pEntity.position(), pEntity.getEndPos());
+			pPoseStack.pushPose();
+			pPoseStack.mulPose(Axis.YP.rotationDegrees(-rot.y + 180.0F));
+			pPoseStack.mulPose(Axis.XP.rotationDegrees(-rot.x));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, -(length / 2.0F));
+			pPoseStack.scale(1.0F, 1.0F, length);
+			this.superBeam.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
+			this.superBeam.renderToBuffer(pPoseStack, pBuffer.getBuffer(ACCRenderType.eyesFix(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, alpha);
+			pPoseStack.popPose();
 		}
 		else
 		{
-			float length = (float) p_114485_.position().distanceTo(p_114485_.getEndPos());
-			Vec2 rot = ACCUtil.lookAt(p_114485_.position(), p_114485_.getEndPos());
-			p_114488_.pushPose();
-			p_114488_.mulPose(Axis.YP.rotationDegrees(-rot.y + 180.0F));
-			p_114488_.mulPose(Axis.XP.rotationDegrees(-rot.x));
-			p_114488_.scale(-1.0F, -1.0F, 1.0F);
-			p_114488_.translate(0.0F, -1.5F, -(length / 2.0F));
-			p_114488_.scale(1.0F, 1.0F, length);
-			this.beamSegment.renderToBuffer(p_114488_, p_114489_.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
-			this.beamSegment.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, alpha);
-			p_114488_.popPose();
+			float length = (float) pEntity.position().distanceTo(pEntity.getEndPos());
+			Vec2 rot = ACCUtil.lookAt(pEntity.position(), pEntity.getEndPos());
+			pPoseStack.pushPose();
+			pPoseStack.mulPose(Axis.YP.rotationDegrees(-rot.y + 180.0F));
+			pPoseStack.mulPose(Axis.XP.rotationDegrees(-rot.x));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, -(length / 2.0F));
+			pPoseStack.scale(1.0F, 1.0F, length);
+			this.beamSegment.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
+			this.beamSegment.renderToBuffer(pPoseStack, pBuffer.getBuffer(ACCRenderType.eyesFix(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, alpha);
+			pPoseStack.popPose();
 		}
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(EntityRadrifleBeam p_114482_) 
+	public ResourceLocation getTextureLocation(EntityRadrifleBeam pEntity) 
 	{
-		if(p_114482_.isOvercharge())
+		if(pEntity.isOvercharge())
 		{
-			return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_segment_overcharged.png");
+			return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_segment_overcharged.png");
 		}
-		if(p_114482_.isEnd())
+		if(pEntity.isEnd())
 		{
-			if(p_114482_.isGamma())
+			if(pEntity.isGamma())
 			{
-				return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_end_gamma.png");
+				return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_end_gamma.png");
 			}
-			return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_end.png");
+			return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_end.png");
 		}
-		return p_114482_.isGamma() ? new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_segment_gamma.png") : new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_segment.png");
+		return pEntity.isGamma() ? ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_segment_gamma.png") : ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/radrifle_beam_segment.png");
 	}
 }

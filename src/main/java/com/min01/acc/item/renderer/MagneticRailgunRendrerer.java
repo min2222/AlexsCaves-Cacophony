@@ -31,56 +31,56 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 	}
 	
 	@Override
-	public void renderByItem(ItemStack p_108830_, ItemDisplayContext p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) 
+	public void renderByItem(ItemStack pStack, ItemDisplayContext pDisplayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) 
 	{
-		if(p_108830_.getItem() instanceof MagneticRailgunItem)
+		if(pStack.getItem() instanceof MagneticRailgunItem)
 		{
-			p_108832_.pushPose();
-			VertexConsumer vertexconsumer = p_108833_.getBuffer(RenderType.entityCutoutNoCull(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun.png")));
-			p_108832_.scale(-1.0F, -1.0F, 1.0F);
-			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.515F, 0.6F);
-			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			this.model.renderToBuffer(p_108832_, vertexconsumer, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-			p_108832_.popPose();
+			pPoseStack.pushPose();
+			VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.entityCutoutNoCull(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun.png")));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, 0.0F);
+			pPoseStack.translate(-0.5F, -0.515F, 0.6F);
+			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			this.model.renderToBuffer(pPoseStack, vertexConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			pPoseStack.popPose();
 			
-			p_108832_.pushPose();
-			VertexConsumer vertexconsumer2 = p_108833_.getBuffer(RenderType.eyes(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_blue.png")));
-			p_108832_.scale(-1.0F, -1.0F, 1.0F);
-			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.515F, 0.6F);
-			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			pPoseStack.pushPose();
+			VertexConsumer vertexConsumer2 = pBuffer.getBuffer(RenderType.eyes(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_blue.png")));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, 0.0F);
+			pPoseStack.translate(-0.5F, -0.515F, 0.6F);
+			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
 			
-			ItemAnimationCapabilityImpl cap = (ItemAnimationCapabilityImpl) p_108830_.getCapability(ACCCapabilities.ITEM_ANIMATION).orElseGet(() -> new ItemAnimationCapabilityImpl());
-			float ageInTicks = ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime();
+			ItemAnimationCapabilityImpl cap = (ItemAnimationCapabilityImpl) pStack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElseGet(() -> new ItemAnimationCapabilityImpl());
+			float ageInTicks = ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime();
 	        float strength = 0.5F + Mth.clamp(((float) Math.cos((cap.glowingTicks + ageInTicks) * 0.1F)) - 0.5F, -0.5F, 0.5F);
 	        strength += Mth.lerp(ageInTicks, cap.brightnessOld, cap.brightness) * Mth.PI;
 	        strength = Mth.clamp(strength, 0.0F, 1.0F);
-			if(!MagneticRailgunItem.isRepel(p_108830_) || !MagneticRailgunItem.isFlash(p_108830_))
+			if(!MagneticRailgunItem.isRepel(pStack) || !MagneticRailgunItem.isFlash(pStack))
 			{
 				strength = 0.0F;
 			}
-			this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, strength, strength, strength, 1.0F);
-			p_108832_.popPose();
+			this.model.renderToBuffer(pPoseStack, vertexConsumer2, pPackedLight, OverlayTexture.NO_OVERLAY, strength, strength, strength, 1.0F);
+			pPoseStack.popPose();
 			
-			p_108832_.pushPose();
-			VertexConsumer vertexconsumer3 = p_108833_.getBuffer(RenderType.eyes(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_red.png")));
-			p_108832_.scale(-1.0F, -1.0F, 1.0F);
-			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.515F, 0.6F);
-			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			float strength2 = !MagneticRailgunItem.isRepel(p_108830_) && MagneticRailgunItem.isFlash(p_108830_) ? 0.8F : 0.0F;
-			this.model.renderToBuffer(p_108832_, vertexconsumer3, p_108834_, OverlayTexture.NO_OVERLAY, strength2, strength2, strength2, 1.0F);
-			p_108832_.popPose();
+			pPoseStack.pushPose();
+			VertexConsumer vertexConsumer3 = pBuffer.getBuffer(RenderType.eyes(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_red.png")));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, 0.0F);
+			pPoseStack.translate(-0.5F, -0.515F, 0.6F);
+			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			float strength2 = !MagneticRailgunItem.isRepel(pStack) && MagneticRailgunItem.isFlash(pStack) ? 0.8F : 0.0F;
+			this.model.renderToBuffer(pPoseStack, vertexConsumer3, pPackedLight, OverlayTexture.NO_OVERLAY, strength2, strength2, strength2, 1.0F);
+			pPoseStack.popPose();
 			
-			p_108832_.pushPose();
-			VertexConsumer vertexconsumer4 = p_108833_.getBuffer(RenderType.eyes(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_layer.png")));
-			p_108832_.scale(-1.0F, -1.0F, 1.0F);
-			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.515F, 0.6F);
-			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			this.model.renderToBuffer(p_108832_, vertexconsumer4, p_108834_, OverlayTexture.NO_OVERLAY, 0.8F, 0.8F, 0.8F, 1.0F);
-			p_108832_.popPose();
+			pPoseStack.pushPose();
+			VertexConsumer vertexConsumer4 = pBuffer.getBuffer(RenderType.eyes(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/magnetic_railgun_layer.png")));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, 0.0F);
+			pPoseStack.translate(-0.5F, -0.515F, 0.6F);
+			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			this.model.renderToBuffer(pPoseStack, vertexConsumer4, pPackedLight, OverlayTexture.NO_OVERLAY, 0.8F, 0.8F, 0.8F, 1.0F);
+			pPoseStack.popPose();
 		}
 	}
 }

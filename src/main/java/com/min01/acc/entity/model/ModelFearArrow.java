@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModelFearArrow extends EntityModel<EntityFearArrow>
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "arrow_of_fear"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "arrow_of_fear"), "main");
 	private final ModelPart body;
 
 	public ModelFearArrow(ModelPart root)

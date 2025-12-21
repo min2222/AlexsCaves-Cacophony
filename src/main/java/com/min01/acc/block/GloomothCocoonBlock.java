@@ -42,39 +42,39 @@ public class GloomothCocoonBlock extends Block
 	}
 	
 	@Override
-	public void randomTick(BlockState p_222954_, ServerLevel p_222955_, BlockPos p_222956_, RandomSource p_222957_) 
+	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) 
 	{
-		if(!(p_222955_.getBlockState(p_222956_.below()).getBlock() instanceof IceBlock))
+		if(!(pLevel.getBlockState(pPos.below()).getBlock() instanceof IceBlock))
 		{
-			GloomothEntity moth = new GloomothEntity(ACEntityRegistry.GLOOMOTH.get(), p_222955_);
-			moth.setPos(Vec3.atCenterOf(p_222956_.above()));
-			if(p_222954_.hasProperty(WORM_NAME))
+			GloomothEntity moth = new GloomothEntity(ACEntityRegistry.GLOOMOTH.get(), pLevel);
+			moth.setPos(Vec3.atCenterOf(pPos.above()));
+			if(pState.hasProperty(WORM_NAME))
 			{
-				WormName wormName = p_222954_.getValue(WORM_NAME);
+				WormName wormName = pState.getValue(WORM_NAME);
 				if(wormName == WormName.GONDAL)
 				{
 					moth.setCustomName(Component.literal(wormName.name));
 				}
 			}
-			p_222955_.addFreshEntity(moth);
-			p_222955_.destroyBlock(p_222956_, false);
+			pLevel.addFreshEntity(moth);
+			pLevel.destroyBlock(pPos, false);
 		}
 	}
 	
 	@Override
-	public void stepOn(Level p_152431_, BlockPos p_152432_, BlockState p_152433_, Entity p_152434_) 
+	public void stepOn(Level pLevel, BlockPos pPos, BlockState pState, Entity pEntity) 
 	{
-		if(!p_152434_.isSteppingCarefully())
+		if(!pEntity.isSteppingCarefully())
 		{
-			this.destroyAndSpawnWorm(p_152431_, p_152432_, p_152434_, 100);
+			this.destroyAndSpawnWorm(pLevel, pPos, pEntity, 100);
 		}
 	}
 	
 	@Override
-	public void fallOn(Level p_152426_, BlockState p_152427_, BlockPos p_152428_, Entity p_152429_, float p_152430_)
+	public void fallOn(Level pLevel, BlockState pState, BlockPos pPos, Entity pEntity, float pFallDistance)
 	{
-		this.destroyAndSpawnWorm(p_152426_, p_152428_, p_152429_, 3);
-		super.fallOn(p_152426_, p_152427_, p_152428_, p_152429_, p_152430_);
+		this.destroyAndSpawnWorm(pLevel, pPos, pEntity, 3);
+		super.fallOn(pLevel, pState, pPos, pEntity, pFallDistance);
 	}
 	
 	@Override
@@ -116,21 +116,21 @@ public class GloomothCocoonBlock extends Block
 	}
 	
 	@Override
-    public void onPlace(BlockState p_277964_, Level p_277827_, BlockPos p_277526_, BlockState p_277618_, boolean p_277819_) 
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) 
     {
 		int j = HATCH_TIME_TICKS / 3;
-        p_277827_.gameEvent(GameEvent.BLOCK_PLACE, p_277526_, GameEvent.Context.of(p_277964_));
-        p_277827_.scheduleTick(p_277526_, this, j + p_277827_.random.nextInt(RANDOM_HATCH_OFFSET_TICKS));
+		pLevel.gameEvent(GameEvent.BLOCK_PLACE, pPos, GameEvent.Context.of(pState));
+		pLevel.scheduleTick(pPos, this, j + pLevel.random.nextInt(RANDOM_HATCH_OFFSET_TICKS));
     }
 	
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_152043_)
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder)
     {
-		p_152043_.add(WORM_NAME);
+    	pBuilder.add(WORM_NAME);
     }
 	
 	@Override
-	public boolean isPathfindable(BlockState p_60475_, BlockGetter p_60476_, BlockPos p_60477_, PathComputationType p_60478_)
+	public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType)
 	{
 		return false;
 	}

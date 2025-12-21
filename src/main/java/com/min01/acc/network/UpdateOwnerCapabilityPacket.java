@@ -22,47 +22,42 @@ public class UpdateOwnerCapabilityPacket
 		this.ownerUUID = ownerUUID;
 	}
 
-	public UpdateOwnerCapabilityPacket(FriendlyByteBuf buf)
+	public static UpdateOwnerCapabilityPacket read(FriendlyByteBuf buf)
 	{
-		this.entityUUID = buf.readUUID();
-		this.ownerUUID = buf.readOptional(t -> t.readUUID());
+		return new UpdateOwnerCapabilityPacket(buf.readUUID(), buf.readOptional(t -> t.readUUID()));
 	}
 
-	public void encode(FriendlyByteBuf buf)
+	public void write(FriendlyByteBuf buf)
 	{
 		buf.writeUUID(this.entityUUID);
 		buf.writeOptional(this.ownerUUID, (t, u) -> t.writeUUID(u));
 	}
 	
-	public static class Handler 
+	public static boolean handle(UpdateOwnerCapabilityPacket message, Supplier<NetworkEvent.Context> ctx) 
 	{
-		public static boolean onMessage(UpdateOwnerCapabilityPacket message, Supplier<NetworkEvent.Context> ctx) 
+		ctx.get().enqueueWork(() ->
 		{
-			ctx.get().enqueueWork(() ->
+			if(ctx.get().getDirection().getReceptionSide().isClient())
 			{
-				if(ctx.get().getDirection().getReceptionSide().isClient())
+				ACCUtil.getClientLevel(level -> 
 				{
-					ACCUtil.getClientLevel(level -> 
+					Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
+					entity.getCapability(ACCCapabilities.OWNER).ifPresent(cap -> 
 					{
-						Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
-						entity.getCapability(ACCCapabilities.OWNER).ifPresent(cap -> 
+						if(message.ownerUUID.isPresent())
 						{
-							if(message.ownerUUID.isPresent())
-							{
-								Entity owner = ACCUtil.getEntityByUUID(level, message.ownerUUID.get());
-								cap.setOwner(owner);
-							}
-							else
-							{
-								cap.setOwner(null);
-							}
-						});
+							Entity owner = ACCUtil.getEntityByUUID(level, message.ownerUUID.get());
+							cap.setOwner(owner);
+						}
+						else
+						{
+							cap.setOwner(null);
+						}
 					});
-				}
-			});
-
-			ctx.get().setPacketHandled(true);
-			return true;
-		}
+				});
+			}
+		});
+		ctx.get().setPacketHandled(true);
+		return true;
 	}
 }

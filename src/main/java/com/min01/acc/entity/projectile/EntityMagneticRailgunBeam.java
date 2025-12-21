@@ -25,9 +25,9 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 {
 	public static final EntityDataAccessor<Float> BEAM_DAMAGE = SynchedEntityData.defineId(EntityMagneticRailgunBeam.class, EntityDataSerializers.FLOAT);
 	
-	public EntityMagneticRailgunBeam(EntityType<?> p_19870_, Level p_19871_)
+	public EntityMagneticRailgunBeam(EntityType<?> pEntityType, Level pLevel)
 	{
-		super(p_19870_, p_19871_);
+		super(pEntityType, pLevel);
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	        	//TODO custom damage source;
 	        	if(t.hurt(this.damageSources().mobProjectile(this, this.getOwner()), this.getBeamDamage()))
 	        	{
-	        		t.addDeltaMovement(ACCUtil.fromToVector(t.position(), hitPos, 1.5F));
+	        		t.addDeltaMovement(ACCUtil.getVelocityTowards(t.position(), hitPos, 1.5F));
 	        		if(t instanceof ServerPlayer player)
 	        		{
 		    			player.connection.send(new ClientboundSetEntityMotionPacket(t));
@@ -86,17 +86,17 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 	}
 	
 	@Override
-	public void addAdditionalSaveData(CompoundTag p_37265_) 
+	public void addAdditionalSaveData(CompoundTag pCompound) 
 	{
-		super.addAdditionalSaveData(p_37265_);
-		p_37265_.putFloat("BeamDamage", this.getBeamDamage());
+		super.addAdditionalSaveData(pCompound);
+		pCompound.putFloat("BeamDamage", this.getBeamDamage());
 	}
 	
 	@Override
-	public void readAdditionalSaveData(CompoundTag p_37262_)
+	public void readAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.readAdditionalSaveData(p_37262_);
-		this.setBeamDamage(p_37262_.getFloat("BeamDamage"));
+		super.readAdditionalSaveData(pCompound);
+		this.setBeamDamage(pCompound.getFloat("BeamDamage"));
 	}
 	
 	public float getBeamDamage()

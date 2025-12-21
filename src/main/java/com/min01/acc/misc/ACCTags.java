@@ -19,12 +19,12 @@ public class ACCTags
 		
 		private static TagKey<Block> create(String name) 
 		{
-			return TagKey.create(Registries.BLOCK, new ResourceLocation(AlexsCavesCacophony.MODID, name));
+			return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, name));
 		}
 
 	    public static TagKey<Block> registerBlockTag(String name)
 	    {
-	        return TagKey.create(Registries.BLOCK, new ResourceLocation(AlexsCaves.MODID, name));
+	        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(AlexsCaves.MODID, name));
 	    }
 	}
     
@@ -35,7 +35,7 @@ public class ACCTags
 		
 		private static TagKey<Item> create(String name) 
 		{
-			return TagKey.create(Registries.ITEM, new ResourceLocation(AlexsCavesCacophony.MODID, name));
+			return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, name));
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class ACCTags
 		
 		private static TagKey<EntityType<?>> create(String name) 
 		{
-			return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(AlexsCavesCacophony.MODID, name));
+			return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, name));
 		}
 	}
 }

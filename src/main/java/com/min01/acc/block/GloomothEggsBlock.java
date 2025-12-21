@@ -43,59 +43,59 @@ public class GloomothEggsBlock extends MultifaceBlock implements SimpleWaterlogg
 	}
 	
 	@Override
-	public VoxelShape getShape(BlockState p_221199_, BlockGetter p_221200_, BlockPos p_221201_, CollisionContext p_221202_) 
+	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) 
 	{
 		return SHAPE;
 	}
 	
 	@Override
-	public void onPlace(BlockState p_221227_, Level p_221228_, BlockPos p_221229_, BlockState p_221230_, boolean p_221231_)
+	public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston)
 	{
-		p_221228_.scheduleTick(p_221229_, this, p_221228_.random.nextInt(1200, 9600));
+		pLevel.scheduleTick(pPos, this, pLevel.random.nextInt(1200, 9600));
 	}
 	
 	@Override
-	public void randomTick(BlockState p_222954_, ServerLevel p_222955_, BlockPos p_222956_, RandomSource p_222957_) 
+	public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) 
 	{
-		EntityGloomworm worm = new EntityGloomworm(ACCEntities.GLOOMWORM.get(), p_222955_);
-		worm.setPos(Vec3.atCenterOf(p_222956_));
-		p_222955_.addFreshEntity(worm);
-		p_222955_.destroyBlock(p_222956_, false);
+		EntityGloomworm worm = new EntityGloomworm(ACCEntities.GLOOMWORM.get(), pLevel);
+		worm.setPos(Vec3.atCenterOf(pPos));
+		pLevel.addFreshEntity(worm);
+		pLevel.destroyBlock(pPos, false);
 	}
 	
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_153309_)
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder)
 	{
-		super.createBlockStateDefinition(p_153309_);
-		p_153309_.add(WATERLOGGED);
+		super.createBlockStateDefinition(pBuilder);
+		pBuilder.add(WATERLOGGED);
 	}
 	
 	@Override
-	public BlockState updateShape(BlockState p_153302_, Direction p_153303_, BlockState p_153304_, LevelAccessor p_153305_, BlockPos p_153306_, BlockPos p_153307_)
+	public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos)
 	{
-		if(p_153302_.getValue(WATERLOGGED)) 
+		if(pState.getValue(WATERLOGGED)) 
 		{
-			p_153305_.scheduleTick(p_153306_, Fluids.WATER, Fluids.WATER.getTickDelay(p_153305_));
+			pLevel.scheduleTick(pPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
 		}
-		return super.updateShape(p_153302_, p_153303_, p_153304_, p_153305_, p_153306_, p_153307_);
+		return super.updateShape(pState, pDirection, pNeighborState, pLevel, pPos, pNeighborPos);
 	}
 
 	@Override
-	public boolean canBeReplaced(BlockState p_153299_, BlockPlaceContext p_153300_)
+	public boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext)
 	{
-		return !p_153300_.getItemInHand().is(ACCItems.GLOOMOTH_EGGS.get()) || super.canBeReplaced(p_153299_, p_153300_);
+		return !pUseContext.getItemInHand().is(ACCItems.GLOOMOTH_EGGS.get()) || super.canBeReplaced(pState, pUseContext);
 	}
 
 	@Override
-	public FluidState getFluidState(BlockState p_153311_) 
+	public FluidState getFluidState(BlockState pState) 
 	{
-		return p_153311_.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+		return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
 	}
 
 	@Override
-	public boolean propagatesSkylightDown(BlockState p_181225_, BlockGetter p_181226_, BlockPos p_181227_) 
+	public boolean propagatesSkylightDown(BlockState pState, BlockGetter pLevel, BlockPos pPos) 
 	{
-		return p_181225_.getFluidState().isEmpty();
+		return pState.getFluidState().isEmpty();
 	}
 
 	@Override

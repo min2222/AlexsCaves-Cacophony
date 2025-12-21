@@ -31,41 +31,41 @@ public class ThrowableFallingBlockRenderer extends EntityRenderer<EntityThrowabl
 {
 	private final BlockRenderDispatcher dispatcher;
 	
-	public ThrowableFallingBlockRenderer(Context p_174008_)
+	public ThrowableFallingBlockRenderer(Context pContext)
 	{
-		super(p_174008_);
-		this.dispatcher = p_174008_.getBlockRenderDispatcher();
+		super(pContext);
+		this.dispatcher = pContext.getBlockRenderDispatcher();
 	}
 	
 	@Override
-	public void render(EntityThrowableFallingBlock p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_)
+	public void render(EntityThrowableFallingBlock pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight)
 	{
-		BlockState state = p_114485_.getBlockState();
+		BlockState state = pEntity.getBlockState();
 		if(state.getRenderShape() == RenderShape.MODEL) 
 		{
-			Level level = p_114485_.level;
-			if(state != level.getBlockState(p_114485_.blockPosition()) && state.getRenderShape() != RenderShape.INVISIBLE) 
+			Level level = pEntity.level;
+			if(state != level.getBlockState(pEntity.blockPosition()) && state.getRenderShape() != RenderShape.INVISIBLE) 
 			{
-				p_114488_.pushPose();
-				BlockPos pos = BlockPos.containing(p_114485_.getX(), p_114485_.getBoundingBox().maxY, p_114485_.getZ());
-				p_114488_.translate(-0.5D, 0.0D, -0.5D);
+				pPoseStack.pushPose();
+				BlockPos pos = BlockPos.containing(pEntity.getX(), pEntity.getBoundingBox().maxY, pEntity.getZ());
+				pPoseStack.translate(-0.5D, 0.0D, -0.5D);
 				BakedModel model = this.dispatcher.getBlockModel(state);
-				for(RenderType renderType : model.getRenderTypes(state, RandomSource.create(state.getSeed(p_114485_.blockPosition())), net.minecraftforge.client.model.data.ModelData.EMPTY))
+				for(RenderType renderType : model.getRenderTypes(state, RandomSource.create(state.getSeed(pEntity.blockPosition())), net.minecraftforge.client.model.data.ModelData.EMPTY))
 				{
 					renderType = net.minecraftforge.client.RenderTypeHelper.getMovingBlockRenderType(renderType);
-					this.dispatcher.getModelRenderer().tesselateBlock(level, model, state, pos, p_114488_, p_114489_.getBuffer(renderType), false, RandomSource.create(), state.getSeed(p_114485_.blockPosition()), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
+					this.dispatcher.getModelRenderer().tesselateBlock(level, model, state, pos, pPoseStack, pBuffer.getBuffer(renderType), false, RandomSource.create(), state.getSeed(pEntity.blockPosition()), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
 				}
-				p_114488_.popPose();
+				pPoseStack.popPose();
 			}
-			Entity owner = ACCUtil.getOwner(p_114485_);
+			Entity owner = ACCUtil.getOwner(pEntity);
 			if(owner != null)
 			{
-				Vec3 pos = p_114485_.getEyePosition(p_114487_);
-				Vec3 toVec = owner.getEyePosition(p_114487_);
-				toVec = ACCUtil.getLookPos(new Vec2(owner.getViewXRot(p_114487_), owner.getViewYRot(p_114487_)), toVec, 0, 0.5F, 2);
+				Vec3 pos = pEntity.getEyePosition(pPartialTick);
+				Vec3 toVec = owner.getEyePosition(pPartialTick);
+				toVec = ACCUtil.getLookPos(new Vec2(owner.getViewXRot(pPartialTick), owner.getViewYRot(pPartialTick)), toVec, 0, 0.5F, 2);
 				
-				p_114488_.pushPose();
-				p_114488_.translate(-pos.x, -pos.y, -pos.z);
+				pPoseStack.pushPose();
+				pPoseStack.translate(-pos.x, -pos.y, -pos.z);
 				pos = pos.add(0.0F, 0.5F, 0.0F);
 	            int segCount = Mth.clamp((int) pos.distanceTo(toVec) + 2, 3, 30);
 	            float spreadFactor = 0.1F;
@@ -73,21 +73,21 @@ public class ThrowableFallingBlockRenderer extends EntityRenderer<EntityThrowabl
 	            LightningBoltData.BoltRenderInfo boltData1 = new LightningBoltData.BoltRenderInfo(0.0F, spreadFactor, 0.0F, 0.0F, new Vector4f(0.9F, 0.1F, 0.1F, 0.8F), 0.1F);
 	            LightningBoltData bolt1 = new LightningBoltData(boltData, pos, toVec, segCount).size(0.1F).lifespan(1).spawn(LightningBoltData.SpawnFunction.CONSECUTIVE).fade(LightningBoltData.FadeFunction.NONE);
 	            LightningBoltData bolt2 = new LightningBoltData(boltData1, pos, toVec, segCount).size(0.1F).lifespan(1).spawn(LightningBoltData.SpawnFunction.CONSECUTIVE).fade(LightningBoltData.FadeFunction.NONE);
-	            LightningRender lightningRender = ACCClientUtil.getLightingRender(p_114485_.getUUID());
-	            lightningRender.update(1, bolt1, p_114487_);
-	            lightningRender.update(2, bolt2, p_114487_);
-	            lightningRender.render(p_114487_, p_114488_, p_114489_);
-	            p_114488_.popPose();
+	            LightningRender lightningRender = ACCClientUtil.getLightingRender(pEntity.getUUID());
+	            lightningRender.update(1, bolt1, pPartialTick);
+	            lightningRender.update(2, bolt2, pPartialTick);
+	            lightningRender.render(pPartialTick, pPoseStack, pBuffer);
+	            pPoseStack.popPose();
 			}
-			else if(ACCClientUtil.LIGHTNING_MAP.containsKey(p_114485_.getUUID())) 
+			else if(ACCClientUtil.LIGHTNING_MAP.containsKey(pEntity.getUUID())) 
 			{
-				ACCClientUtil.LIGHTNING_MAP.remove(p_114485_.getUUID());
+				ACCClientUtil.LIGHTNING_MAP.remove(pEntity.getUUID());
 	        }
 		}
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(EntityThrowableFallingBlock p_114482_) 
+	public ResourceLocation getTextureLocation(EntityThrowableFallingBlock pEntity) 
 	{
 		return null;
 	}

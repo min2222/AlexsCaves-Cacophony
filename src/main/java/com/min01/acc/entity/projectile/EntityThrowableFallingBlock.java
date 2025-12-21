@@ -30,19 +30,19 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 {
 	public static final EntityDataAccessor<BlockState> BLOCK_STATE = SynchedEntityData.defineId(EntityThrowableFallingBlock.class, EntityDataSerializers.BLOCK_STATE);
 	
-	public EntityThrowableFallingBlock(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_)
+	public EntityThrowableFallingBlock(EntityType<? extends ThrowableProjectile> pEntityType, Level pLevel)
 	{
-		super(p_37466_, p_37467_);
+		super(pEntityType, pLevel);
 	}
 
-	public EntityThrowableFallingBlock(EntityType<? extends ThrowableProjectile> p_37456_, double p_37457_, double p_37458_, double p_37459_, Level p_37460_) 
+	public EntityThrowableFallingBlock(EntityType<? extends ThrowableProjectile> pEntityType, double pX, double pY, double pZ, Level pLevel) 
 	{
-		super(p_37456_, p_37457_, p_37458_, p_37459_, p_37460_);
+		super(pEntityType, pX, pY, pZ, pLevel);
 	}
 
-	public EntityThrowableFallingBlock(EntityType<? extends ThrowableProjectile> p_37462_, LivingEntity p_37463_, Level p_37464_)
+	public EntityThrowableFallingBlock(EntityType<? extends ThrowableProjectile> pEntityType, LivingEntity pShooter, Level pLevel)
 	{
-		super(p_37462_, p_37463_, p_37464_);
+		super(pEntityType, pShooter, pLevel);
 	}
 
 	@Override
@@ -52,9 +52,9 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void onHitBlock(BlockHitResult p_37258_)
+	protected void onHitBlock(BlockHitResult pResult)
 	{
-		super.onHitBlock(p_37258_);
+		super.onHitBlock(pResult);
 		BlockState state = this.getBlockState();
 		if(!state.isAir() && !(state.getBlock() instanceof TntBlock) && !(state.getBlock() instanceof NuclearBombBlock))
 		{
@@ -68,10 +68,10 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void onHit(HitResult p_37260_)
+	protected void onHit(HitResult pResult)
 	{
-		super.onHit(p_37260_);
-		Vec3 pos = p_37260_.getLocation();
+		super.onHit(pResult);
+		Vec3 pos = pResult.getLocation();
 		BlockState state = this.getBlockState();
 		if(state.getBlock() instanceof TntBlock)
 		{
@@ -90,13 +90,13 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void onHitEntity(EntityHitResult p_37259_) 
+	protected void onHitEntity(EntityHitResult pResult) 
 	{
-		super.onHitEntity(p_37259_);
+		super.onHitEntity(pResult);
 		BlockState state = this.getBlockState();
 		if(!state.isAir() && !(state.getBlock() instanceof TntBlock) && !(state.getBlock() instanceof NuclearBombBlock))
 		{
-			Entity entity = p_37259_.getEntity();
+			Entity entity = pResult.getEntity();
 			if(entity.hurt(this.damageSources().thrown(this, this.getOwner()), 6.0F))
 			{
 				this.level.broadcastEntityEvent(this, (byte) 99);
@@ -107,10 +107,10 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 	}
 	
 	@Override
-	public void handleEntityEvent(byte p_19882_) 
+	public void handleEntityEvent(byte pId) 
 	{
-		super.handleEntityEvent(p_19882_);
-		if(p_19882_ == 99)
+		super.handleEntityEvent(pId);
+		if(pId == 99)
 		{
 			for(int i = 0; i < 60; ++i) 
 			{
@@ -150,17 +150,17 @@ public class EntityThrowableFallingBlock extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void addAdditionalSaveData(CompoundTag p_37265_)
+	protected void addAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.addAdditionalSaveData(p_37265_);
-		p_37265_.put("BlockState", NbtUtils.writeBlockState(this.getBlockState()));
+		super.addAdditionalSaveData(pCompound);
+		pCompound.put("BlockState", NbtUtils.writeBlockState(this.getBlockState()));
 	}
 	
 	@Override
-	protected void readAdditionalSaveData(CompoundTag p_37262_)
+	protected void readAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.readAdditionalSaveData(p_37262_);
-		this.setBlockState(NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), p_37262_.getCompound("BlockState")));
+		super.readAdditionalSaveData(pCompound);
+		this.setBlockState(NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), pCompound.getCompound("BlockState")));
 	}
 	
 	public void setBlockState(BlockState state)

@@ -45,9 +45,9 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 	public static final EntityDataAccessor<Direction> END_DIR = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.DIRECTION);
 	public static final EntityDataAccessor<Vec3> END_POS = SynchedEntityData.defineId(EntityRadrifleBeam.class, ACCEntityDataSerializers.VEC3.get());
 	
-	public EntityRadrifleBeam(EntityType<?> p_19870_, Level p_19871_)
+	public EntityRadrifleBeam(EntityType<?> pEntityType, Level pLevel)
 	{
-		super(p_19870_, p_19871_);
+		super(pEntityType, pLevel);
 		this.noCulling = true;
 	}
 	
@@ -225,20 +225,20 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 	
 	public Vec3 getMovement()
 	{
-		return ACCUtil.fromToVector(this.position(), this.getEndPos(), 10.0F);
+		return ACCUtil.getVelocityTowards(this.position(), this.getEndPos(), 10.0F);
 	}
 	
 	@Override
-	public void addAdditionalSaveData(CompoundTag p_37265_) 
+	public void addAdditionalSaveData(CompoundTag pCompound) 
 	{
-		super.addAdditionalSaveData(p_37265_);
-		p_37265_.putBoolean("isGamma", this.isGamma());
-		p_37265_.putBoolean("isEnd", this.isEnd());
-		p_37265_.putBoolean("isRicochet", this.isRicochet());
-		p_37265_.putBoolean("isOvercharge", this.isOvercharge());
-		p_37265_.putInt("Bounce", this.getBounce());
-		p_37265_.putInt("EndDir", this.getEndDir().ordinal());
-		this.writeVec3(this.getEndPos(), "EndPos", p_37265_);
+		super.addAdditionalSaveData(pCompound);
+		pCompound.putBoolean("isGamma", this.isGamma());
+		pCompound.putBoolean("isEnd", this.isEnd());
+		pCompound.putBoolean("isRicochet", this.isRicochet());
+		pCompound.putBoolean("isOvercharge", this.isOvercharge());
+		pCompound.putInt("Bounce", this.getBounce());
+		pCompound.putInt("EndDir", this.getEndDir().ordinal());
+		this.writeVec3(this.getEndPos(), "EndPos", pCompound);
 	}
 	
 	public void writeVec3(Vec3 vec3, String name, CompoundTag nbt)
@@ -251,16 +251,16 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 	}
 	
 	@Override
-	public void readAdditionalSaveData(CompoundTag p_37262_)
+	public void readAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.readAdditionalSaveData(p_37262_);
-		this.setGamma(p_37262_.getBoolean("isGamma"));
-		this.setEnd(p_37262_.getBoolean("isEnd"));
-		this.setRicochet(p_37262_.getBoolean("isRicochet"));
-		this.setOvercharge(p_37262_.getBoolean("isOvercharge"));
-		this.setBounce(p_37262_.getInt("Bounce"));
-		this.setEndDir(Direction.values()[p_37262_.getInt("EndDir")]);
-		this.setEndPos(this.readVec3(p_37262_, "EndPos"));
+		super.readAdditionalSaveData(pCompound);
+		this.setGamma(pCompound.getBoolean("isGamma"));
+		this.setEnd(pCompound.getBoolean("isEnd"));
+		this.setRicochet(pCompound.getBoolean("isRicochet"));
+		this.setOvercharge(pCompound.getBoolean("isOvercharge"));
+		this.setBounce(pCompound.getInt("Bounce"));
+		this.setEndDir(Direction.values()[pCompound.getInt("EndDir")]);
+		this.setEndPos(this.readVec3(pCompound, "EndPos"));
 	}
 	
 	public Vec3 readVec3(CompoundTag nbt, String name)

@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModelNeodymiumShackle extends HierarchicalModel<EntityNeodymiumShackle>
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "neodymium_shackle"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "neodymium_shackle"), "main");
 	private final ModelPart root;
 
 	public ModelNeodymiumShackle(ModelPart root)

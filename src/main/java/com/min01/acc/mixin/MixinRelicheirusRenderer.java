@@ -22,7 +22,7 @@ public class MixinRelicheirusRenderer
     	{
     		if(t.isPainted())
     		{
-        		cir.setReturnValue(new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/relicheirus_painted.png"));
+        		cir.setReturnValue(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/relicheirus_painted.png"));
     		}
     	});
     }

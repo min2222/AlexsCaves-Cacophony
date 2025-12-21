@@ -66,20 +66,20 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	}
 	
 	@Override
-	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) 
+	public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) 
 	{
-		int charge = ACCUtil.getCharge(p_41404_);
-		if(ACCUtil.getOwner(p_41406_) != null && p_41406_ instanceof Player player && p_41408_)
+		int charge = ACCUtil.getCharge(pStack);
+		if(ACCUtil.getOwner(pEntity) != null && pEntity instanceof Player player && pIsSelected)
 		{
 			if(!player.getAbilities().instabuild)
 			{
 				if(charge <= MAX_CHARGE - 2)
 				{
-					ACCUtil.setCharge(p_41404_, Math.min(charge + 2, MAX_CHARGE));
+					ACCUtil.setCharge(pStack, Math.min(charge + 2, MAX_CHARGE));
 				}
 				else
 				{
-					release(player, ACCUtil.getOwner(player), p_41404_);
+					release(player, ACCUtil.getOwner(player), pStack);
 				}
 			}
 		}
@@ -186,13 +186,13 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	}
 	
 	@Override
-	public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) 
+	public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) 
 	{
-		if(p_41428_.isClientSide && this.getUseDuration(p_41430_) - p_41431_ == 32 + 20)
+		if(pLevel.isClientSide && this.getUseDuration(pStack) - pRemainingUseDuration == 32 + 20)
 		{
-			setFlash(p_41430_, true);
-			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(p_41429_.getXRot(), p_41429_.getYHeadRot()), p_41429_.getEyePosition(), -0.05F, -0.05F, 0.15F);
-			p_41428_.addAlwaysVisibleParticle(ACCParticles.RAILGUN_CHARGE.get(), lookPos.x, lookPos.y, lookPos.z, 0, 0, 0);
+			setFlash(pStack, true);
+			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(pLivingEntity.getXRot(), pLivingEntity.getYHeadRot()), pLivingEntity.getEyePosition(), -0.05F, -0.05F, 0.15F);
+			pLevel.addAlwaysVisibleParticle(ACCParticles.RAILGUN_CHARGE.get(), lookPos.x, lookPos.y, lookPos.z, 0, 0, 0);
 		}
 	}
 	
@@ -203,38 +203,38 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 	}
 	
 	@Override
-	public void releaseUsing(ItemStack stack, Level p_41413_, LivingEntity entity, int p_41415_)
+	public void releaseUsing(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity, int pTimeCharged)
 	{
 		//32 tick = animation length, 20 tick actual charging time
-		if(this.getUseDuration(stack) - p_41415_ >= 32 + 20)
+		if(this.getUseDuration(pStack) - pTimeCharged >= 32 + 20)
 		{
-			int charge = ACCUtil.getCharge(stack);
+			int charge = ACCUtil.getCharge(pStack);
 			if(charge <= MAX_CHARGE - 250)
 			{
-				EntityMagneticRailgunBeam beam = new EntityMagneticRailgunBeam(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), entity.level);
-				Vec3 lookPos = ACCUtil.getLookPos(new Vec2(entity.getXRot(), entity.getYHeadRot()), entity.getEyePosition(), -0.25F, -0.5F, 2);
+				EntityMagneticRailgunBeam beam = new EntityMagneticRailgunBeam(ACCEntities.MAGNETIC_RAILGUN_BEAM.get(), pLivingEntity.level);
+				Vec3 lookPos = ACCUtil.getLookPos(new Vec2(pLivingEntity.getXRot(), pLivingEntity.getYHeadRot()), pLivingEntity.getEyePosition(), -0.25F, -0.5F, 2);
 				beam.setPos(lookPos);
-				beam.setOwner(entity);
-				beam.setXRot(entity.getXRot());
-				beam.setYRot(entity.getYHeadRot());
+				beam.setOwner(pLivingEntity);
+				beam.setXRot(pLivingEntity.getXRot());
+				beam.setYRot(pLivingEntity.getYHeadRot());
 				beam.setBeamDamage(10.0F);
-				entity.level.addFreshEntity(beam);
-				if(entity instanceof Player player && !player.getAbilities().instabuild)
+				pLivingEntity.level.addFreshEntity(beam);
+				if(pLivingEntity instanceof Player player && !player.getAbilities().instabuild)
 				{
-					player.getCooldowns().addCooldown(stack.getItem(), 32);
-			        ACCUtil.setCharge(stack, Math.min(charge + 250, MAX_CHARGE));
+					player.getCooldowns().addCooldown(pStack.getItem(), 32);
+			        ACCUtil.setCharge(pStack, Math.min(charge + 250, MAX_CHARGE));
 				}
-		    	ACCUtil.setPlayerAnimationState(entity, 1);
-		    	ACCUtil.setPlayerAnimationTick(entity, 30);
-		    	ACCUtil.setItemAnimationState(stack, 2);
-		    	ACCUtil.setItemAnimationTick(stack, 30);
+		    	ACCUtil.setPlayerAnimationState(pLivingEntity, 1);
+		    	ACCUtil.setPlayerAnimationTick(pLivingEntity, 30);
+		    	ACCUtil.setItemAnimationState(pStack, 2);
+		    	ACCUtil.setItemAnimationTick(pStack, 30);
 			}
 		}
 		else
 		{
-	    	ACCUtil.setPlayerAnimationState(entity, 0);
+	    	ACCUtil.setPlayerAnimationState(pLivingEntity, 0);
 		}
-		setFlash(stack, false);
+		setFlash(pStack, false);
 	}
 	
 	@Override
@@ -279,7 +279,7 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
     }
     
 	@Override
-	public int getUseDuration(ItemStack p_41454_) 
+	public int getUseDuration(ItemStack pStack) 
 	{
 		return 72000;
 	}

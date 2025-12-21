@@ -19,34 +19,34 @@ public class FearArrowRenderer extends EntityRenderer<EntityFearArrow>
 {
 	private final ModelFearArrow model;
 	
-	public FearArrowRenderer(Context p_174008_) 
+	public FearArrowRenderer(Context pContext) 
 	{
-		super(p_174008_);
-		this.model = new ModelFearArrow(p_174008_.bakeLayer(ModelFearArrow.LAYER_LOCATION));
+		super(pContext);
+		this.model = new ModelFearArrow(pContext.bakeLayer(ModelFearArrow.LAYER_LOCATION));
 	}
 	
 	@Override
-	public void render(EntityFearArrow p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) 
+	public void render(EntityFearArrow pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) 
 	{
-		p_114488_.pushPose();
-		p_114488_.mulPose(Axis.YP.rotationDegrees(Mth.lerp(p_114487_, p_114485_.yRotO, p_114485_.getYRot())));
-        p_114488_.mulPose(Axis.XN.rotationDegrees(Mth.lerp(p_114487_, p_114485_.xRotO, p_114485_.getXRot())));
-        p_114488_.translate(0.0F, 1.5F, 0.0F);
-        p_114488_.mulPose(Axis.XP.rotationDegrees(180.0F));
-		float f9 = (float)p_114485_.shakeTime - p_114487_;
+		pPoseStack.pushPose();
+		pPoseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTick, pEntity.yRotO, pEntity.getYRot())));
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(Mth.lerp(pPartialTick, pEntity.xRotO, pEntity.getXRot())));
+        pPoseStack.translate(0.0F, 1.5F, 0.0F);
+        pPoseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+		float f9 = (float)pEntity.shakeTime - pPartialTick;
 		if(f9 > 0.0F)
 		{
 			float f10 = -Mth.sin(f9 * 3.0F) * f9;
-			p_114488_.mulPose(Axis.ZP.rotationDegrees(f10));
+			pPoseStack.mulPose(Axis.ZP.rotationDegrees(f10));
 		}
-		VertexConsumer consumer = p_114489_.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(p_114485_)));
-		this.model.renderToBuffer(p_114488_, consumer, p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-		p_114488_.popPose();
+		VertexConsumer consumer = pBuffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(pEntity)));
+		this.model.renderToBuffer(pPoseStack, consumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		pPoseStack.popPose();
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(EntityFearArrow p_114482_)
+	public ResourceLocation getTextureLocation(EntityFearArrow pEntity)
 	{
-		return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/arrow_of_fear.png");
+		return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/arrow_of_fear.png");
 	}
 }

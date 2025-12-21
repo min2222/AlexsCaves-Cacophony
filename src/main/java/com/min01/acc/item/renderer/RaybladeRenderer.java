@@ -29,37 +29,37 @@ public class RaybladeRenderer extends BlockEntityWithoutLevelRenderer
 	}
 	
 	@Override
-	public void renderByItem(ItemStack p_108830_, ItemDisplayContext p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) 
+	public void renderByItem(ItemStack pStack, ItemDisplayContext pDisplayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) 
 	{
-		if(p_108830_.getItem() instanceof RaybladeItem)
+		if(pStack.getItem() instanceof RaybladeItem)
 		{
-			p_108832_.pushPose();
-			VertexConsumer vertexconsumer = p_108833_.getBuffer(RenderType.entityCutoutNoCull(this.getTexture(p_108830_)));
-			p_108832_.scale(-1.0F, -1.0F, 1.0F);
-			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.8F, 0.5F);
-			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			this.model.renderToBuffer(p_108832_, vertexconsumer, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-			p_108832_.popPose();
+			pPoseStack.pushPose();
+			VertexConsumer vertexConsumer = pBuffer.getBuffer(RenderType.entityCutoutNoCull(this.getTexture(pStack)));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, 0.0F);
+			pPoseStack.translate(-0.5F, -0.8F, 0.5F);
+			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			this.model.renderToBuffer(pPoseStack, vertexConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			pPoseStack.popPose();
 			
-			p_108832_.pushPose();
-			VertexConsumer vertexconsumer2 = p_108833_.getBuffer(ACCRenderType.eyesFix(this.getLayerTexture(p_108830_)));
-			p_108832_.scale(-1.0F, -1.0F, 1.0F);
-			p_108832_.translate(0.0F, -1.5F, 0.0F);
-			p_108832_.translate(-0.5F, -0.8F, 0.5F);
-			this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
-			p_108832_.popPose();
+			pPoseStack.pushPose();
+			VertexConsumer vertexConsumer2 = pBuffer.getBuffer(ACCRenderType.eyesFix(this.getLayerTexture(pStack)));
+			pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+			pPoseStack.translate(0.0F, -1.5F, 0.0F);
+			pPoseStack.translate(-0.5F, -0.8F, 0.5F);
+			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+			this.model.renderToBuffer(pPoseStack, vertexConsumer2, pPackedLight, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
+			pPoseStack.popPose();
 		}
 	}
 	
 	public ResourceLocation getLayerTexture(ItemStack stack)
 	{
-		return new ResourceLocation(String.format("%s:textures/item/rayblade_layer%d.png", AlexsCavesCacophony.MODID, ACCUtil.getItemTickCount(stack) % 20));
+		return ResourceLocation.parse(String.format("%s:textures/item/rayblade_layer%d.png", AlexsCavesCacophony.MODID, ACCUtil.getItemTickCount(stack) % 20));
 	}
 	
 	public ResourceLocation getTexture(ItemStack stack)
 	{
-		return new ResourceLocation(String.format("%s:textures/item/rayblade%d.png", AlexsCavesCacophony.MODID, ACCUtil.getItemTickCount(stack) % 20));
+		return ResourceLocation.parse(String.format("%s:textures/item/rayblade%d.png", AlexsCavesCacophony.MODID, ACCUtil.getItemTickCount(stack) % 20));
 	}
 }

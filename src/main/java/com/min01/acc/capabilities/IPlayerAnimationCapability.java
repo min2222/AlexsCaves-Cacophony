@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 @AutoRegisterCapability
 public interface IPlayerAnimationCapability extends INBTSerializable<CompoundTag>
 {
-	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "player_animation");
+	ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "player_animation");
 	
 	void tick(LivingEntity entity);
 	

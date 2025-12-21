@@ -70,21 +70,21 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_)
+	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand)
 	{
-		ItemStack stack = p_41433_.getItemInHand(p_41434_);
+		ItemStack stack = pPlayer.getItemInHand(pUsedHand);
 		int charge = ACCUtil.getCharge(stack);
         if(charge < MAX_CHARGE)
         {
-			p_41433_.startUsingItem(p_41434_);
+        	pPlayer.startUsingItem(pUsedHand);
         }
 		return InteractionResultHolder.pass(stack);
 	}
 	
 	@Override
-	public void releaseUsing(ItemStack p_41412_, Level p_41413_, LivingEntity p_41414_, int p_41415_) 
+	public void releaseUsing(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity, int pTimeCharged) 
 	{
-		if(p_41414_ instanceof Player player)
+		if(pLivingEntity instanceof Player player)
 		{
 	        ItemStack ammo = this.findAmmo(player);
 	        if(!ammo.isEmpty())
@@ -93,14 +93,14 @@ public class RaybladeItem extends SwordItem implements IAnimatableItem
 	        	{
 	                ammo.shrink(1);
 	        	}
-	            ACCUtil.setCharge(p_41412_, 0);
+	            ACCUtil.setCharge(pStack, 0);
 	        }
 		}
-		ACCUtil.setPlayerAnimationState(p_41414_, 1);
-		ACCUtil.setPlayerAnimationTick(p_41414_, 30);
-		ACCUtil.setItemAnimationState(p_41412_, 1);
-		ACCUtil.setItemAnimationTick(p_41412_, 30);
-		ACCUtil.setVisible(p_41412_, true);
+		ACCUtil.setPlayerAnimationState(pLivingEntity, 1);
+		ACCUtil.setPlayerAnimationTick(pLivingEntity, 30);
+		ACCUtil.setItemAnimationState(pStack, 1);
+		ACCUtil.setItemAnimationTick(pStack, 30);
+		ACCUtil.setVisible(pStack, true);
 	}
 	
 	@Override

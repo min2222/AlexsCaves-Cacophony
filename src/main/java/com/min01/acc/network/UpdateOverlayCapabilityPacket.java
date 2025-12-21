@@ -22,42 +22,37 @@ public class UpdateOverlayCapabilityPacket
 		this.progressMap = progressMap;
 	}
 
-	public UpdateOverlayCapabilityPacket(FriendlyByteBuf buf)
+	public static UpdateOverlayCapabilityPacket read(FriendlyByteBuf buf)
 	{
-		this.entityUUID = buf.readUUID();
-		this.progressMap = buf.readMap(t -> t.readUtf(), t -> t.readInt());
+		return new UpdateOverlayCapabilityPacket(buf.readUUID(), buf.readMap(t -> t.readUtf(), t -> t.readInt()));
 	}
 
-	public void encode(FriendlyByteBuf buf)
+	public void write(FriendlyByteBuf buf)
 	{
 		buf.writeUUID(this.entityUUID);
 		buf.writeMap(this.progressMap, (t, u) -> t.writeUtf(u), (t, u) -> t.writeInt(u));
 	}
 	
-	public static class Handler 
+	public static boolean handle(UpdateOverlayCapabilityPacket message, Supplier<NetworkEvent.Context> ctx) 
 	{
-		public static boolean onMessage(UpdateOverlayCapabilityPacket message, Supplier<NetworkEvent.Context> ctx) 
+		ctx.get().enqueueWork(() ->
 		{
-			ctx.get().enqueueWork(() ->
+			if(ctx.get().getDirection().getReceptionSide().isClient())
 			{
-				if(ctx.get().getDirection().getReceptionSide().isClient())
+				ACCUtil.getClientLevel(level -> 
 				{
-					ACCUtil.getClientLevel(level -> 
+					Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
+					entity.getCapability(ACCCapabilities.OVERLAY).ifPresent(cap -> 
 					{
-						Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
-						entity.getCapability(ACCCapabilities.OVERLAY).ifPresent(cap -> 
+						for(Map.Entry<String, Integer> entry : message.progressMap.entrySet())
 						{
-							for(Map.Entry<String, Integer> entry : message.progressMap.entrySet())
-							{
-								cap.setOverlayProgress(entry.getKey(), entry.getValue());
-							}
-						});
+							cap.setOverlayProgress(entry.getKey(), entry.getValue());
+						}
 					});
-				}
-			});
-
-			ctx.get().setPacketHandled(true);
-			return true;
-		}
+				});
+			}
+		});
+		ctx.get().setPacketHandled(true);
+		return true;
 	}
 }

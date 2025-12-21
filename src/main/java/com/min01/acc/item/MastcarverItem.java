@@ -31,11 +31,11 @@ public class MastcarverItem extends SwordItem
 	}
 	
 	@Override
-	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
+	public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) 
 	{
-		if(getStackedDmg(p_41404_) <= 0.0F)
+		if(getStackedDmg(pStack) <= 0.0F)
 		{
-			setStackedDmg(p_41404_, 6.0F);
+			setStackedDmg(pStack, 6.0F);
 		}
 	}
 	

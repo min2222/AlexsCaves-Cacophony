@@ -67,28 +67,28 @@ public class RadrifleItem extends Item implements IAnimatableItem
 	}
 	
 	@Override
-	public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_)
+	public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) 
 	{
-        int charge = ACCUtil.getCharge(p_41404_);
-		float overheat = ACCUtil.getOverlayProgress("Overheat", p_41406_);
+        int charge = ACCUtil.getCharge(pStack);
+		float overheat = ACCUtil.getOverlayProgress("Overheat", pEntity);
 		if(overheat >= 1000)
 		{
-			ACCUtil.setCharge(p_41404_, Math.min(charge + 500, MAX_CHARGE));
-			ACCUtil.setItemAnimationState(p_41404_, 1);
-			ACCUtil.setItemAnimationTick(p_41404_, 80);
-        	ACCUtil.setPlayerAnimationState(p_41406_, 4);
-        	ACCUtil.setPlayerAnimationTick(p_41406_, 80);
-			ACCUtil.setOverlayProgress("Overheat", 0, p_41406_);
+			ACCUtil.setCharge(pStack, Math.min(charge + 500, MAX_CHARGE));
+			ACCUtil.setItemAnimationState(pStack, 1);
+			ACCUtil.setItemAnimationTick(pStack, 80);
+        	ACCUtil.setPlayerAnimationState(pEntity, 4);
+        	ACCUtil.setPlayerAnimationTick(pEntity, 80);
+			ACCUtil.setOverlayProgress("Overheat", 0, pEntity);
 		}
-        if(p_41404_.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
+        if(pStack.getEnchantmentLevel(ACEnchantmentRegistry.SOLAR.get()) > 0) 
         {
-            if(charge > 0 && p_41405_.random.nextFloat() < 0.02F)
+            if(charge > 0 && pLevel.random.nextFloat() < 0.02F)
             {
-                BlockPos playerPos = p_41406_.blockPosition().above();
-                float timeOfDay = p_41405_.getTimeOfDay(1.0F);
-                if(p_41405_.canSeeSky(playerPos) && p_41405_.isDay() && !p_41405_.dimensionType().hasFixedTime() && (timeOfDay < 0.259 || timeOfDay > 0.74))
+                BlockPos playerPos = pEntity.blockPosition().above();
+                float timeOfDay = pLevel.getTimeOfDay(1.0F);
+                if(pLevel.canSeeSky(playerPos) && pLevel.isDay() && !pLevel.dimensionType().hasFixedTime() && (timeOfDay < 0.259 || timeOfDay > 0.74))
                 {
-                	ACCUtil.setCharge(p_41404_, charge - 1);
+                	ACCUtil.setCharge(pStack, charge - 1);
                 }
             }
         }
@@ -154,7 +154,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
                 	Vec3 startPos = ACCUtil.getLookPos(headRotation, player.getEyePosition(), -0.25F, -0.15, 1.0F);
                 	Vec3 endPos = ACCUtil.getLookPos(isPulse ? headRotation2 : headRotation, startPos, 0, 0, 20.0F);
                 	HitResult hitResult = player.level.clip(new ClipContext(startPos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-    				EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, startPos, endPos, player.getBoundingBox().expandTowards(ACCUtil.fromToVector(startPos, hitResult.getLocation(), 5.0F)).inflate(1.0D), Entity::canBeHitByProjectile);
+    				EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, startPos, endPos, player.getBoundingBox().expandTowards(ACCUtil.getVelocityTowards(startPos, hitResult.getLocation(), 5.0F)).inflate(1.0D), Entity::canBeHitByProjectile);
             		Direction direction = Direction.DOWN;
             		if(hitResult instanceof BlockHitResult blockHit)
             		{

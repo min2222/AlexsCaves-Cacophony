@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 @AutoRegisterCapability
 public interface IOwnerCapability extends INBTSerializable<CompoundTag>
 {
-	ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "owner");
+	ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "owner");
 
 	void setOwner(Entity entity);
 	

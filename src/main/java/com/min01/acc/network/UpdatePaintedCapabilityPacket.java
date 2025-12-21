@@ -21,39 +21,34 @@ public class UpdatePaintedCapabilityPacket
 		this.isPainted = isPainted;
 	}
 
-	public UpdatePaintedCapabilityPacket(FriendlyByteBuf buf)
+	public static UpdatePaintedCapabilityPacket read(FriendlyByteBuf buf)
 	{
-		this.entityUUID = buf.readUUID();
-		this.isPainted = buf.readBoolean();
+		return new UpdatePaintedCapabilityPacket(buf.readUUID(), buf.readBoolean());
 	}
 
-	public void encode(FriendlyByteBuf buf)
+	public void write(FriendlyByteBuf buf)
 	{
 		buf.writeUUID(this.entityUUID);
 		buf.writeBoolean(this.isPainted);
 	}
 	
-	public static class Handler 
+	public static boolean handle(UpdatePaintedCapabilityPacket message, Supplier<NetworkEvent.Context> ctx) 
 	{
-		public static boolean onMessage(UpdatePaintedCapabilityPacket message, Supplier<NetworkEvent.Context> ctx) 
+		ctx.get().enqueueWork(() ->
 		{
-			ctx.get().enqueueWork(() ->
+			if(ctx.get().getDirection().getReceptionSide().isClient())
 			{
-				if(ctx.get().getDirection().getReceptionSide().isClient())
+				ACCUtil.getClientLevel(level -> 
 				{
-					ACCUtil.getClientLevel(level -> 
+					Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
+					entity.getCapability(ACCCapabilities.PAINTED).ifPresent(cap -> 
 					{
-						Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
-						entity.getCapability(ACCCapabilities.PAINTED).ifPresent(cap -> 
-						{
-							cap.setPainted(message.isPainted);
-						});
+						cap.setPainted(message.isPainted);
 					});
-				}
-			});
-
-			ctx.get().setPacketHandled(true);
-			return true;
-		}
+				});
+			}
+		});
+		ctx.get().setPacketHandled(true);
+		return true;
 	}
 }

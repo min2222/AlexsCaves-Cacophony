@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "ovivenator"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "ovivenator"), "main");
 	private final ModelPart root;
 
 	public ModelOvivenator(ModelPart root)

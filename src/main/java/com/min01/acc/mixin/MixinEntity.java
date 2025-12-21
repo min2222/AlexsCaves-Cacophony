@@ -19,7 +19,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
-@Mixin(Entity.class)
+@Mixin(value = Entity.class, priority = -10000)
 public class MixinEntity
 {
     @Inject(at = @At("TAIL"), method = "tick")

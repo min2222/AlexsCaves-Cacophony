@@ -14,14 +14,13 @@ public class ACCEntityDataSerializers
 {
 	public static final DeferredRegister<EntityDataSerializer<?>> SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, AlexsCavesCacophony.MODID);
 	
-	public static final RegistryObject<EntityDataSerializer<Vec3>> VEC3 = SERIALIZERS.register("serializer_vec3", () -> EntityDataSerializer.simple(ACCEntityDataSerializers::writeVec3, ACCEntityDataSerializers::readVec3));
-	public static final RegistryObject<EntityDataSerializer<Double>> DOUBLE = SERIALIZERS.register("serializer_double", () -> EntityDataSerializer.simple((buf, value) -> buf.writeDouble(value), (buf) -> buf.readDouble()));
+	public static final RegistryObject<EntityDataSerializer<Vec3>> VEC3 = SERIALIZERS.register("vec3", () -> EntityDataSerializer.simple(ACCEntityDataSerializers::writeVec3, ACCEntityDataSerializers::readVec3));
 	
-	public static ByteBuf writeVec3(FriendlyByteBuf buf, Vec3 vec)
+	public static ByteBuf writeVec3(FriendlyByteBuf buf, Vec3 vec3)
 	{
-		buf.writeDouble(vec.x);
-		buf.writeDouble(vec.y);
-		buf.writeDouble(vec.z);
+		buf.writeDouble(vec3.x);
+		buf.writeDouble(vec3.y);
+		buf.writeDouble(vec3.z);
 		return buf;
 	}
 	

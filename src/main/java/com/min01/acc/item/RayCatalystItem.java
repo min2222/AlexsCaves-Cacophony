@@ -21,16 +21,16 @@ public class RayCatalystItem extends RadioactiveItem
 	}
 	
 	@Override
-	public InteractionResult interactLivingEntity(ItemStack p_41398_, Player p_41399_, LivingEntity p_41400_, InteractionHand p_41401_)
+	public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand)
 	{
-		if(p_41400_ instanceof TremorzillaEntity zilla)
+		if(pInteractionTarget instanceof TremorzillaEntity zilla)
 		{
 			if(zilla.isTame())
 			{
-				if(!p_41399_.getAbilities().instabuild)
+				if(!pPlayer.getAbilities().instabuild)
 				{
-					p_41398_.shrink(1);
-					p_41399_.getCooldowns().addCooldown(p_41398_.getItem(), 100);
+					pStack.shrink(1);
+					pPlayer.getCooldowns().addCooldown(pStack.getItem(), 100);
 				}
 				if(!zilla.isFiring())
 				{
@@ -49,6 +49,6 @@ public class RayCatalystItem extends RadioactiveItem
 	            return InteractionResult.SUCCESS;
 			}
 		}
-		return super.interactLivingEntity(p_41398_, p_41399_, p_41400_, p_41401_);
+		return super.interactLivingEntity(pStack, pPlayer, pInteractionTarget, pUsedHand);
 	}
 }

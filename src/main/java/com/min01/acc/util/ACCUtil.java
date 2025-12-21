@@ -64,6 +64,7 @@ public class ACCUtil
             Vec3 vec3 = LandRandomPos.getPosAway(mob, 16, 7, pos);
             if(vec3 != null)
             {
+            	mob.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, 2.0F);
                 mob.getNavigation().moveTo(vec3.x, vec3.y, vec3.z, 2.0F);
             }
     	}
@@ -87,26 +88,26 @@ public class ACCUtil
 		return cap.getOwner(entity);
 	}
     
-    public static void shoot(Entity projectile, double p_37266_, double p_37267_, double p_37268_, float p_37269_, float p_37270_) 
+    public static void shoot(Entity projectile, double pX, double pY, double pZ, float pVelocity, float pInaccuracy) 
     {
     	RandomSource random = projectile.level.random;
-    	Vec3 vec3 = (new Vec3(p_37266_, p_37267_, p_37268_)).normalize().add(random.triangle(0.0D, 0.0172275D * (double)p_37270_), random.triangle(0.0D, 0.0172275D * (double)p_37270_), random.triangle(0.0D, 0.0172275D * (double)p_37270_)).scale((double)p_37269_);
-    	projectile.setDeltaMovement(vec3);
-    	double d0 = vec3.horizontalDistance();
-    	projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180.0F / (float)Math.PI)));
-    	projectile.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180.0F / (float)Math.PI)));
-    	projectile.yRotO = projectile.getYRot();
-    	projectile.xRotO = projectile.getXRot();
+        Vec3 vec3 = (new Vec3(pX, pY, pZ)).normalize().add(random.triangle(0.0D, 0.0172275D * (double)pInaccuracy), random.triangle(0.0D, 0.0172275D * (double)pInaccuracy), random.triangle(0.0D, 0.0172275D * (double)pInaccuracy)).scale((double)pVelocity);
+        projectile.setDeltaMovement(vec3);
+        double d0 = vec3.horizontalDistance();
+        projectile.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180.0F / (float)Math.PI)));
+        projectile.setXRot((float)(Mth.atan2(vec3.y, d0) * (double)(180.0F / (float)Math.PI)));
+        projectile.yRotO = projectile.getYRot();
+        projectile.xRotO = projectile.getXRot();
     }
 
-    public static void shootFromRotation(Entity projectile, Entity p_37252_, float p_37253_, float p_37254_, float p_37255_, float p_37256_, float p_37257_) 
+    public static void shootFromRotation(Entity projectile, Entity pShooter, float pX, float pY, float pZ, float pVelocity, float pInaccuracy) 
     {
-    	float f = -Mth.sin(p_37254_ * ((float)Math.PI / 180.0F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180.0F));
-    	float f1 = -Mth.sin((p_37253_ + p_37255_) * ((float)Math.PI / 180.0F));
-    	float f2 = Mth.cos(p_37254_ * ((float)Math.PI / 180.0F)) * Mth.cos(p_37253_ * ((float)Math.PI / 180.0F));
-    	shoot(projectile, (double)f, (double)f1, (double)f2, p_37256_, p_37257_);
-    	Vec3 vec3 = p_37252_.getDeltaMovement();
-    	projectile.setDeltaMovement(projectile.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));
+        float f = -Mth.sin(pY * ((float)Math.PI / 180.0F)) * Mth.cos(pX * ((float)Math.PI / 180.0F));
+        float f1 = -Mth.sin((pX + pZ) * ((float)Math.PI / 180.0F));
+        float f2 = Mth.cos(pY * ((float)Math.PI / 180.0F)) * Mth.cos(pX * ((float)Math.PI / 180.0F));
+        shoot(projectile, (double)f, (double)f1, (double)f2, pVelocity, pInaccuracy);
+        Vec3 vec3 = pShooter.getDeltaMovement();
+        projectile.setDeltaMovement(projectile.getDeltaMovement().add(vec3.x, pShooter.onGround() ? 0.0D : vec3.y, vec3.z));
     }
     
 	public static void getClientLevel(Consumer<Level> consumer)
@@ -271,16 +272,16 @@ public class ACCUtil
 		return ModList.get().isLoaded(modid);
 	}
 	
-	public static Vec3 fromToPos(Vec3 from, Vec3 to)
+	public static Vec3 getPositionTowards(Vec3 from, Vec3 to)
 	{
 		Vec3 pos = to.subtract(from);
 		return pos;
 	}
 	
-	public static Vec3 fromToVector(Vec3 from, Vec3 to, float scale)
+	public static Vec3 getVelocityTowards(Vec3 from, Vec3 to, float speed)
 	{
 		Vec3 motion = to.subtract(from).normalize();
-		return motion.scale(scale);
+		return motion.scale(speed);
 	}
 	
 	public static Vec2 lookAt(Vec3 startPos, Vec3 pos)

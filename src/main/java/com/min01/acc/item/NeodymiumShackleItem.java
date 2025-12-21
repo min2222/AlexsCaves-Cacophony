@@ -20,27 +20,27 @@ public class NeodymiumShackleItem extends Item
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_)
+	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand)
 	{
-		ItemStack stack = p_41433_.getItemInHand(p_41434_);
-        if(!p_41432_.isClientSide) 
+		ItemStack stack = pPlayer.getItemInHand(pUsedHand);
+        if(!pLevel.isClientSide) 
         {
-        	stack.hurtAndBreak(1, p_41433_, (p_43388_) ->
+        	stack.hurtAndBreak(1, pPlayer, (p_43388_) ->
         	{
-        		p_43388_.broadcastBreakEvent(p_41434_);
+        		p_43388_.broadcastBreakEvent(pUsedHand);
             });
-        	EntityNeodymiumShackle shackle = new EntityNeodymiumShackle(p_41432_, p_41433_, stack);
+        	EntityNeodymiumShackle shackle = new EntityNeodymiumShackle(pLevel, pPlayer, stack);
         	if(stack.getEnchantmentLevel(ACCEnchantments.ORBITING.get()) > 0)
         	{
         		shackle.setNoGravity(true);
         	}
-        	shackle.shootFromRotation(p_41433_, p_41433_.getXRot(), p_41433_.getYRot(), 0.0F, 1.5F, 1.0F);
+        	shackle.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0F, 1.5F, 1.0F);
         	shackle.setAnimationState(1);
         	shackle.setAnimationTick(10);
-        	p_41432_.addFreshEntity(shackle);
-        	if(!p_41433_.getAbilities().instabuild) 
+        	pLevel.addFreshEntity(shackle);
+        	if(!pPlayer.getAbilities().instabuild) 
         	{
-        		p_41433_.getInventory().removeItem(stack);
+        		pPlayer.getInventory().removeItem(stack);
         	}
         	else
         	{

@@ -31,25 +31,25 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
 	}
 	
 	@Override
-	public void renderByItem(ItemStack p_108830_, ItemDisplayContext p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) 
+	public void renderByItem(ItemStack pStack, ItemDisplayContext pDisplayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) 
 	{
-		p_108832_.pushPose();
-		VertexConsumer vertexconsumer = ItemRenderer.getFoilBuffer(p_108833_, RenderType.entityCutoutNoCull(this.getTexture(p_108830_)), false, p_108830_.hasFoil());
-		p_108832_.scale(-1.0F, -1.0F, 1.0F);
-		p_108832_.translate(0.0F, -1.5F, 0.0F);
-		p_108832_.translate(-0.5F, -0.25F, 0.3F);
-		this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-		this.model.renderToBuffer(p_108832_, vertexconsumer, p_108834_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-		p_108832_.popPose();
+		pPoseStack.pushPose();
+		VertexConsumer vertexConsumer = ItemRenderer.getFoilBuffer(pBuffer, RenderType.entityCutoutNoCull(this.getTexture(pStack)), false, pStack.hasFoil());
+		pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+		pPoseStack.translate(0.0F, -1.5F, 0.0F);
+		pPoseStack.translate(-0.5F, -0.25F, 0.3F);
+		this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+		this.model.renderToBuffer(pPoseStack, vertexConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		pPoseStack.popPose();
 		
-		p_108832_.pushPose();
-		VertexConsumer vertexconsumer2 = ItemRenderer.getFoilBuffer(p_108833_, ACCRenderType.eyesFix(this.getLayerTexture(p_108830_)), false, p_108830_.hasFoil());
-		p_108832_.scale(-1.0F, -1.0F, 1.0F);
-		p_108832_.translate(0.0F, -1.5F, 0.0F);
-		p_108832_.translate(-0.5F, -0.25F, 0.3F);
-		this.model.setupAnim(p_108830_, 0, 0, ACCUtil.getItemTickCount(p_108830_) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-		this.model.renderToBuffer(p_108832_, vertexconsumer2, p_108834_, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
-		p_108832_.popPose();
+		pPoseStack.pushPose();
+		VertexConsumer vertexConsumer2 = ItemRenderer.getFoilBuffer(pBuffer, ACCRenderType.eyesFix(this.getLayerTexture(pStack)), false, pStack.hasFoil());
+		pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+		pPoseStack.translate(0.0F, -1.5F, 0.0F);
+		pPoseStack.translate(-0.5F, -0.25F, 0.3F);
+		this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
+		this.model.renderToBuffer(pPoseStack, vertexConsumer2, pPackedLight, OverlayTexture.NO_OVERLAY, 0.3F, 0.3F, 0.3F, 1.0F);
+		pPoseStack.popPose();
 	}
 	
 	public ResourceLocation getLayerTexture(ItemStack stack)
@@ -58,9 +58,9 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
         boolean overcharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
         if(overcharge)
         {
-        	return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_overcharged_layer.png");
+        	return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/radrifle_overcharged_layer.png");
         }
-		return gamma ? new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_gamma_layer.png") : new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_layer.png");
+		return gamma ? ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/radrifle_gamma_layer.png") : ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/radrifle_layer.png");
 	}
 	
 	public ResourceLocation getTexture(ItemStack stack)
@@ -69,8 +69,8 @@ public class RadrifleRenderer extends BlockEntityWithoutLevelRenderer
         boolean overcharge = stack.getEnchantmentLevel(ACCEnchantments.OVERCHARGE.get()) > 0;
         if(overcharge)
         {
-        	return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_overcharged.png");
+        	return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/radrifle_overcharged.png");
         }
-		return gamma ? new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle_gamma.png") : new ResourceLocation(AlexsCavesCacophony.MODID, "textures/item/radrifle.png");
+		return gamma ? ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/radrifle_gamma.png") : ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/item/radrifle.png");
 	}
 }

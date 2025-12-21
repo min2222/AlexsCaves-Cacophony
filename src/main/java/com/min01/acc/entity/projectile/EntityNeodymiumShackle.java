@@ -46,25 +46,25 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 	
 	public AbstractArrow.Pickup pickup = AbstractArrow.Pickup.ALLOWED;
 	
-	public EntityNeodymiumShackle(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_)
+	public EntityNeodymiumShackle(EntityType<? extends ThrowableProjectile> pEntityType, Level pLevel)
 	{
-		super(p_37466_, p_37467_);
+		super(pEntityType, pLevel);
 	}
 
-	public EntityNeodymiumShackle(EntityType<? extends ThrowableProjectile> p_37456_, double p_37457_, double p_37458_, double p_37459_, Level p_37460_) 
+	public EntityNeodymiumShackle(EntityType<? extends ThrowableProjectile> pEntityType, double pX, double pY, double pZ, Level pLevel) 
 	{
-		super(p_37456_, p_37457_, p_37458_, p_37459_, p_37460_);
+		super(pEntityType, pX, pY, pZ, pLevel);
 	}
 
-	public EntityNeodymiumShackle(EntityType<? extends ThrowableProjectile> p_37462_, LivingEntity p_37463_, Level p_37464_)
+	public EntityNeodymiumShackle(EntityType<? extends ThrowableProjectile> pEntityType, LivingEntity pShooter, Level pLevel)
 	{
-		super(p_37462_, p_37463_, p_37464_);
+		super(pEntityType, pShooter, pLevel);
 	}
 	
-	public EntityNeodymiumShackle(Level p_37569_, LivingEntity p_37570_, ItemStack p_37571_)
+	public EntityNeodymiumShackle(Level pLevel, LivingEntity pShooter, ItemStack stack)
 	{
-		super(ACCEntities.NEODYMIUM_SHACKLE.get(), p_37570_, p_37569_);
-		this.shackleItem = p_37571_.copy();
+		super(ACCEntities.NEODYMIUM_SHACKLE.get(), pShooter, pLevel);
+		this.shackleItem = stack.copy();
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 				int orbit = this.shackleItem.getEnchantmentLevel(ACCEnchantments.ORBITING.get());
 				Entity owner = this.getOwner();
 				Vec3 lookPos = ACCUtil.getLookPos(new Vec2(0, this.getYRot()), owner.getEyePosition().subtract(0.0F, 0.5F, 0.0F), 0, 0, 4 + orbit);
-				this.setDeltaMovement(ACCUtil.fromToVector(this.position(), lookPos, 1.0F * orbit));
+				this.setDeltaMovement(ACCUtil.getVelocityTowards(this.position(), lookPos, 1.0F * orbit));
 				this.setYRot(this.getYRot() + (15 * orbit));
 			}
 		}
@@ -149,9 +149,9 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void onHitBlock(BlockHitResult p_37258_) 
+	protected void onHitBlock(BlockHitResult pResult) 
 	{
-		super.onHitBlock(p_37258_);
+		super.onHitBlock(pResult);
 		if(this.getAnimationState() != 3 && !this.isOrbiting())
 		{
 			this.setAnimationState(3);
@@ -162,11 +162,11 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void onHitEntity(EntityHitResult p_37259_) 
+	protected void onHitEntity(EntityHitResult pResult) 
 	{
-		super.onHitEntity(p_37259_);
-		Entity entity = p_37259_.getEntity();
-		Vec3 pos = p_37259_.getLocation();
+		super.onHitEntity(pResult);
+		Entity entity = pResult.getEntity();
+		Vec3 pos = pResult.getLocation();
 		if(entity instanceof LivingEntity victim)
 		{
 			if(this.getOwner() instanceof LivingEntity living && this.getAnimationState() != 3)
@@ -225,21 +225,21 @@ public class EntityNeodymiumShackle extends ThrowableProjectile
 	}
 	
 	@Override
-	protected void addAdditionalSaveData(CompoundTag p_37265_) 
+	protected void addAdditionalSaveData(CompoundTag pCompound) 
 	{
-		super.addAdditionalSaveData(p_37265_);
-		p_37265_.putByte("Pickup", (byte)this.pickup.ordinal());
-		p_37265_.put("Shackle", this.shackleItem.save(new CompoundTag()));
+		super.addAdditionalSaveData(pCompound);
+		pCompound.putByte("Pickup", (byte)this.pickup.ordinal());
+		pCompound.put("Shackle", this.shackleItem.save(new CompoundTag()));
 	}
 	
 	@Override
-	protected void readAdditionalSaveData(CompoundTag p_37262_)
+	protected void readAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.readAdditionalSaveData(p_37262_);
-		this.pickup = AbstractArrow.Pickup.byOrdinal(p_37262_.getByte("Pickup"));
-		if(p_37262_.contains("Shackle", 10))
+		super.readAdditionalSaveData(pCompound);
+		this.pickup = AbstractArrow.Pickup.byOrdinal(pCompound.getByte("Pickup"));
+		if(pCompound.contains("Shackle", 10))
 		{
-			this.shackleItem = ItemStack.of(p_37262_.getCompound("Shackle"));
+			this.shackleItem = ItemStack.of(pCompound.getCompound("Shackle"));
 		}
 	}
     

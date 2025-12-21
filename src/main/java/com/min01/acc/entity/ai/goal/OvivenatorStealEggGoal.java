@@ -64,6 +64,7 @@ public class OvivenatorStealEggGoal extends Goal
 	@Override
 	public void start() 
 	{
+		this.mob.getMoveControl().setWantedPosition(this.wantedX, this.wantedY, this.wantedZ, 1.5F);
 		this.mob.getNavigation().moveTo(this.wantedX, this.wantedY, this.wantedZ, 1.5F);
 	}
 

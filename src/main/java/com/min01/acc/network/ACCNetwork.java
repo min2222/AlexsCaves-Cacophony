@@ -12,7 +12,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 public class ACCNetwork
 {
 	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(AlexsCavesCacophony.MODID, "accacophony"),
+	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, AlexsCavesCacophony.MODID),
 			() -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals
@@ -21,11 +21,11 @@ public class ACCNetwork
 	public static int ID = 0;
 	public static void registerMessages()
 	{
-		CHANNEL.registerMessage(ID++, UpdatePlayerAnimationPacket.class, UpdatePlayerAnimationPacket::encode, UpdatePlayerAnimationPacket::new, UpdatePlayerAnimationPacket.Handler::onMessage);
-		CHANNEL.registerMessage(ID++, UpdateItemAnimationPacket.class, UpdateItemAnimationPacket::encode, UpdateItemAnimationPacket::new, UpdateItemAnimationPacket.Handler::onMessage);
-		CHANNEL.registerMessage(ID++, UpdateOwnerCapabilityPacket.class, UpdateOwnerCapabilityPacket::encode, UpdateOwnerCapabilityPacket::new, UpdateOwnerCapabilityPacket.Handler::onMessage);
-		CHANNEL.registerMessage(ID++, UpdatePaintedCapabilityPacket.class, UpdatePaintedCapabilityPacket::encode, UpdatePaintedCapabilityPacket::new, UpdatePaintedCapabilityPacket.Handler::onMessage);
-		CHANNEL.registerMessage(ID++, UpdateOverlayCapabilityPacket.class, UpdateOverlayCapabilityPacket::encode, UpdateOverlayCapabilityPacket::new, UpdateOverlayCapabilityPacket.Handler::onMessage);
+		CHANNEL.registerMessage(ID++, UpdatePlayerAnimationPacket.class, UpdatePlayerAnimationPacket::write, UpdatePlayerAnimationPacket::read, UpdatePlayerAnimationPacket::handle);
+		CHANNEL.registerMessage(ID++, UpdateItemAnimationPacket.class, UpdateItemAnimationPacket::write, UpdateItemAnimationPacket::read, UpdateItemAnimationPacket::handle);
+		CHANNEL.registerMessage(ID++, UpdateOwnerCapabilityPacket.class, UpdateOwnerCapabilityPacket::write, UpdateOwnerCapabilityPacket::read, UpdateOwnerCapabilityPacket::handle);
+		CHANNEL.registerMessage(ID++, UpdatePaintedCapabilityPacket.class, UpdatePaintedCapabilityPacket::write, UpdatePaintedCapabilityPacket::read, UpdatePaintedCapabilityPacket::handle);
+		CHANNEL.registerMessage(ID++, UpdateOverlayCapabilityPacket.class, UpdateOverlayCapabilityPacket::write, UpdateOverlayCapabilityPacket::read, UpdateOverlayCapabilityPacket::handle);
 	}
 	
     public static <MSG> void sendToServer(MSG message) 

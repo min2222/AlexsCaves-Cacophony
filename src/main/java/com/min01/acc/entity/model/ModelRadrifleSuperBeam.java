@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModelRadrifleSuperBeam extends EntityModel<EntityRadrifleBeam>
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "radrifle_super_beam"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "radrifle_super_beam"), "main");
 	private final ModelPart beam;
 
 	public ModelRadrifleSuperBeam(ModelPart root)

@@ -15,44 +15,44 @@ import net.minecraft.resources.ResourceLocation;
 
 public class NeodymiumShackleRenderer extends EntityRenderer<EntityNeodymiumShackle>
 {
-	public static final ResourceLocation TEXTURE_BLUE = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/neodymium_shackle_blue.png");
-	public static final ResourceLocation TEXTURE_RED = new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/neodymium_shackle_red.png");
+	public static final ResourceLocation TEXTURE_BLUE = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/neodymium_shackle_blue.png");
+	public static final ResourceLocation TEXTURE_RED = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/neodymium_shackle_red.png");
 	public final ModelNeodymiumShackle model;
 	
-	public NeodymiumShackleRenderer(Context p_174008_)
+	public NeodymiumShackleRenderer(Context pContext)
 	{
-		super(p_174008_);
-		this.model = new ModelNeodymiumShackle(p_174008_.bakeLayer(ModelNeodymiumShackle.LAYER_LOCATION));
+		super(pContext);
+		this.model = new ModelNeodymiumShackle(pContext.bakeLayer(ModelNeodymiumShackle.LAYER_LOCATION));
 	}
 	
 	@Override
-	public void render(EntityNeodymiumShackle p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) 
+	public void render(EntityNeodymiumShackle pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) 
 	{
-		p_114488_.pushPose();
-		p_114488_.scale(-1.0F, -1.0F, 1.0F);
-		p_114488_.translate(0.0F, -1.5F, 0.0F);
-		this.model.setupAnim(p_114485_, 0, 0, p_114485_.tickCount + p_114487_, 0, 0);
-		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(p_114485_))), p_114490_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-		p_114488_.popPose();
+		pPoseStack.pushPose();
+		pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+		pPoseStack.translate(0.0F, -1.5F, 0.0F);
+		this.model.setupAnim(pEntity, 0, 0, pEntity.tickCount + pPartialTick, 0, 0);
+		this.model.renderToBuffer(pPoseStack, pBuffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(pEntity))), pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		pPoseStack.popPose();
 		
-		p_114488_.pushPose();
-		p_114488_.scale(-1.0F, -1.0F, 1.0F);
-		p_114488_.translate(0.0F, -1.5F, 0.0F);
-		this.model.setupAnim(p_114485_, 0, 0, p_114485_.tickCount + p_114487_, 0, 0);
-		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(TEXTURE_RED)), p_114490_, OverlayTexture.NO_OVERLAY, 0.5F, 0.5F, 0.5F, 1.0F);
-		p_114488_.popPose();
+		pPoseStack.pushPose();
+		pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+		pPoseStack.translate(0.0F, -1.5F, 0.0F);
+		this.model.setupAnim(pEntity, 0, 0, pEntity.tickCount + pPartialTick, 0, 0);
+		this.model.renderToBuffer(pPoseStack, pBuffer.getBuffer(ACCRenderType.eyesFix(TEXTURE_RED)), pPackedLight, OverlayTexture.NO_OVERLAY, 0.5F, 0.5F, 0.5F, 1.0F);
+		pPoseStack.popPose();
 		
-		p_114488_.pushPose();
-		p_114488_.scale(-1.0F, -1.0F, 1.0F);
-		p_114488_.translate(0.0F, -1.5F, 0.0F);
-		this.model.setupAnim(p_114485_, 0, 0, p_114485_.tickCount + p_114487_, 0, 0);
-		this.model.renderToBuffer(p_114488_, p_114489_.getBuffer(ACCRenderType.eyesFix(TEXTURE_BLUE)), p_114490_, OverlayTexture.NO_OVERLAY, 0.5F, 0.5F, 0.5F, 1.0F);
-		p_114488_.popPose();
+		pPoseStack.pushPose();
+		pPoseStack.scale(-1.0F, -1.0F, 1.0F);
+		pPoseStack.translate(0.0F, -1.5F, 0.0F);
+		this.model.setupAnim(pEntity, 0, 0, pEntity.tickCount + pPartialTick, 0, 0);
+		this.model.renderToBuffer(pPoseStack, pBuffer.getBuffer(ACCRenderType.eyesFix(TEXTURE_BLUE)), pPackedLight, OverlayTexture.NO_OVERLAY, 0.5F, 0.5F, 0.5F, 1.0F);
+		pPoseStack.popPose();
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(EntityNeodymiumShackle p_114482_)
+	public ResourceLocation getTextureLocation(EntityNeodymiumShackle pEntity)
 	{
-		return new ResourceLocation(AlexsCavesCacophony.MODID, "textures/entity/neodymium_shackle.png");
+		return ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "textures/entity/neodymium_shackle.png");
 	}
 }

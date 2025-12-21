@@ -38,10 +38,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -75,14 +75,14 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	public AmbientType ambientType;
 	public int ambientTick;
 	
-	public EntityOvivenator(EntityType<? extends DinosaurEntity> p_33002_, Level p_33003_)
+	public EntityOvivenator(EntityType<? extends DinosaurEntity> pEntityType, Level pLevel)
 	{
-		super(p_33002_, p_33003_);
+		super(pEntityType, pLevel);
 	}
 	
     public static AttributeSupplier.Builder createAttributes()
     {
-        return Monster.createMonsterAttributes()
+        return Mob.createMobAttributes()
     			.add(Attributes.MAX_HEALTH, 18.0F)
     			.add(Attributes.MOVEMENT_SPEED, 0.2F);
     }
@@ -119,13 +119,13 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
     }
     
 	@Override
-	public void handleEntityEvent(byte p_21375_) 
+	public void handleEntityEvent(byte pId) 
 	{
-		super.handleEntityEvent(p_21375_);
-		if(p_21375_ == 82 || p_21375_ == 83) 
+		super.handleEntityEvent(pId);
+		if(pId == 82 || pId == 83) 
 		{
             ParticleOptions options;
-            if(p_21375_ == 82)
+            if(pId == 82)
             {
                 options = ACParticleRegistry.DINOSAUR_TRANSFORMATION_AMBER.get();
             }
@@ -138,7 +138,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
                 this.level.addParticle(options, this.getX(), this.getY(0.5F), this.getZ(), 0, 0, 0);
             }
         }
-		if(p_21375_ == 99 && !this.getCurrentEgg().isEmpty()) 
+		if(pId == 99 && !this.getCurrentEgg().isEmpty()) 
 		{
 			Vec3 lookPos = ACCUtil.getLookPos(new Vec2(this.getXRot(), this.yBodyRot), this.position(), 0.0F, 1.5F, 1.5F);
             for(int i = 0; i < 15 + this.random.nextInt(5); i++) 
@@ -155,9 +155,9 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	}
 
 	@Override
-	public AgeableMob getBreedOffspring(ServerLevel p_146743_, AgeableMob p_146744_) 
+	public AgeableMob getBreedOffspring(ServerLevel pLevel, AgeableMob pMate)
 	{
-		return ACCEntities.OVIVENATOR.get().create(p_146743_);
+		return ACCEntities.OVIVENATOR.get().create(pLevel);
 	}
 	
 	@Override
@@ -236,20 +236,20 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	}
     
     @Override
-    public boolean hurt(DamageSource p_27567_, float p_27568_) 
+    public boolean hurt(DamageSource pSource, float pAmount) 
     {
-    	if(!this.isPanic() && p_27567_.getDirectEntity() != null && !this.isTame())
+    	if(!this.isPanic() && pSource.getDirectEntity() != null && !this.isTame())
     	{
     		List<EntityOvivenator> list = this.level.getEntitiesOfClass(EntityOvivenator.class, this.getBoundingBox().inflate(10), t -> !t.isPanic() && !t.isTame());
     		list.forEach(t -> 
     		{
     			t.setPanic(true);
-        		ACCUtil.runAway(t, p_27567_.getSourcePosition());
+        		ACCUtil.runAway(t, pSource.getSourcePosition());
     		});
     		this.setPanic(true);
-    		ACCUtil.runAway(this, p_27567_.getSourcePosition());
+    		ACCUtil.runAway(this, pSource.getSourcePosition());
     	}
-    	return super.hurt(p_27567_, p_27568_);
+    	return super.hurt(pSource, pAmount);
     }
 	
     public int getAltSkinForItem(ItemStack stack) 
@@ -339,7 +339,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	}
 	
 	@Override
-	protected SoundEvent getHurtSound(DamageSource p_21239_)
+	protected SoundEvent getHurtSound(DamageSource pDamageSource)
 	{
 		return ACSoundRegistry.VALLUMRAPTOR_HURT.get();
 	}
@@ -357,9 +357,9 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	}
 	
 	@Override
-	protected void updateWalkAnimation(float p_268283_)
+	protected void updateWalkAnimation(float pPartialTick)
 	{
-		float f = Math.min(p_268283_ * 20.0F, 1.0F);
+		float f = Math.min(pPartialTick * 20.0F, 1.0F);
 		this.walkAnimation.update(f, 0.4F);
 	}
 	
@@ -376,30 +376,30 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	}
 	
 	@Override
-	public void readAdditionalSaveData(CompoundTag p_21450_)
+	public void readAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.readAdditionalSaveData(p_21450_);
-		this.setPanic(p_21450_.getBoolean("isPanic"));
-		this.setHoldingEgg(p_21450_.getBoolean("HoldingEgg"));
-		this.setEggPos(NbtUtils.readBlockPos(p_21450_.getCompound("EggPos")));
-		this.setEggHoldingTick(p_21450_.getInt("EggHoldingTick"));
-		if(p_21450_.contains("CurrentEgg"))
+		super.readAdditionalSaveData(pCompound);
+		this.setPanic(pCompound.getBoolean("isPanic"));
+		this.setHoldingEgg(pCompound.getBoolean("HoldingEgg"));
+		this.setEggPos(NbtUtils.readBlockPos(pCompound.getCompound("EggPos")));
+		this.setEggHoldingTick(pCompound.getInt("EggHoldingTick"));
+		if(pCompound.contains("CurrentEgg"))
 		{
-			this.setCurrentEgg(ItemStack.of(p_21450_.getCompound("CurrentEgg")));
+			this.setCurrentEgg(ItemStack.of(pCompound.getCompound("CurrentEgg")));
 		}
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag p_21484_)
+	public void addAdditionalSaveData(CompoundTag pCompound)
 	{
-		super.addAdditionalSaveData(p_21484_);
-		p_21484_.putBoolean("isPanic", this.isPanic());
-		p_21484_.putBoolean("HoldingEgg", this.isHoldingEgg());
-		p_21484_.put("EggPos", NbtUtils.writeBlockPos(this.getEggPos()));
-		p_21484_.putInt("EggHoldingTick", this.getEggHoldingTick());
+		super.addAdditionalSaveData(pCompound);
+		pCompound.putBoolean("isPanic", this.isPanic());
+		pCompound.putBoolean("HoldingEgg", this.isHoldingEgg());
+		pCompound.put("EggPos", NbtUtils.writeBlockPos(this.getEggPos()));
+		pCompound.putInt("EggHoldingTick", this.getEggHoldingTick());
 		if(!this.getCurrentEgg().isEmpty())
 		{
-			p_21484_.put("CurrentEgg", this.getCurrentEgg().save(new CompoundTag()));
+			pCompound.put("CurrentEgg", this.getCurrentEgg().save(new CompoundTag()));
 		}
 	}
 	

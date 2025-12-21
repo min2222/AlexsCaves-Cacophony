@@ -52,7 +52,6 @@ public class ACCTier implements Tier
 	public int getEnchantmentValue()
 	{
 		return this.enchantmentValue;
-		
 	}
 	
 	@Override

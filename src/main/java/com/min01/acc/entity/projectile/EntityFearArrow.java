@@ -16,19 +16,19 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public class EntityFearArrow extends AbstractArrow
 {
-	public EntityFearArrow(EntityType<? extends AbstractArrow> p_36858_, Level p_36859_)
+	public EntityFearArrow(EntityType<? extends AbstractArrow> pEntityType, Level pLevel)
 	{
-		super(p_36858_, p_36859_);
+		super(pEntityType, pLevel);
 	}
 
-	public EntityFearArrow(Level p_36861_, double p_36862_, double p_36863_, double p_36864_)
+	public EntityFearArrow(Level pLevel, double pX, double pY, double pZ)
 	{
-		super(ACCEntities.FEAR_ARROW.get(), p_36862_, p_36863_, p_36864_, p_36861_);
+		super(ACCEntities.FEAR_ARROW.get(), pX, pY, pZ, pLevel);
 	}
 
-	public EntityFearArrow(Level p_36866_, LivingEntity p_36867_) 
+	public EntityFearArrow(Level pLevel, LivingEntity pShooter) 
 	{
-		super(ACCEntities.FEAR_ARROW.get(), p_36867_, p_36866_);
+		super(ACCEntities.FEAR_ARROW.get(), pShooter, pLevel);
 	}
 
 	@Override
@@ -38,10 +38,10 @@ public class EntityFearArrow extends AbstractArrow
 	}
 	
 	@Override
-	protected void onHitEntity(EntityHitResult p_36757_)
+	protected void onHitEntity(EntityHitResult pResult)
 	{
-		super.onHitEntity(p_36757_);
-		Entity entity = p_36757_.getEntity();
+		super.onHitEntity(pResult);
+		Entity entity = pResult.getEntity();
         if(entity instanceof PathfinderMob mob) 
         {
         	if(!mob.getType().is(ACTagRegistry.RESISTS_TREMORSAURUS_ROAR))

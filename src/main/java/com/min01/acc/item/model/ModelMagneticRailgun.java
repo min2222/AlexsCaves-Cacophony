@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ModelMagneticRailgun extends HierarchicalItemModel
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "magnetic_railgun"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "magnetic_railgun"), "main");
 	private final ModelPart root;
 
 	public ModelMagneticRailgun(ModelPart root)

@@ -23,9 +23,9 @@ public class AlexsCavesCacophony
 {
 	public static final String MODID = "accacophony";
 			
-	public AlexsCavesCacophony() 
+	public AlexsCavesCacophony(FMLJavaModLoadingContext ctx) 
 	{
-		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		IEventBus bus = ctx.getModEventBus();
 		ACCEntities.ENTITY_TYPES.register(bus);
 		ACCItems.ITEMS.register(bus);
 		ACCBlocks.BLOCKS.register(bus);

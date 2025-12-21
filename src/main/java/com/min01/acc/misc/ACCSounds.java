@@ -14,6 +14,6 @@ public class ACCSounds
 	
 	public static RegistryObject<SoundEvent> registerSound(String name) 
 	{
-		return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(AlexsCavesCacophony.MODID, name)));
+		return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, name)));
     }
 }

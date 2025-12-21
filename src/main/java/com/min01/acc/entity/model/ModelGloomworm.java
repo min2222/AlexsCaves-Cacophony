@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModelGloomworm extends HierarchicalModel<EntityGloomworm>
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlexsCavesCacophony.MODID, "gloomworm"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "gloomworm"), "main");
 	private final ModelPart root;
 
 	public ModelGloomworm(ModelPart root)

@@ -12,7 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ShootNuclearBombTrigger extends SimpleCriterionTrigger<ShootNuclearBombTrigger.TriggerInstance> 
 {
-	static final ResourceLocation ID = new ResourceLocation(AlexsCavesCacophony.MODID, "shoot_nuclear_bomb");
+	static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "shoot_nuclear_bomb");
 
 	@Override
 	public ResourceLocation getId() 
@@ -21,21 +21,21 @@ public class ShootNuclearBombTrigger extends SimpleCriterionTrigger<ShootNuclear
 	}
 
 	@Override
-	protected TriggerInstance createInstance(JsonObject p_66248_, ContextAwarePredicate p_286603_, DeserializationContext p_66250_)
+	protected TriggerInstance createInstance(JsonObject pJson, ContextAwarePredicate pPredicate, DeserializationContext pDeserializationContext)
 	{
-		return new ShootNuclearBombTrigger.TriggerInstance(p_286603_);
+		return new ShootNuclearBombTrigger.TriggerInstance(pPredicate);
 	}
 	
-	public void trigger(ServerPlayer p_46872_)
+	public void trigger(ServerPlayer pPlayer)
 	{
-		this.trigger(p_46872_, t -> true);
+		this.trigger(pPlayer, t -> true);
 	}
 	
 	public static class TriggerInstance extends AbstractCriterionTriggerInstance
 	{
-		public TriggerInstance(ContextAwarePredicate p_286466_) 
+		public TriggerInstance(ContextAwarePredicate pPlayer) 
 		{
-			super(ID, p_286466_);
+			super(ID, pPlayer);
 		}
 	}
 }

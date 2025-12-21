@@ -11,15 +11,8 @@ import com.min01.acc.entity.living.EntityGloomworm;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.item.ACCItems;
 
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
@@ -33,12 +26,8 @@ public class EventHandler
 	@SubscribeEvent
 	public static void onFMLCommonSetup(FMLCommonSetupEvent event)
 	{
-		ItemStack water = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
-		ItemStack fear = PotionUtils.setPotion(new ItemStack(Items.POTION), ACCEffects.FEAR_POTION.get());
-		ItemStack strongFear = PotionUtils.setPotion(new ItemStack(Items.POTION), ACCEffects.STRONG_FEAR_POTION.get());
-		BrewingRecipeRegistry.addRecipe(Ingredient.of(water), Ingredient.of(ACCItems.TREMORSAURUS_TOOTH.get()), fear);
-		BrewingRecipeRegistry.addRecipe(Ingredient.of(fear), Ingredient.of(Items.GLOWSTONE_DUST), strongFear);
-		CriteriaTriggers.register(ACCCriteriaTriggers.SHOOT_NUCLEAR_BOMB);
+		ACCEffects.init();
+		ACCCriteriaTriggers.init();
 	}
 	
     @SubscribeEvent
