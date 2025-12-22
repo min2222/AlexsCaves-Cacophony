@@ -64,7 +64,6 @@ public class ACCUtil
             Vec3 vec3 = LandRandomPos.getPosAway(mob, 16, 7, pos);
             if(vec3 != null)
             {
-            	mob.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, 2.0F);
                 mob.getNavigation().moveTo(vec3.x, vec3.y, vec3.z, 2.0F);
             }
     	}
