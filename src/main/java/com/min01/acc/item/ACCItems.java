@@ -37,8 +37,8 @@ public class ACCItems
 	public static final RegistryObject<Item> HULLBREAKER_TOOTH = ITEMS.register("hullbreaker_tooth", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> MASTCARVER = ITEMS.register("mastcarver", () -> new MastcarverItem());
 	
-	public static final RegistryObject<Item> RAW_DINO_DRUMSTICK = ITEMS.register("raw_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(2.5F).nutrition(10).build(), true));
-	public static final RegistryObject<Item> COOKED_DINO_DRUMSTICK = ITEMS.register("cooked_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(5.0F).nutrition(20).build(), false));
+	public static final RegistryObject<Item> RAW_DINO_DRUMSTICK = ITEMS.register("raw_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(0.125F).nutrition(10).build(), true));
+	public static final RegistryObject<Item> COOKED_DINO_DRUMSTICK = ITEMS.register("cooked_dino_drumstick", () -> new DinoDrumstickItem(new FoodProperties.Builder().saturationMod(0.125F).nutrition(20).build(), false));
 	public static final RegistryObject<Item> TREMORSAURUS_TOOTH = ITEMS.register("tremorsaurus_tooth", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> ARROW_OF_FEAR = ITEMS.register("arrow_of_fear", () -> new FearArrowItem());
 	
