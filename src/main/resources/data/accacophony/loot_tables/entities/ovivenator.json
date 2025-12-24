@@ -2,7 +2,6 @@
 	"type": "minecraft:entity",
 	"pools": [
 		{
-			"bonus_rolls": 0,
 			"entries": [
 				{
 					"type": "minecraft:item",
@@ -31,7 +30,6 @@
 			"rolls": 1
 		},
 		{
-			"bonus_rolls": 0,
 			"entries": [
 				{
 					"type": "minecraft:item",
@@ -63,8 +61,13 @@
 					"name": "accacophony:raw_dino_drumstick"
 				}
 			],
-			"rolls": 1
+			"rolls": 1,
+			"conditions": [
+				{
+					"condition": "minecraft:killed_by_player"
+				}
+			]
 		}
 	],
-	"random_sequence": "minecraft:entities/chicken"
+	"random_sequence": "accacophony:entities/ovivenator"
 }
