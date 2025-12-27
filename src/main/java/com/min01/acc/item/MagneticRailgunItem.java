@@ -29,6 +29,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -183,6 +184,11 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 		ACCUtil.setOwner(entity, null);
 		entity.setNoGravity(false);
 		setFlash(stack, false);
+		
+		if(entity instanceof Creeper creeper)
+		{
+			creeper.getPersistentData().putBoolean("FromRailgun", true);
+		}
 	}
 	
 	@Override

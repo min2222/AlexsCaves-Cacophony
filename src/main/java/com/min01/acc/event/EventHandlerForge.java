@@ -1,5 +1,7 @@
 package com.min01.acc.event;
 
+import java.lang.reflect.Method;
+
 import com.github.alexmodguy.alexscaves.server.entity.living.DinosaurEntity;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.capabilities.ACCCapabilities;
@@ -11,6 +13,7 @@ import com.min01.acc.util.ACCUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,12 +24,16 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 @Mod.EventBusSubscriber(modid = AlexsCavesCacophony.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventHandlerForge
 {
+	public static final Method EXPLODE_CREEPER = ObfuscationReflectionHelper.findMethod(Creeper.class, "m_32315_");
+	
     @SubscribeEvent
     public static void onLootTableLoad(LootTableLoadEvent event)
     {
@@ -62,6 +69,27 @@ public class EventHandlerForge
 		ACCUtil.tickItemAnimation(event.player);
 		ACCUtil.tickPlayerAnimation(event.player);
 		ACCUtil.tickOverlayProgress(event.player);
+	}
+	
+	@SubscribeEvent
+	public static void onLivingTick(LivingTickEvent event)
+	{
+		LivingEntity living = event.getEntity();
+		
+		if(living instanceof Creeper creeper && creeper.getPersistentData().contains("FromRailgun"))
+		{
+			if(creeper.verticalCollision || creeper.horizontalCollision)
+			{
+				try
+				{
+					EXPLODE_CREEPER.invoke(creeper);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@SubscribeEvent
