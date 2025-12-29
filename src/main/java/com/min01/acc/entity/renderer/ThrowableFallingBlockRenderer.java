@@ -62,7 +62,7 @@ public class ThrowableFallingBlockRenderer extends EntityRenderer<EntityThrowabl
 			{
 				Vec3 pos = pEntity.getEyePosition(pPartialTick);
 				Vec3 toVec = owner.getEyePosition(pPartialTick);
-				toVec = ACCUtil.getLookPos(new Vec2(owner.getViewXRot(pPartialTick), owner.getViewYRot(pPartialTick)), toVec, 0, 0.5F, 2);
+				toVec = ACCUtil.getLookPos(new Vec2(owner.getViewXRot(pPartialTick), owner.getViewYRot(pPartialTick)), toVec, -0.5F, 0.25F, 2.0F);
 				
 				pPoseStack.pushPose();
 				pPoseStack.translate(-pos.x, -pos.y, -pos.z);

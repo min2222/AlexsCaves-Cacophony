@@ -96,7 +96,7 @@ public class ClientEventHandlerForge
 		{
 			Vec3 pos = entity.getEyePosition(partialTicks);
 			Vec3 toVec = owner.getEyePosition(partialTicks);
-			toVec = ACCUtil.getLookPos(new Vec2(owner.getViewXRot(partialTicks), owner.getViewYRot(partialTicks)), toVec, 0, 0.5F, 2);
+			toVec = ACCUtil.getLookPos(new Vec2(owner.getViewXRot(partialTicks), owner.getViewYRot(partialTicks)), toVec, -0.5F, 0.25F, 2.0F);
 			
 			stack.pushPose();
 			stack.translate(-pos.x, -pos.y, -pos.z);

@@ -56,7 +56,7 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 	        float strength = 0.5F + Mth.clamp(((float) Math.cos((cap.glowingTicks + ageInTicks) * 0.1F)) - 0.5F, -0.5F, 0.5F);
 	        strength += Mth.lerp(ageInTicks, cap.brightnessOld, cap.brightness) * Mth.PI;
 	        strength = Mth.clamp(strength, 0.0F, 1.0F);
-			if(!MagneticRailgunItem.isRepel(pStack) || !MagneticRailgunItem.isFlash(pStack))
+	        if(!MagneticRailgunItem.isRepel(pStack) || !MagneticRailgunItem.isFlash(pStack))
 			{
 				strength = 0.0F;
 			}
@@ -69,8 +69,14 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 			pPoseStack.translate(0.0F, -1.5F, 0.0F);
 			pPoseStack.translate(-0.5F, -0.515F, 0.6F);
 			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
-			float strength2 = !MagneticRailgunItem.isRepel(pStack) && MagneticRailgunItem.isFlash(pStack) ? 0.8F : 0.0F;
-			this.model.renderToBuffer(pPoseStack, vertexConsumer3, pPackedLight, OverlayTexture.NO_OVERLAY, strength2, strength2, strength2, 1.0F);
+	        float strength1 = 0.5F + Mth.clamp(((float) Math.cos((cap.glowingTicks + ageInTicks) * 0.1F)) - 0.5F, -0.5F, 0.5F);
+	        strength1 += Mth.lerp(ageInTicks, cap.brightnessOld, cap.brightness) * Mth.PI;
+	        strength1 = Mth.clamp(strength1, 0.0F, 1.0F);
+	        if(MagneticRailgunItem.isRepel(pStack))
+			{
+				strength1 = 0.0F;
+			}
+			this.model.renderToBuffer(pPoseStack, vertexConsumer3, pPackedLight, OverlayTexture.NO_OVERLAY, strength1, strength1, strength1, 1.0F);
 			pPoseStack.popPose();
 			
 			pPoseStack.pushPose();
