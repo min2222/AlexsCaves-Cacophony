@@ -65,7 +65,7 @@ description='''This add-on serves to add the communities’ ideas to the popular
 [[dependencies.accacophony]]
     modId="alexscaves"
     mandatory=true
-    versionRange="[1.1.5,)"
+    versionRange="[2.0.2,)"
     ordering="NONE"
     side="BOTH"
 
