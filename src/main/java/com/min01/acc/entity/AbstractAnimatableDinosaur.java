@@ -143,7 +143,7 @@ public abstract class AbstractAnimatableDinosaur extends DinosaurEntity implemen
 	
 	public boolean canMoveAround()
 	{
-		return this.canMove() && !this.isUsingSkill() && !this.hasTarget();
+		return this.canMove() && !this.isUsingSkill() && !this.hasTarget() && !this.isInSittingPose();
 	}
 	
     @Override
