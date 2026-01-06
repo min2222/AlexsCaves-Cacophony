@@ -72,7 +72,7 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 	        float strength1 = 0.5F + Mth.clamp(((float) Math.cos((cap.glowingTicks + ageInTicks) * 0.1F)) - 0.5F, -0.5F, 0.5F);
 	        strength1 += Mth.lerp(ageInTicks, cap.brightnessOld, cap.brightness) * Mth.PI;
 	        strength1 = Mth.clamp(strength1, 0.0F, 1.0F);
-	        if(MagneticRailgunItem.isRepel(pStack))
+	        if(MagneticRailgunItem.isRepel(pStack) || !MagneticRailgunItem.isFlash(pStack))
 			{
 				strength1 = 0.0F;
 			}
