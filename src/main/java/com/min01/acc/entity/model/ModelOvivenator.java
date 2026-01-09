@@ -88,8 +88,11 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		ACCClientUtil.animateHead(this.root.getChild("ovivenator").getChild("body").getChild("neck").getChild("head"), netHeadYaw, headPitch);
-		entity.idleAnimationState.animate(this, OvivenatorAnimation.IDLE, ageInTicks, limbSwingAmount);
-		entity.idleWithEggAnimationState.animate(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, limbSwingAmount);
+		
+		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
+		
+		entity.idleAnimationState.animate(this, OvivenatorAnimation.IDLE, ageInTicks, Math.max(limbSwingAmount * factor, 0.0F), 2.5F);
+		entity.idleWithEggAnimationState.animate(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, Math.max(limbSwingAmount * factor, 0.0F), 2.5F);
 		entity.holdAnimationState.animate(this, OvivenatorAnimation.HOLD, ageInTicks);
 		entity.noiseAnimationState.animate(this, OvivenatorAnimation.NOISE, ageInTicks);
 		entity.scratchRightAnimationState.animate(this, OvivenatorAnimation.SCRATCH_RIGHT, ageInTicks);
@@ -100,9 +103,7 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		entity.eatAnimationState.animate(this, OvivenatorAnimation.EAT_ITEM, ageInTicks);
 		entity.sitAnimationState.animate(this, OvivenatorAnimation.SIT, ageInTicks);
 		
-		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
-		
-		this.animateWalk(OvivenatorAnimation.WALK, limbSwing, limbSwingAmount * factor, 2.5F, 2.5F);
+		this.animateWalk(OvivenatorAnimation.WALK, limbSwing, Math.max(limbSwingAmount * factor, 0.0F), 2.5F, 2.5F);
 		this.animateWalk(OvivenatorAnimation.RUN, limbSwing, Math.max(limbSwingAmount - factor, 0.0F), 1.0F, 1.0F);
 	}
 	
