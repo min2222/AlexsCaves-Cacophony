@@ -91,8 +91,10 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		
 		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
 		
-		entity.idleAnimationState.animate(this, OvivenatorAnimation.IDLE, ageInTicks, Math.max(limbSwingAmount * factor, 0.0F), 2.5F);
-		entity.idleWithEggAnimationState.animate(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, Math.max(limbSwingAmount * factor, 0.0F), 2.5F);
+		float totalLimb = Math.max(limbSwingAmount * factor, 0.0F) + Math.max(limbSwingAmount - factor, 0.0F);
+		
+		entity.idleAnimationState.animate(this, OvivenatorAnimation.IDLE, ageInTicks, totalLimb, 2.5F);
+		entity.idleWithEggAnimationState.animate(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, totalLimb, 2.5F);
 		entity.holdAnimationState.animate(this, OvivenatorAnimation.HOLD, ageInTicks);
 		entity.noiseAnimationState.animate(this, OvivenatorAnimation.NOISE, ageInTicks);
 		entity.scratchRightAnimationState.animate(this, OvivenatorAnimation.SCRATCH_RIGHT, ageInTicks);
