@@ -1,22 +1,19 @@
 package com.min01.acc.util;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.joml.Math;
 
-import com.min01.acc.capabilities.ACCCapabilities;
-import com.min01.acc.capabilities.IItemAnimationCapability;
 import com.min01.acc.capabilities.IOverlayCapability;
 import com.min01.acc.capabilities.IOwnerCapability;
-import com.min01.acc.capabilities.IPlayerAnimationCapability;
 import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.capabilities.OverlayCapabilityImpl;
 import com.min01.acc.capabilities.OwnerCapabilityImpl;
 import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 import com.min01.acc.item.animation.IAnimatableItem;
-import com.min01.acc.misc.SmoothAnimationState;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
@@ -68,22 +65,23 @@ public class ACCUtil
             }
     	}
     }
-    
-	public static void tickOwner(Entity entity)
-	{
-		IOwnerCapability cap = entity.getCapability(ACCCapabilities.OWNER).orElse(new OwnerCapabilityImpl());
-		cap.tick(entity);
-	}
 	
 	public static void setOwner(Entity entity, Entity owner)
 	{
-		IOwnerCapability cap = entity.getCapability(ACCCapabilities.OWNER).orElse(new OwnerCapabilityImpl());
-		cap.setOwner(owner);
+		IOwnerCapability cap = entity.getCapability(OwnerCapabilityImpl.OWNER).orElse(new OwnerCapabilityImpl(entity));
+		if(owner == null)
+		{
+			cap.setOwner(Optional.empty());
+		}
+		else
+		{
+			cap.setOwner(Optional.of(owner.getUUID()));
+		}
 	}
     
 	public static Entity getOwner(Entity entity)
 	{
-		IOwnerCapability cap = entity.getCapability(ACCCapabilities.OWNER).orElse(new OwnerCapabilityImpl());
+		IOwnerCapability cap = entity.getCapability(OwnerCapabilityImpl.OWNER).orElse(new OwnerCapabilityImpl(entity));
 		return cap.getOwner(entity);
 	}
     
@@ -119,19 +117,19 @@ public class ACCUtil
 	
     public static void tickOverlayProgress(LivingEntity player)
     {
-		IOverlayCapability cap = player.getCapability(ACCCapabilities.OVERLAY).orElse(new OverlayCapabilityImpl());
+		IOverlayCapability cap = player.getCapability(OverlayCapabilityImpl.OVERLAY).orElse(new OverlayCapabilityImpl(player));
 		cap.tick(player);
     }
     
     public static void setOverlayProgress(String name, int value, Entity player)
     {
-		IOverlayCapability cap = player.getCapability(ACCCapabilities.OVERLAY).orElse(new OverlayCapabilityImpl());
+		IOverlayCapability cap = player.getCapability(OverlayCapabilityImpl.OVERLAY).orElse(new OverlayCapabilityImpl(player));
 		cap.setOverlayProgress(name, value);
     }
     
     public static int getOverlayProgress(String name, Entity player)
     {
-		IOverlayCapability cap = player.getCapability(ACCCapabilities.OVERLAY).orElse(new OverlayCapabilityImpl());
+		IOverlayCapability cap = player.getCapability(OverlayCapabilityImpl.OVERLAY).orElse(new OverlayCapabilityImpl(player));
 		return cap.getOverlayProgress(name);
     }
     
@@ -142,7 +140,7 @@ public class ACCUtil
 			ItemStack stack = player.getInventory().getItem(i);
 			if(stack.getItem() instanceof IAnimatableItem)
 			{
-				stack.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+				stack.getCapability(ItemAnimationCapabilityImpl.ITEM_ANIMATION).ifPresent(t -> 
 				{
 					t.tick(player, stack);
 				});
@@ -150,76 +148,66 @@ public class ACCUtil
 		}
     }
     
+    public static PlayerAnimationCapabilityImpl getPlayerAnimationCapability(Entity player)
+    {
+    	PlayerAnimationCapabilityImpl cap = (PlayerAnimationCapabilityImpl) player.getCapability(PlayerAnimationCapabilityImpl.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl(player));
+		return cap;
+    }
+    
     public static void tickPlayerAnimation(LivingEntity player)
     {
-		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		cap.tick(player);
+    	getPlayerAnimationCapability(player).tick(player);
     }
     
     public static void setPlayerAnimationState(Entity player, int state)
     {
-		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		cap.setAnimationState(state);
+    	getPlayerAnimationCapability(player).setAnimationState(state);
     }
     
     public static int getPlayerAnimationState(Entity player)
     {
-		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		return cap.getAnimationState();
-    }
-    
-    public static SmoothAnimationState getPlayerAnimationStateByName(Entity player, String name)
-    {
-		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		return cap.getAnimationStateByName(name);
+    	return getPlayerAnimationCapability(player).getAnimationState();
     }
     
     public static void setPlayerAnimationTick(Entity player, int tick)
     {
-		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		cap.setAnimationTick(tick);
+    	getPlayerAnimationCapability(player).setAnimationTick(tick);
     }
     
     public static int getPlayerAnimationTick(Entity player)
     {
-		IPlayerAnimationCapability cap = player.getCapability(ACCCapabilities.PLAYER_ANIMATION).orElse(new PlayerAnimationCapabilityImpl());
-		return cap.getAnimationTick();
+    	return getPlayerAnimationCapability(player).getAnimationTick();
+    }
+    
+    public static ItemAnimationCapabilityImpl getItemAnimationCapability(ItemStack stack)
+    {
+    	ItemAnimationCapabilityImpl cap = (ItemAnimationCapabilityImpl) stack.getCapability(ItemAnimationCapabilityImpl.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl(stack));
+		return cap;
     }
     
     public static void setItemAnimationState(ItemStack stack, int state)
     {
-		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		cap.setAnimationState(state);
+    	getItemAnimationCapability(stack).setAnimationState(state);
     }
     
     public static int getItemAnimationState(ItemStack stack)
     {
-		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		return cap.getAnimationState();
-    }
-    
-    public static SmoothAnimationState getItemAnimationStateByName(ItemStack stack, String name)
-    {
-		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		return cap.getAnimationStateByName(name);
+    	return getItemAnimationCapability(stack).getAnimationState();
     }
     
     public static void setItemAnimationTick(ItemStack stack, int tick)
     {
-		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		cap.setAnimationTick(tick);
+    	getItemAnimationCapability(stack).setAnimationTick(tick);
     }
     
     public static int getItemAnimationTick(ItemStack stack)
     {
-		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		return cap.getAnimationTick();
+    	return getItemAnimationCapability(stack).getAnimationTick();
     }
     
     public static int getItemTickCount(ItemStack stack)
     {
-		IItemAnimationCapability cap = stack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl());
-		return cap.getTickCount();
+    	return getItemAnimationCapability(stack).getTickCount();
     }
 
     public static boolean isVisible(ItemStack stack)

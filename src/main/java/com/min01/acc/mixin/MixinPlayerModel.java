@@ -12,9 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.min01.acc.animation.IHierarchicalPlayerModel;
 import com.min01.acc.animation.PlayerAnimation;
-import com.min01.acc.item.MagneticRailgunItem;
-import com.min01.acc.item.RadrifleItem;
-import com.min01.acc.item.RaybladeItem;
+import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.util.ACCClientUtil;
 import com.min01.acc.util.ACCUtil;
@@ -32,41 +30,43 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
 	
     @Inject(at = @At("HEAD"), method = "setupAnim", cancellable = true)
     private void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci)
-    {	
+    {
     	this.setupMap();
     }
     
     @Inject(at = @At("TAIL"), method = "setupAnim", cancellable = true)
     private void setupAnimTail(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci)
     {
-    	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
-    	this.animate(entity, RaybladeItem.RAYBLADE_SWING_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
-    	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_LEFT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_LEFT, ageInTicks);
-    	this.animate(entity, RaybladeItem.RAYBLADE_SWING_LEFT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_LEFT, ageInTicks);
+    	PlayerAnimationCapabilityImpl cap = ACCUtil.getPlayerAnimationCapability(entity);
+    	this.animate(entity, cap.raybladeDrawRightAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
+    	this.animate(entity, cap.raybladeSwingRightAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
+    	this.animate(entity, cap.raybladeDrawLeftAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_LEFT, ageInTicks);
+    	this.animate(entity, cap.raybladeSwingLeftAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_LEFT, ageInTicks);
     }
     
     @Override
     public void setupAnimFirstPerson(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) 
     {
     	this.setupMap();
-    	this.animate(entity, RadrifleItem.RADRIFLE_FIRE, PlayerAnimation.RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
-    	this.animate(entity, RadrifleItem.RADRIFLE_HOLD, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD, ageInTicks);
-    	this.animate(entity, RadrifleItem.RADRIFLE_HOLD_NEAR_WALL, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD_NEAR_WALL, ageInTicks);
-    	this.animate(entity, RadrifleItem.RADRIFLE_RUNNING, PlayerAnimation.RadrifleAnimation.RADRIFLE_RUNNING, ageInTicks);
-    	this.animate(entity, RadrifleItem.RADRIFLE_OVERCHARGE_FIRE, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERCHARGE_FIRE, ageInTicks);
-    	this.animate(entity, RadrifleItem.RADRIFLE_OVERHEAT, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERHEAT, ageInTicks);
+    	PlayerAnimationCapabilityImpl cap = ACCUtil.getPlayerAnimationCapability(entity);
+    	this.animate(entity, cap.radrifleFireAnimationState, PlayerAnimation.RadrifleAnimation.RADRIFLE_FIRE, ageInTicks);
+    	this.animate(entity, cap.radrifleHoldAnimationState, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD, ageInTicks);
+    	this.animate(entity, cap.radrifleHoldNearWallAnimationState, PlayerAnimation.RadrifleAnimation.RADRIFLE_HOLD_NEAR_WALL, ageInTicks);
+    	this.animate(entity, cap.radrifleRunningAnimationState, PlayerAnimation.RadrifleAnimation.RADRIFLE_RUNNING, ageInTicks);
+    	this.animate(entity, cap.radrifleOverchargeFireAnimationState, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERCHARGE_FIRE, ageInTicks);
+    	this.animate(entity, cap.radrifleOverheatAnimationState, PlayerAnimation.RadrifleAnimation.RADRIFLE_OVERHEAT, ageInTicks);
     	
-    	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
-    	this.animate(entity, RaybladeItem.RAYBLADE_SWING_RIGHT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
-    	this.animate(entity, RaybladeItem.RAYBLADE_DRAW_LEFT, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_LEFT, ageInTicks);
-    	this.animate(entity, RaybladeItem.RAYBLADE_SWING_LEFT, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_LEFT, ageInTicks);
+    	this.animate(entity, cap.raybladeDrawRightAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_RIGHT, ageInTicks);
+    	this.animate(entity, cap.raybladeSwingRightAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_RIGHT, ageInTicks);
+    	this.animate(entity, cap.raybladeDrawLeftAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_DRAW_LEFT, ageInTicks);
+    	this.animate(entity, cap.raybladeSwingLeftAnimationState, PlayerAnimation.RaybladeAnimation.RAYBLADE_SWING_LEFT, ageInTicks);
     	
-    	this.animate(entity, MagneticRailgunItem.RAILGUN_FIRE, PlayerAnimation.RailgunAnimation.RAILGUN_FIRE, ageInTicks);
-    	this.animate(entity, MagneticRailgunItem.RAILGUN_HOLD, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD, ageInTicks);
-    	this.animate(entity, MagneticRailgunItem.RAILGUN_HOLD_NEAR_WALL, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD_NEAR_WALL, ageInTicks);
-    	this.animate(entity, MagneticRailgunItem.RAILGUN_RUNNING, PlayerAnimation.RailgunAnimation.RAILGUN_RUNNING, ageInTicks);
-    	this.animate(entity, MagneticRailgunItem.RAILGUN_CHARGE, PlayerAnimation.RailgunAnimation.RAILGUN_CHARGE, ageInTicks);
-    	this.animate(entity, MagneticRailgunItem.RAILGUN_RELOAD, PlayerAnimation.RailgunAnimation.RAILGUN_RELOAD, ageInTicks);
+    	this.animate(entity, cap.railgunFireAnimationState, PlayerAnimation.RailgunAnimation.RAILGUN_FIRE, ageInTicks);
+    	this.animate(entity, cap.railgunHoldAnimationState, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD, ageInTicks);
+    	this.animate(entity, cap.railgunHoldNearWallAnimationState, PlayerAnimation.RailgunAnimation.RAILGUN_HOLD_NEAR_WALL, ageInTicks);
+    	this.animate(entity, cap.railgunRunningAnimationState, PlayerAnimation.RailgunAnimation.RAILGUN_RUNNING, ageInTicks);
+    	this.animate(entity, cap.railgunChargeAnimationState, PlayerAnimation.RailgunAnimation.RAILGUN_CHARGE, ageInTicks);
+    	this.animate(entity, cap.railgunReloadAnimationState, PlayerAnimation.RailgunAnimation.RAILGUN_RELOAD, ageInTicks);
     }
     
 	@Override
@@ -86,9 +86,8 @@ public class MixinPlayerModel<T extends LivingEntity> implements IHierarchicalPl
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void animate(T entity, String name, AnimationDefinition definition, float ageInTicks)
+	public void animate(T entity, SmoothAnimationState state, AnimationDefinition definition, float ageInTicks)
 	{
-		SmoothAnimationState state = ACCUtil.getPlayerAnimationStateByName(entity, name);
 		state.animatePlayer(PlayerModel.class.cast(this), definition, ageInTicks);
 	}
 	

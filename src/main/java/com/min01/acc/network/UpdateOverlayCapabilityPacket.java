@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -42,13 +41,10 @@ public class UpdateOverlayCapabilityPacket
 				ACCUtil.getClientLevel(level -> 
 				{
 					Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
-					entity.getCapability(ACCCapabilities.OVERLAY).ifPresent(cap -> 
+					for(Map.Entry<String, Integer> entry : message.progressMap.entrySet())
 					{
-						for(Map.Entry<String, Integer> entry : message.progressMap.entrySet())
-						{
-							cap.setOverlayProgress(entry.getKey(), entry.getValue());
-						}
-					});
+						ACCUtil.setOverlayProgress(entry.getKey(), entry.getValue(), entity);
+					}
 				});
 			}
 		});

@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -42,18 +41,15 @@ public class UpdateOwnerCapabilityPacket
 				ACCUtil.getClientLevel(level -> 
 				{
 					Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
-					entity.getCapability(ACCCapabilities.OWNER).ifPresent(cap -> 
+					if(message.ownerUUID.isPresent())
 					{
-						if(message.ownerUUID.isPresent())
-						{
-							Entity owner = ACCUtil.getEntityByUUID(level, message.ownerUUID.get());
-							cap.setOwner(owner);
-						}
-						else
-						{
-							cap.setOwner(null);
-						}
-					});
+						Entity owner = ACCUtil.getEntityByUUID(level, message.ownerUUID.get());
+						ACCUtil.setOwner(entity, owner);
+					}
+					else
+					{
+						ACCUtil.setOwner(entity, null);
+					}
 				});
 			}
 		});

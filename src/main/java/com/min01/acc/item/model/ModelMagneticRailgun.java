@@ -1,8 +1,9 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.item.MagneticRailgunItem;
+import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.item.animation.MagneticRailgunAnimation;
+import com.min01.acc.util.ACCUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -63,9 +64,11 @@ public class ModelMagneticRailgun extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_RELOAD, MagneticRailgunAnimation.RAILGUN_RELOAD, ageInTicks / 2.0F);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_CHARGE, MagneticRailgunAnimation.RAILGUN_CHARGE, ageInTicks);
-		this.animate(stack, MagneticRailgunItem.RAILGUN_FIRE, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks);
+		ItemAnimationCapabilityImpl cap = ACCUtil.getItemAnimationCapability(stack);
+		
+		this.animate(stack, cap.railgunReloadAnimationState, MagneticRailgunAnimation.RAILGUN_RELOAD, ageInTicks, 0.5F);
+		this.animate(stack, cap.railgunChargeAnimationState, MagneticRailgunAnimation.RAILGUN_CHARGE, ageInTicks);
+		this.animate(stack, cap.railgunFireAnimationState, MagneticRailgunAnimation.RAILGUN_FIRE, ageInTicks);
 	}
 	
 	@Override

@@ -3,7 +3,7 @@ package com.min01.acc.network;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.PaintedCapabilityImpl;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,7 +41,7 @@ public class UpdatePaintedCapabilityPacket
 				ACCUtil.getClientLevel(level -> 
 				{
 					Entity entity = ACCUtil.getEntityByUUID(level, message.entityUUID);
-					entity.getCapability(ACCCapabilities.PAINTED).ifPresent(cap -> 
+					entity.getCapability(PaintedCapabilityImpl.PAINTED).ifPresent(cap -> 
 					{
 						cap.setPainted(message.isPainted);
 					});

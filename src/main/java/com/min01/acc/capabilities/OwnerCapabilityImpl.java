@@ -3,17 +3,33 @@ package com.min01.acc.capabilities;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.min01.acc.network.ACCNetwork;
 import com.min01.acc.network.UpdateOwnerCapabilityPacket;
 import com.min01.acc.util.ACCUtil;
 
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
 public class OwnerCapabilityImpl implements IOwnerCapability
 {
+	public static final Capability<IOwnerCapability> OWNER = CapabilityManager.get(new CapabilityToken<>() {});
+	
 	private Optional<UUID> ownerUUID = Optional.empty();
+	private final Entity entity;
+	
+	public OwnerCapabilityImpl(Entity entity) 
+	{
+		this.entity = entity;
+	}
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -31,21 +47,19 @@ public class OwnerCapabilityImpl implements IOwnerCapability
 	{
 		if(nbt.contains("OwnerUUID"))
 		{
-			this.ownerUUID = Optional.of(nbt.getUUID("OwnerUUID"));
+			this.setOwner(Optional.of(nbt.getUUID("OwnerUUID")));
+		}
+		else
+		{
+			this.setOwner(Optional.empty());
 		}
 	}
 	
 	@Override
-	public void setOwner(Entity entity)
+	public void setOwner(Optional<UUID> optional)
 	{
-		if(entity == null)
-		{
-			this.ownerUUID = Optional.empty();
-		}
-		else 
-		{
-			this.ownerUUID = Optional.of(entity.getUUID());
-		}
+		this.ownerUUID = optional;
+		this.sendUpdatePacket();
 	}
 	
 	@Override
@@ -58,12 +72,17 @@ public class OwnerCapabilityImpl implements IOwnerCapability
 		return null;
 	}
 	
-	@Override
-	public void tick(Entity entity) 
+	private void sendUpdatePacket() 
 	{
-		if(!entity.level.isClientSide)
+		if(!this.entity.level.isClientSide)
 		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdateOwnerCapabilityPacket(entity.getUUID(), this.ownerUUID));
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdateOwnerCapabilityPacket(this.entity.getUUID(), this.ownerUUID));
 		}
+	}
+
+	@Override
+	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) 
+	{
+		return OWNER.orEmpty(cap, LazyOptional.of(() -> this));
 	}
 }

@@ -1,8 +1,9 @@
 package com.min01.acc.item.model;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.item.RadrifleItem;
+import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.item.animation.RadrifleAnimation;
+import com.min01.acc.util.ACCUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -53,7 +54,9 @@ public class ModelRadrifle extends HierarchicalItemModel
 	public void setupAnim(ItemStack stack, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) 
 	{
 		this.root().getAllParts().forEach(ModelPart::resetPose);
-		this.animate(stack, RadrifleItem.RADRIFLE_OVERHEAT, RadrifleAnimation.OVERHEAT, ageInTicks / 2.0F);
+		ItemAnimationCapabilityImpl cap = ACCUtil.getItemAnimationCapability(stack);
+		
+		this.animate(stack, cap.overheatAnimationState, RadrifleAnimation.OVERHEAT, ageInTicks, 0.5F);
 	}
 	
 	@Override

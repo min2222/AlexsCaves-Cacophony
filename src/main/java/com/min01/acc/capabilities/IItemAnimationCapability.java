@@ -1,17 +1,16 @@
 package com.min01.acc.capabilities;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.misc.SmoothAnimationState;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 @AutoRegisterCapability
-public interface IItemAnimationCapability extends INBTSerializable<CompoundTag>
+public interface IItemAnimationCapability extends ICapabilitySerializable<CompoundTag>
 {
 	ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "item_animation");
 
@@ -20,8 +19,6 @@ public interface IItemAnimationCapability extends INBTSerializable<CompoundTag>
 	void setAnimationState(int state);
 	
 	int getAnimationState();
-	
-	SmoothAnimationState getAnimationStateByName(String name);
 	
 	void setAnimationTick(int tick);
 	

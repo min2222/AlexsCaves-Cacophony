@@ -40,11 +40,6 @@ import net.minecraftforge.common.ToolActions;
 
 public class RaybladeItem extends SwordItem implements IAnimatableItem
 {
-    public static final String RAYBLADE_DRAW_RIGHT = "RaybladeDrawRight";
-    public static final String RAYBLADE_SWING_RIGHT = "RaybladeSwingRight";
-    public static final String RAYBLADE_DRAW_LEFT = "RaybladeDrawLeft";
-    public static final String RAYBLADE_SWING_LEFT = "RaybladeSwingLeft";
-    public static final String RAYBLADE_SWING = "RaybladeSwing";
     public static final int MAX_CHARGE = 3;
 
     public static final Predicate<ItemStack> AMMO = (stack) ->

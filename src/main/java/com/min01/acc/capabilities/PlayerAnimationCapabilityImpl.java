@@ -2,16 +2,17 @@ package com.min01.acc.capabilities;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.min01.acc.item.ACCItems;
-import com.min01.acc.item.MagneticRailgunItem;
-import com.min01.acc.item.RadrifleItem;
-import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.item.animation.IAnimatableItem;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.network.ACCNetwork;
 import com.min01.acc.network.UpdatePlayerAnimationPacket;
 import com.min01.acc.util.ACCUtil;
 
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,33 +22,46 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
 public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 {
+	public static final Capability<IPlayerAnimationCapability> PLAYER_ANIMATION = CapabilityManager.get(new CapabilityToken<>() {});
+	
 	private int animationTick;
 	private int animationState;
 	private int prevAnimationState;
 	
-	private final SmoothAnimationState radrifleFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	private final SmoothAnimationState radrifleHoldAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState radrifleHoldNearWallAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	private final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	private final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState radrifleFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState radrifleHoldAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState radrifleHoldNearWallAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	
-	private final SmoothAnimationState raybladeDrawRightAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState raybladeSwingRightAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState raybladeDrawRightAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState raybladeSwingRightAnimationState = new SmoothAnimationState();
 	
-	private final SmoothAnimationState raybladeDrawLeftAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState raybladeSwingLeftAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState raybladeDrawLeftAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState raybladeSwingLeftAnimationState = new SmoothAnimationState();
 	
-	private final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	private final SmoothAnimationState railgunHoldAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState railgunHoldNearWallAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState railgunRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	private final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	private final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunHoldAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState railgunHoldNearWallAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState railgunRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	
+	private final Entity entity;
+	
+	public PlayerAnimationCapabilityImpl(Entity entity) 
+	{
+		this.entity = entity;
+	}
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -62,9 +76,9 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	@Override
 	public void deserializeNBT(CompoundTag nbt)
 	{
-		this.animationTick = nbt.getInt("AnimationTick");
-		this.animationState = nbt.getInt("AnimationState");
-		this.prevAnimationState = nbt.getInt("PrevAnimationState");
+		this.setAnimationTick(nbt.getInt("AnimationTick"));
+		this.setAnimationState(nbt.getInt("AnimationState"));
+		this.setPrevAnimationState(nbt.getInt("PrevAnimationState"));
 	}
 
 	@Override
@@ -120,7 +134,7 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 		}
 		else
 		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdatePlayerAnimationPacket(entity.getUUID(), this.animationState, this.prevAnimationState, this.animationTick));
+			this.sendUpdatePacket();
 		}
 	}
 	
@@ -156,76 +170,6 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	}
 	
 	@Override
-	public SmoothAnimationState getAnimationStateByName(String name) 
-	{
-		if(name.equals(RadrifleItem.RADRIFLE_FIRE))
-		{
-			return this.radrifleFireAnimationState;
-		}
-		if(name.equals(RadrifleItem.RADRIFLE_HOLD))
-		{
-			return this.radrifleHoldAnimationState;
-		}
-		if(name.equals(RadrifleItem.RADRIFLE_HOLD_NEAR_WALL))
-		{
-			return this.radrifleHoldNearWallAnimationState;
-		}
-		if(name.equals(RadrifleItem.RADRIFLE_RUNNING))
-		{
-			return this.radrifleRunningAnimationState;
-		}
-		if(name.equals(RadrifleItem.RADRIFLE_OVERCHARGE_FIRE))
-		{
-			return this.radrifleOverchargeFireAnimationState;
-		}
-		if(name.equals(RadrifleItem.RADRIFLE_OVERHEAT))
-		{
-			return this.radrifleOverheatAnimationState;
-		}
-		if(name.equals(RaybladeItem.RAYBLADE_DRAW_RIGHT))
-		{
-			return this.raybladeDrawRightAnimationState;
-		}
-		if(name.equals(RaybladeItem.RAYBLADE_SWING_RIGHT))
-		{
-			return this.raybladeSwingRightAnimationState;
-		}
-		if(name.equals(RaybladeItem.RAYBLADE_DRAW_LEFT))
-		{
-			return this.raybladeDrawLeftAnimationState;
-		}
-		if(name.equals(RaybladeItem.RAYBLADE_SWING_LEFT))
-		{
-			return this.raybladeSwingLeftAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_FIRE))
-		{
-			return this.railgunFireAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_HOLD))
-		{
-			return this.railgunHoldAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_HOLD_NEAR_WALL))
-		{
-			return this.railgunHoldNearWallAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_RUNNING))
-		{
-			return this.railgunRunningAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_RELOAD))
-		{
-			return this.railgunReloadAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_CHARGE))
-		{
-			return this.railgunChargeAnimationState;
-		}
-		return new SmoothAnimationState();
-	}
-	
-	@Override
 	public void setAnimationTick(int tick) 
 	{
 		this.animationTick = tick;
@@ -235,5 +179,19 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	public int getAnimationTick() 
 	{
 		return this.animationTick;
+	}
+	
+	private void sendUpdatePacket() 
+	{
+		if(!this.entity.level.isClientSide)
+		{
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.entity), new UpdatePlayerAnimationPacket(this.entity.getUUID(), this.animationState, this.prevAnimationState, this.animationTick));
+		}
+	}
+	
+	@Override
+	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) 
+	{
+		return PLAYER_ANIMATION.orEmpty(cap, LazyOptional.of(() -> this));
 	}
 }

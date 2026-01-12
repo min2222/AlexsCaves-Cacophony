@@ -49,12 +49,6 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 public class MagneticRailgunItem extends Item implements IAnimatableItem
 {
     public static final int MAX_CHARGE = 1000;
-    public static final String RAILGUN_HOLD = "RailgunHold";
-    public static final String RAILGUN_HOLD_NEAR_WALL = "RailgunHoldNearWall";
-    public static final String RAILGUN_RUNNING = "RailgunRunning";
-    public static final String RAILGUN_CHARGE = "RailgunCharge";
-    public static final String RAILGUN_RELOAD = "RailgunReload";
-    public static final String RAILGUN_FIRE = "RailgunFire";
     
     public static final Predicate<ItemStack> AMMO = (stack) ->
     {
@@ -141,12 +135,12 @@ public class MagneticRailgunItem extends Item implements IAnimatableItem
 				        			if(blockState.canEntityDestroy(level, blockPos, player) && !blockState.isAir() && !blockState.is(BlockTags.DRAGON_IMMUNE))
 				        			{
 				        				EntityThrowableFallingBlock fallingBlock = new EntityThrowableFallingBlock(ACCEntities.THROWABLE_FALLING_BLOCK.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), level);
-				            			ACCUtil.setOwner(fallingBlock, player);
-				            			ACCUtil.setOwner(player, fallingBlock);
 				            			fallingBlock.setBlockState(blockState);
 				            			fallingBlock.setNoGravity(true);
 				        				level.removeBlock(blockPos, false);
 				        				level.addFreshEntity(fallingBlock);
+				            			ACCUtil.setOwner(player, fallingBlock);
+				            			ACCUtil.setOwner(fallingBlock, player);
 						        		setFlash(stack, true);
 				        			}
 				        		}

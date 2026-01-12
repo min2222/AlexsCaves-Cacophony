@@ -6,10 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 @AutoRegisterCapability
-public interface IOverlayCapability extends INBTSerializable<CompoundTag>
+public interface IOverlayCapability extends ICapabilitySerializable<CompoundTag>
 {
 	ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AlexsCavesCacophony.MODID, "overlay");
 

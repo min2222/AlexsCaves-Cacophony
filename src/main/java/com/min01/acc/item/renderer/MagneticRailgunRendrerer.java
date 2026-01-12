@@ -1,7 +1,6 @@
 package com.min01.acc.item.renderer;
 
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.capabilities.ACCCapabilities;
 import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.item.MagneticRailgunItem;
 import com.min01.acc.item.model.ModelMagneticRailgun;
@@ -51,7 +50,7 @@ public class MagneticRailgunRendrerer extends BlockEntityWithoutLevelRenderer
 			pPoseStack.translate(-0.5F, -0.515F, 0.6F);
 			this.model.setupAnim(pStack, 0, 0, ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime(), 0, 0);
 			
-			ItemAnimationCapabilityImpl cap = (ItemAnimationCapabilityImpl) pStack.getCapability(ACCCapabilities.ITEM_ANIMATION).orElseGet(() -> new ItemAnimationCapabilityImpl());
+			ItemAnimationCapabilityImpl cap = (ItemAnimationCapabilityImpl) pStack.getCapability(ItemAnimationCapabilityImpl.ITEM_ANIMATION).orElse(new ItemAnimationCapabilityImpl(pStack));
 			float ageInTicks = ACCUtil.getItemTickCount(pStack) + ACCClientUtil.MC.getFrameTime();
 	        float strength = 0.5F + Mth.clamp(((float) Math.cos((cap.glowingTicks + ageInTicks) * 0.1F)) - 0.5F, -0.5F, 0.5F);
 	        strength += Mth.lerp(ageInTicks, cap.brightnessOld, cap.brightness) * Mth.PI;

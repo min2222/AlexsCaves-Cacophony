@@ -38,7 +38,7 @@ public class AlexsCavesCacophony
 		ACCParticles.PARTICLES.register(bus);
 		
 		ACCNetwork.registerMessages();
-		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ACCCapabilities::attachEntityCapability);
-		MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ACCCapabilities::attachItemStackCapability);
+		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ACCCapabilities::onAttachEntityCapabilities);
+		MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ACCCapabilities::onAttachItemStackCapabilities);
 	}
 }

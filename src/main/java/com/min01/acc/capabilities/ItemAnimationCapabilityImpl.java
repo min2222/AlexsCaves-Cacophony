@@ -1,22 +1,29 @@
 package com.min01.acc.capabilities;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.min01.acc.item.ACCItems;
-import com.min01.acc.item.MagneticRailgunItem;
-import com.min01.acc.item.RadrifleItem;
-import com.min01.acc.item.RaybladeItem;
 import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.network.ACCNetwork;
 import com.min01.acc.network.UpdateItemAnimationPacket;
 import com.min01.acc.util.ACCUtil;
 
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
 public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 {
+	public static final Capability<IItemAnimationCapability> ITEM_ANIMATION = CapabilityManager.get(new CapabilityToken<>() {});
+	
 	private int animationTick;
 	private int animationState;
 	private int tickCount;
@@ -25,13 +32,20 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	public float brightnessOld;
 	public int glowingTicks;
 	
-	private final SmoothAnimationState overheatAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState overheatAnimationState = new SmoothAnimationState();
 	
-	private final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState();
-	private final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
 	
-	private final SmoothAnimationState raybladeSwingAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState raybladeSwingAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	
+	private final ItemStack stack;
+	
+	public ItemAnimationCapabilityImpl(ItemStack stack) 
+	{
+		this.stack = stack;
+	}
 	
 	@Override
 	public CompoundTag serializeNBT() 
@@ -45,8 +59,8 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	@Override
 	public void deserializeNBT(CompoundTag nbt)
 	{
-		this.animationTick = nbt.getInt("AnimationTick");
-		this.animationState = nbt.getInt("AnimationState");
+		this.setAnimationTick(nbt.getInt("AnimationTick"));
+		this.setAnimationState(nbt.getInt("AnimationState"));
 	}
 
 	@Override
@@ -83,7 +97,7 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 		}
 		else
 		{
-			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new UpdateItemAnimationPacket(stack, player.getUUID(), this.animationState, this.animationTick));
+			this.sendUpdatePacket(player);
 		}
 	}
 
@@ -97,32 +111,6 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	public int getAnimationState() 
 	{
 		return this.animationState;
-	}
-	
-	@Override
-	public SmoothAnimationState getAnimationStateByName(String name) 
-	{
-		if(name.equals(RadrifleItem.RADRIFLE_OVERHEAT))
-		{
-			return this.overheatAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_RELOAD))
-		{
-			return this.railgunReloadAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_CHARGE))
-		{
-			return this.railgunChargeAnimationState;
-		}
-		if(name.equals(MagneticRailgunItem.RAILGUN_FIRE))
-		{
-			return this.railgunFireAnimationState;
-		}
-		if(name.equals(RaybladeItem.RAYBLADE_SWING))
-		{
-			return this.raybladeSwingAnimationState;
-		}
-		return new SmoothAnimationState();
 	}
 	
 	@Override
@@ -141,5 +129,19 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	public int getTickCount() 
 	{
 		return this.tickCount;
+	}
+	
+	private void sendUpdatePacket(Entity entity) 
+	{
+		if(!entity.level.isClientSide)
+		{
+			ACCNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UpdateItemAnimationPacket(this.stack, entity.getUUID(), this.animationState, this.animationTick));
+		}
+	}
+
+	@Override
+	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) 
+	{
+		return ITEM_ANIMATION.orEmpty(cap, LazyOptional.of(() -> this));
 	}
 }

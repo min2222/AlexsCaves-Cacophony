@@ -3,7 +3,7 @@ package com.min01.acc.network;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.ItemAnimationCapabilityImpl;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -64,7 +64,7 @@ public class UpdateItemAnimationPacket
 		                }
 		                if(to != null)
 		                {
-		                	to.getCapability(ACCCapabilities.ITEM_ANIMATION).ifPresent(t -> 
+		                	to.getCapability(ItemAnimationCapabilityImpl.ITEM_ANIMATION).ifPresent(t -> 
 		                	{
 		    					t.setAnimationState(message.animationState);
 		    					t.setAnimationTick(message.animationTick);

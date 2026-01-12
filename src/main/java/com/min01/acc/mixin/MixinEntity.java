@@ -27,7 +27,6 @@ public class MixinEntity
     {
     	Entity entity = Entity.class.cast(this);
     	Entity owner = ACCUtil.getOwner(entity);
-    	ACCUtil.tickOwner(entity);
     	
     	if(owner instanceof LivingEntity living && !(entity instanceof Player))
     	{

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import com.github.alexmodguy.alexscaves.server.entity.living.DinosaurEntity;
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.PaintedCapabilityImpl;
 import com.min01.acc.entity.living.EntityOvivenator;
 import com.min01.acc.misc.ACCLootTables;
 import com.min01.acc.misc.ACCTags;
@@ -17,7 +17,6 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -95,15 +94,14 @@ public class EventHandlerForge
 	@SubscribeEvent
 	public static void onEntityJoinLevel(EntityJoinLevelEvent event)
 	{
-		Level level = event.getLevel();
 		Entity entity = event.getEntity();
 		if(entity instanceof DinosaurEntity dino)
 		{
 			dino.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(dino, EntityOvivenator.class, false, t -> canTargetOvivenator(dino, t)));
 		}
-		if(entity.getType().is(ACCTags.ACCEntity.PAINTABLE) && Math.random() <= 0.1F && !level.isClientSide)
+		if(entity.getType().is(ACCTags.ACCEntity.PAINTABLE) && Math.random() <= 0.1F)
 		{
-			entity.getCapability(ACCCapabilities.PAINTED).ifPresent(t -> 
+			entity.getCapability(PaintedCapabilityImpl.PAINTED).ifPresent(t -> 
 			{
 				if(!t.isPainted())
 				{

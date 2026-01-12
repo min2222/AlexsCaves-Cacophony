@@ -3,7 +3,7 @@ package com.min01.acc.network;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.PlayerAnimationCapabilityImpl;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -48,15 +48,12 @@ public class UpdatePlayerAnimationPacket
 				ACCUtil.getClientLevel(level -> 
 				{
 					Entity entity = ACCUtil.getEntityByUUID(level, message.uuid);
-					if(entity instanceof Player player)
+					entity.getCapability(PlayerAnimationCapabilityImpl.PLAYER_ANIMATION).ifPresent(t -> 
 					{
-						player.getCapability(ACCCapabilities.PLAYER_ANIMATION).ifPresent(t -> 
-						{
-							t.setAnimationState(message.animationState);
-							t.setPrevAnimationState(message.prevAimationState);
-							t.setAnimationTick(message.animationTick);
-						});
-					}
+						t.setAnimationState(message.animationState);
+						t.setPrevAnimationState(message.prevAimationState);
+						t.setAnimationTick(message.animationTick);
+					});
 				});
 			}
 		});

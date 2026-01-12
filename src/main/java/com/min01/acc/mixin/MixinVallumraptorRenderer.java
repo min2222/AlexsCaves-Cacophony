@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.github.alexmodguy.alexscaves.client.render.entity.VallumraptorRenderer;
 import com.github.alexmodguy.alexscaves.server.entity.living.VallumraptorEntity;
 import com.min01.acc.AlexsCavesCacophony;
-import com.min01.acc.capabilities.ACCCapabilities;
+import com.min01.acc.capabilities.PaintedCapabilityImpl;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -18,7 +18,7 @@ public class MixinVallumraptorRenderer
     @Inject(at = @At("HEAD"), method = "getTextureLocation", cancellable = true, remap = false)
     private void getTextureLocation(VallumraptorEntity entity, CallbackInfoReturnable<ResourceLocation> cir)
     {
-    	entity.getCapability(ACCCapabilities.PAINTED).ifPresent(t -> 
+    	entity.getCapability(PaintedCapabilityImpl.PAINTED).ifPresent(t -> 
     	{
     		if(t.isPainted())
     		{
