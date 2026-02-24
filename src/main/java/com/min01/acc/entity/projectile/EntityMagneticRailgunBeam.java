@@ -46,7 +46,7 @@ public class EntityMagneticRailgunBeam extends AbstractOwnableEntity<LivingEntit
 		{
 	    	Vec3 startPos = this.position().add(0.0F, 0.5F, 0.0F);
 			Vec3 lookPos = ACCUtil.getLookPos(this.getRotationVector(), startPos, 0.0F, 0.0F, 30.0F);
-			LaserHitResult laserHit = this.laser.raytrace(this.level, this.position(), startPos, lookPos, 0.5F, this.getYRot(), this.getXRot(), t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()), false, this.getOwner());
+			LaserHitResult laserHit = this.laser.raytrace(this.level, startPos, lookPos, 0.5F, t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()), false, this.getOwner());
 			laserHit.entities.forEach(t -> 
 	        {
 	        	//TODO custom damage source;

@@ -91,8 +91,7 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 			}
 			
 			float radius = this.isOvercharge() ? 0.5F : 0.25F;
-			Vec2 rot = ACCUtil.lookAt(this.position(), this.getEndPos());
-			LaserHitResult laserHit = this.laser.raytrace(this.level, this.position(), this.position(), this.getEndPos(), radius, rot.y, rot.x, t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()) && !t.getType().is(ACTagRegistry.RESISTS_RADIATION), this.isXRay(), this.getOwner());
+			LaserHitResult laserHit = this.laser.raytrace(this.level, this.position(), this.getEndPos(), radius, t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()) && !t.getType().is(ACTagRegistry.RESISTS_RADIATION), this.isXRay(), this.getOwner());
 			laserHit.entities.forEach(t -> 
         	{
                 boolean gamma = this.isGamma();
