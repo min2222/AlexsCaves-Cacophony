@@ -166,6 +166,7 @@ public class RadrifleItem extends Item implements IAnimatableItem
                 	beam.setGamma(isGamma);
                 	beam.setRicochet(isRicochet);
             		beam.setOvercharge(isOvercharge);
+            		beam.setXRay(isXRay);
                 	beam.setEndPos(isXRay ? endPos : hitPos);
                 	beam.setEndDir(direction);
             		beam.onHit(hitResult);

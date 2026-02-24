@@ -1,4 +1,4 @@
-package com.min01.acc.advancements.critereon;
+package com.min01.acc.advancements.criterion;
 
 import com.google.gson.JsonObject;
 import com.min01.acc.AlexsCavesCacophony;

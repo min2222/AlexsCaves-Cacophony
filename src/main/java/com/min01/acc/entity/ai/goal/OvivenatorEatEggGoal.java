@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 
-public class OvivenatorEatEggGoal extends BasicAnimationSkillGoal<EntityOvivenator>
+public class OvivenatorEatEggGoal extends AbstractAnimationGoal<EntityOvivenator>
 {
 	public OvivenatorEatEggGoal(EntityOvivenator mob) 
 	{
@@ -23,7 +23,7 @@ public class OvivenatorEatEggGoal extends BasicAnimationSkillGoal<EntityOvivenat
 	@Override
 	public boolean canUse() 
 	{
-		return !this.mob.isUsingSkill() && this.mob.tickCount >= this.nextSkillTickCount && this.canEat();
+		return !this.mob.isAnimationPlaying() && this.mob.tickCount >= this.nextSkillTickCount && this.canEat();
 	}
 	
 	@Override

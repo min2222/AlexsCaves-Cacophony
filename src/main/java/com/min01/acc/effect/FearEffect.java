@@ -28,7 +28,7 @@ public class FearEffect extends MobEffect
 	public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) 
 	{
 		int amplifier = pAmplifier + 1;
-		List<PathfinderMob> list = pLivingEntity.level.getEntitiesOfClass(PathfinderMob.class, pLivingEntity.getBoundingBox().inflate(Math.min(5.0F * amplifier, 20.0F)), t -> !t.isAlliedTo(pLivingEntity) && !(t instanceof TamableAnimal) || !((TamableAnimal) t).isInSittingPose());
+		List<PathfinderMob> list = pLivingEntity.level.getEntitiesOfClass(PathfinderMob.class, pLivingEntity.getBoundingBox().inflate(Math.min(5.0F * amplifier, 20.0F)), t -> !t.isAlliedTo(pLivingEntity) && !(t instanceof TamableAnimal) || !((TamableAnimal) t).isOrderedToSit());
 		list.forEach(mob -> 
 		{
         	if(!mob.getType().is(ACTagRegistry.RESISTS_TREMORSAURUS_ROAR))

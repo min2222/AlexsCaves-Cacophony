@@ -47,7 +47,7 @@ public class ACCUtil
     	boolean flag = true;
     	if(mob instanceof TamableAnimal animal)
     	{
-    		flag = !animal.isInSittingPose();
+    		flag = !animal.isOrderedToSit();
     	}
     	if(flag)
     	{

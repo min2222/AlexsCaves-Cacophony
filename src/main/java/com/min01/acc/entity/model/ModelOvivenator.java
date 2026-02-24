@@ -3,6 +3,7 @@ package com.min01.acc.entity.model;
 import com.min01.acc.AlexsCavesCacophony;
 import com.min01.acc.entity.animation.OvivenatorAnimation;
 import com.min01.acc.entity.living.EntityOvivenator;
+import com.min01.acc.misc.SmoothAnimationState;
 import com.min01.acc.util.ACCClientUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -89,12 +90,8 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		ACCClientUtil.animateHead(this.root.getChild("ovivenator").getChild("body").getChild("neck").getChild("head"), netHeadYaw, headPitch);
 		
-		float factor = entity.runAnimationState.factor(ACCClientUtil.MC.getFrameTime());
-		
-		float totalLimb = Math.max(limbSwingAmount * factor, 0.0F) + Math.max(limbSwingAmount - factor, 0.0F);
-		
-		entity.idleAnimationState.animate(this, OvivenatorAnimation.IDLE, ageInTicks, totalLimb, 2.5F);
-		entity.idleWithEggAnimationState.animate(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, totalLimb, 2.5F);
+		entity.idleAnimationState.animateIdle(this, OvivenatorAnimation.IDLE, ageInTicks, limbSwingAmount, 1.5F, entity.runAnimationState);
+		entity.idleWithEggAnimationState.animateIdle(this, OvivenatorAnimation.IDLE_WITH_EGG, ageInTicks, limbSwingAmount, 1.5F, entity.runAnimationState);
 		entity.holdAnimationState.animate(this, OvivenatorAnimation.HOLD, ageInTicks);
 		entity.noiseAnimationState.animate(this, OvivenatorAnimation.NOISE, ageInTicks);
 		entity.scratchRightAnimationState.animate(this, OvivenatorAnimation.SCRATCH_RIGHT, ageInTicks);
@@ -105,8 +102,8 @@ public class ModelOvivenator extends HierarchicalModel<EntityOvivenator>
 		entity.eatAnimationState.animate(this, OvivenatorAnimation.EAT_ITEM, ageInTicks);
 		entity.sitAnimationState.animate(this, OvivenatorAnimation.SIT, ageInTicks);
 		
-		this.animateWalk(OvivenatorAnimation.WALK, limbSwing, Math.max(limbSwingAmount * factor, 0.0F), 2.5F, 2.5F);
-		this.animateWalk(OvivenatorAnimation.RUN, limbSwing, Math.max(limbSwingAmount - factor, 0.0F), 1.0F, 1.0F);
+		SmoothAnimationState.animateWalk(this, OvivenatorAnimation.WALK, limbSwing, limbSwingAmount, 1.5F, 1.5F, entity.runAnimationState);
+		entity.runAnimationState.animateWalkWithFactor(this, OvivenatorAnimation.RUN, limbSwing, limbSwingAmount, 1.5F, 1.5F);
 	}
 	
 	@Override

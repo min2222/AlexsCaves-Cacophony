@@ -1,8 +1,5 @@
 package com.min01.acc.entity.projectile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.server.message.UpdateEffectVisualityEntityMessage;
 import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
@@ -12,6 +9,8 @@ import com.github.alexmodguy.alexscaves.server.potion.IrradiatedEffect;
 import com.min01.acc.entity.ACCEntities;
 import com.min01.acc.entity.AbstractOwnableEntity;
 import com.min01.acc.misc.ACCEntityDataSerializers;
+import com.min01.acc.misc.Laser;
+import com.min01.acc.misc.Laser.LaserHitResult;
 import com.min01.acc.util.ACCUtil;
 
 import net.minecraft.core.Direction;
@@ -19,7 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -27,7 +25,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -41,9 +38,12 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 	public static final EntityDataAccessor<Boolean> IS_END = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> IS_RICOCHET = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Boolean> IS_OVERCHARGE = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.BOOLEAN);
+	public static final EntityDataAccessor<Boolean> IS_XRAY = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.BOOLEAN);
 	public static final EntityDataAccessor<Integer> BOUNCE = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Direction> END_DIR = SynchedEntityData.defineId(EntityRadrifleBeam.class, EntityDataSerializers.DIRECTION);
 	public static final EntityDataAccessor<Vec3> END_POS = SynchedEntityData.defineId(EntityRadrifleBeam.class, ACCEntityDataSerializers.VEC3.get());
+	
+	public final Laser laser = new Laser();
 	
 	public EntityRadrifleBeam(EntityType<?> pEntityType, Level pLevel)
 	{
@@ -59,6 +59,7 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 		this.entityData.define(IS_END, false);
 		this.entityData.define(IS_RICOCHET, false);
 		this.entityData.define(IS_OVERCHARGE, false);
+		this.entityData.define(IS_XRAY, false);
 		this.entityData.define(BOUNCE, 0);
 		this.entityData.define(END_DIR, Direction.DOWN);
 		this.entityData.define(END_POS, Vec3.ZERO);
@@ -88,23 +89,11 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 	        	beam.setEndDir(this.getEndDir());
 	        	this.level.addFreshEntity(beam);
 			}
-        	
-    		List<LivingEntity> arrayList = new ArrayList<>();
-            Vec3 vec3 = this.position();
-            Vec3 vec31 = this.getEndPos().subtract(vec3);
-            Vec3 vec32 = vec31.normalize();
-            
-            for(int i = 1; i < Mth.floor(vec31.length()); ++i)
-            {
-            	Vec3 vec33 = vec3.add(vec32.scale(i));
-            	List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(vec33, vec33).inflate(this.isOvercharge() ? 0.5F : 0.25F), t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()) && !t.getType().is(ACTagRegistry.RESISTS_RADIATION));
-            	if(!arrayList.containsAll(list))
-            	{
-            		arrayList.addAll(list);
-            	}
-            }
-            
-        	arrayList.forEach(t -> 
+			
+			float radius = this.isOvercharge() ? 0.5F : 0.25F;
+			Vec2 rot = ACCUtil.lookAt(this.position(), this.getEndPos());
+			LaserHitResult laserHit = this.laser.raytrace(this.level, this.position(), this.position(), this.getEndPos(), radius, rot.y, rot.x, t -> t != this.getOwner() && !t.isAlliedTo(this.getOwner()) && !t.getType().is(ACTagRegistry.RESISTS_RADIATION), this.isXRay(), this.getOwner());
+			laserHit.entities.forEach(t -> 
         	{
                 boolean gamma = this.isGamma();
                 boolean overcharge = this.isOvercharge();
@@ -236,6 +225,7 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 		pCompound.putBoolean("isEnd", this.isEnd());
 		pCompound.putBoolean("isRicochet", this.isRicochet());
 		pCompound.putBoolean("isOvercharge", this.isOvercharge());
+		pCompound.putBoolean("isXRay", this.isXRay());
 		pCompound.putInt("Bounce", this.getBounce());
 		pCompound.putInt("EndDir", this.getEndDir().ordinal());
 		this.writeVec3(this.getEndPos(), "EndPos", pCompound);
@@ -258,6 +248,7 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 		this.setEnd(pCompound.getBoolean("isEnd"));
 		this.setRicochet(pCompound.getBoolean("isRicochet"));
 		this.setOvercharge(pCompound.getBoolean("isOvercharge"));
+		this.setXRay(pCompound.getBoolean("isXRay"));
 		this.setBounce(pCompound.getInt("Bounce"));
 		this.setEndDir(Direction.values()[pCompound.getInt("EndDir")]);
 		this.setEndPos(this.readVec3(pCompound, "EndPos"));
@@ -267,6 +258,16 @@ public class EntityRadrifleBeam extends AbstractOwnableEntity<LivingEntity>
 	{
 		CompoundTag tag = nbt.getCompound(name);
 		return new Vec3(tag.getDouble("X"), tag.getDouble("Y"), tag.getDouble("Z"));
+	}
+	
+	public void setXRay(boolean value)
+	{
+		this.entityData.set(IS_XRAY, value);
+	}
+	
+	public boolean isXRay()
+	{
+		return this.entityData.get(IS_XRAY);
 	}
 	
 	public void setGamma(boolean value)

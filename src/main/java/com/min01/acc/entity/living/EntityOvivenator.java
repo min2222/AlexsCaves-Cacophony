@@ -68,7 +68,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	public final SmoothAnimationState danceAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState pickupAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState eatAnimationState = new SmoothAnimationState();
-	public final SmoothAnimationState sitAnimationState = new SmoothAnimationState(1.0F, 0.4F);
+	public final SmoothAnimationState sitAnimationState = new SmoothAnimationState();
 	
 	public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
 	
@@ -174,9 +174,9 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 			this.scratchLeftAnimationState.updateWhen(this.ambientType == AmbientType.SCRATCH_LEFT && !this.isDancing() && !this.isHoldingEgg() && !this.isOrderedToSit(), this.tickCount);
 			this.lookAnimationState.updateWhen(this.ambientType == AmbientType.LOOK && !this.isDancing(), this.tickCount);
 			this.danceAnimationState.updateWhen(this.isDancing(), this.tickCount);
-			this.pickupAnimationState.updateWhen(this.isUsingSkill(1) && !this.isDancing(), this.tickCount);
-			this.eatAnimationState.updateWhen(this.isUsingSkill(2) && !this.isDancing(), this.tickCount);
-			this.sitAnimationState.updateWhen(this.getCommand() == 1 && !this.isDancing(), this.tickCount);
+			this.pickupAnimationState.updateWhen(this.isAnimationPlaying(1) && !this.isDancing(), this.tickCount);
+			this.eatAnimationState.updateWhen(this.isAnimationPlaying(2) && !this.isDancing(), this.tickCount);
+			this.sitAnimationState.updateWhen(this.isOrderedToSit() && !this.isDancing(), this.tickCount);
 			this.runAnimationState.updateWhen(this.isPanic() && this.getAnimationState() == 0, this.tickCount);
 		}
 		if(this.ambientType != null)
@@ -221,18 +221,20 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 				}
 			}
 		}
-		if(this.getAnimationTick() <= 0)
-		{
-			if(this.getAnimationState() == 1)
-			{
-				this.setHoldingEgg(true);
-				this.setAnimationState(0);
-			}
-		}
 		if(this.isHoldingEgg())
 		{
 			this.setEggHoldingTick(this.getEggHoldingTick() + 1);
 		}
+	}
+	
+	@Override
+	public boolean onAnimationEnd(int animationState) 
+	{
+		if(animationState == 1)
+		{
+			this.setHoldingEgg(true);
+		}
+		return super.onAnimationEnd(animationState);
 	}
     
     @Override
@@ -295,7 +297,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
                 }
                 return InteractionResult.SUCCESS;
             }
-            if(itemstack.is(ACCTags.ACCItems.OVIVENATOR_TAMEABLE) && !this.isTame())
+            if(itemstack.is(ACCTags.ACCItems.OVIVENATOR_TAMEABLE) && !this.isTame() && !this.level.isClientSide)
             {
                 if(!player.getAbilities().instabuild)
                 {
@@ -305,7 +307,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
             	{
                     this.heal(5);
                     this.tame(player);
-                    this.navigation.stop();
+                    this.getNavigation().stop();
                     this.setCommand(0);
                     this.setOrderedToSit(true);
                     this.level.broadcastEntityEvent(this, (byte) 7);
@@ -320,15 +322,24 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
         return type;
     }
     
+    @Override
+    public boolean canMoveAround() 
+    {
+    	return super.canMoveAround() && !this.isOrderedToSit();
+    }
+    
 	@Override
 	public void playAmbientSound() 
 	{
-		AmbientType type = AmbientType.getRandom(this.random);
-		this.ambientType = type;
-		this.ambientTick = type.tick;
-		if(type == AmbientType.NOISE)
+		if(!this.isHoldingEgg())
 		{
-			super.playAmbientSound();
+			AmbientType type = AmbientType.getRandom(this.random);
+			this.ambientType = type;
+			this.ambientTick = type.tick;
+			if(type == AmbientType.NOISE)
+			{
+				super.playAmbientSound();
+			}
 		}
 	}
 	
@@ -359,7 +370,7 @@ public class EntityOvivenator extends AbstractAnimatableDinosaur
 	@Override
 	protected void updateWalkAnimation(float pPartialTick)
 	{
-		float f = Math.min(pPartialTick * 20.0F, 1.0F);
+		float f = Math.min(pPartialTick * 12.0F, 1.0F);
 		this.walkAnimation.update(f, 0.4F);
 	}
 	

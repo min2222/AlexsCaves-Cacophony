@@ -29,11 +29,12 @@ public class OvivenatorEggLayer extends RenderLayer<EntityOvivenator, ModelOvive
 		if(!egg.isEmpty())
 		{
 			pPoseStack.pushPose();
+			this.getParentModel().root().translateAndRotate(pPoseStack);
+			this.getParentModel().root().getChild("ovivenator").translateAndRotate(pPoseStack);
+			this.getParentModel().root().getChild("ovivenator").getChild("body").translateAndRotate(pPoseStack);
 			this.getParentModel().root().getChild("ovivenator").getChild("body").getChild("left_arm").translateAndRotate(pPoseStack);
-			pPoseStack.translate(-6.5F / 16.0F, 9.0F / 16.0F, -5.0F / 16.0F);
-			pPoseStack.mulPose(Axis.ZP.rotationDegrees(184.65468F));
-			pPoseStack.mulPose(Axis.YP.rotationDegrees(-8.86042F));
-			pPoseStack.mulPose(Axis.XP.rotationDegrees(-45.0F));
+			pPoseStack.translate(-0.35F, 0.5F, -0.5F);
+			pPoseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
 			this.itemRenderer.renderItem(pLivingEntity, egg, ItemDisplayContext.FIXED, false, pPoseStack, pBuffer, pPackedLight);
 			pPoseStack.popPose();
 		}

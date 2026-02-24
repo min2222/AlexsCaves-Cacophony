@@ -1,6 +1,6 @@
 package com.min01.acc.advancements;
 
-import com.min01.acc.advancements.critereon.ShootNuclearBombTrigger;
+import com.min01.acc.advancements.criterion.ShootNuclearBombTrigger;
 
 import net.minecraft.advancements.CriteriaTriggers;
 

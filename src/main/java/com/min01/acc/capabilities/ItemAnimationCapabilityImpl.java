@@ -36,9 +36,9 @@ public class ItemAnimationCapabilityImpl implements IItemAnimationCapability
 	
 	public final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState();
-	public final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState();
 	
-	public final SmoothAnimationState raybladeSwingAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState raybladeSwingAnimationState = new SmoothAnimationState();
 	
 	private final ItemStack stack;
 	

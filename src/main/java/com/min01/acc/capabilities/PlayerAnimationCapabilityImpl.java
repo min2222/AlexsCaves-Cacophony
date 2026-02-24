@@ -36,12 +36,12 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	private int animationState;
 	private int prevAnimationState;
 	
-	public final SmoothAnimationState radrifleFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState radrifleFireAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState radrifleHoldAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState radrifleHoldNearWallAnimationState = new SmoothAnimationState();
-	public final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	public final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	public final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState radrifleRunningAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState radrifleOverchargeFireAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState radrifleOverheatAnimationState = new SmoothAnimationState();
 	
 	public final SmoothAnimationState raybladeDrawRightAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState raybladeSwingRightAnimationState = new SmoothAnimationState();
@@ -49,12 +49,12 @@ public class PlayerAnimationCapabilityImpl implements IPlayerAnimationCapability
 	public final SmoothAnimationState raybladeDrawLeftAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState raybladeSwingLeftAnimationState = new SmoothAnimationState();
 	
-	public final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunFireAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState railgunHoldAnimationState = new SmoothAnimationState();
 	public final SmoothAnimationState railgunHoldNearWallAnimationState = new SmoothAnimationState();
-	public final SmoothAnimationState railgunRunningAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	public final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState(0.999F, 0.4F);
-	public final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState(0.999F, 0.4F);
+	public final SmoothAnimationState railgunRunningAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState railgunReloadAnimationState = new SmoothAnimationState();
+	public final SmoothAnimationState railgunChargeAnimationState = new SmoothAnimationState();
 	
 	private final Entity entity;
 	
